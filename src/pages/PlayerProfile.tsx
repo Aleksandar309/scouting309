@@ -24,9 +24,9 @@ import {
   Target,
   EyeOff,
   Gauge,
-  Edit, // Added Edit icon
-  Save, // Added Save icon
-  XCircle, // Added Cancel icon
+  Edit,
+  Save,
+  XCircle,
 } from "lucide-react";
 import { Player, PlayerAttribute } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
@@ -113,9 +113,11 @@ const getHighlightType = (
 const PlayerProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const foundPlayer = mockPlayers.find(p => p.id === id);
 
-  const [player, setPlayer] = useState<Player | null>(foundPlayer || null);
+  // Find the player based on the ID from the URL, re-evaluate when ID changes
+  const currentPlayer = React.useMemo(() => mockPlayers.find(p => p.id === id), [id]);
+
+  const [player, setPlayer] = useState<Player | null>(currentPlayer || null);
   const [isReportFormOpen, setIsReportFormOpen] = useState(false);
   const [isShortlistFormOpen, setIsShortlistFormOpen] = useState(false);
   const [showScoutingProfile, setShowScoutingProfile] = useState(true);
@@ -127,36 +129,40 @@ const PlayerProfile: React.FC = () => {
 
   const form = useForm<PlayerFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: player ? {
-      name: player.name,
-      team: player.team,
-      nationality: player.nationality,
-      age: player.age,
-      value: player.value,
-      footed: player.footed,
-      details: player.details,
-      scoutingProfile: player.scoutingProfile,
-      keyStrengths: player.keyStrengths.join('\n'),
-      areasForDevelopment: player.areasForDevelopment.join('\n'),
+    defaultValues: currentPlayer ? {
+      name: currentPlayer.name,
+      team: currentPlayer.team,
+      nationality: currentPlayer.nationality,
+      age: currentPlayer.age,
+      value: currentPlayer.value,
+      footed: currentPlayer.footed,
+      details: currentPlayer.details,
+      scoutingProfile: currentPlayer.scoutingProfile,
+      keyStrengths: currentPlayer.keyStrengths.join('\n'),
+      areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
     } : undefined,
   });
 
+  // Effect to update player state and form defaults when the currentPlayer object changes
   React.useEffect(() => {
-    if (player) {
+    setPlayer(currentPlayer || null); // Update player state when currentPlayer changes
+    if (currentPlayer) {
       form.reset({
-        name: player.name,
-        team: player.team,
-        nationality: player.nationality,
-        age: player.age,
-        value: player.value,
-        footed: player.footed,
-        details: player.details,
-        scoutingProfile: player.scoutingProfile,
-        keyStrengths: player.keyStrengths.join('\n'),
-        areasForDevelopment: player.areasForDevelopment.join('\n'),
+        name: currentPlayer.name,
+        team: currentPlayer.team,
+        nationality: currentPlayer.nationality,
+        age: currentPlayer.age,
+        value: currentPlayer.value,
+        footed: currentPlayer.footed,
+        details: currentPlayer.details,
+        scoutingProfile: currentPlayer.scoutingProfile,
+        keyStrengths: currentPlayer.keyStrengths.join('\n'),
+        areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
       });
     }
-  }, [player, isEditMode, form]);
+    setIsEditMode(false); // Exit edit mode when player changes
+    setSelectedFmRole(null); // Clear selected role
+  }, [currentPlayer, form]); // Depend on currentPlayer and form
 
   if (!player) {
     return <div className="text-center text-white mt-10">Player not found.</div>;
