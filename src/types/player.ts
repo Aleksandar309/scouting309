@@ -61,5 +61,8 @@ export interface Player {
     title: string;
     keyStrengths?: string; // Added
     areasForDevelopment?: string; // Added
+    currentAbility?: number; // NEW: Specific current ability from this report
+    potentialAbility?: number; // NEW: Specific potential ability from this report
+    teamFit?: number; // NEW: Specific team fit from this report
   }[];
 }

@@ -41,7 +41,16 @@ const formSchema = z.object({
     required_error: "A date is required.",
   }),
   rating: z.coerce.number().min(1).max(10, {
-    message: "Rating must be between 1 and 10.",
+    message: "Overall Rating must be between 1 and 10.",
+  }),
+  currentAbility: z.coerce.number().min(1).max(10, {
+    message: "Current Ability must be between 1 and 10.",
+  }),
+  potentialAbility: z.coerce.number().min(1).max(10, {
+    message: "Potential Ability must be between 1 and 10.",
+  }),
+  teamFit: z.coerce.number().min(1).max(10, {
+    message: "Team Fit must be between 1 and 10.",
   }),
   keyStrengths: z.string().optional(),
   areasForDevelopment: z.string().optional(),
@@ -61,6 +70,9 @@ const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmi
       scout: "",
       date: new Date(),
       rating: 7,
+      currentAbility: player.scoutingProfile.currentAbility, // Default from player's current profile
+      potentialAbility: player.scoutingProfile.potentialAbility, // Default from player's current profile
+      teamFit: player.scoutingProfile.teamFit, // Default from player's current profile
       keyStrengths: "",
       areasForDevelopment: "",
     },
@@ -73,8 +85,11 @@ const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmi
       scout: values.scout,
       rating: values.rating,
       title: values.title,
-      keyStrengths: values.keyStrengths, // Added
-      areasForDevelopment: values.areasForDevelopment, // Added
+      keyStrengths: values.keyStrengths,
+      areasForDevelopment: values.areasForDevelopment,
+      currentAbility: values.currentAbility,
+      potentialAbility: values.potentialAbility,
+      teamFit: values.teamFit,
     };
     onReportSubmit(newReport);
     onClose();
@@ -163,6 +178,45 @@ const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmi
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-muted-foreground">Overall Rating (1-10)</FormLabel>
+                <FormControl>
+                  <Input type="number" className="bg-input border-border text-foreground" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="currentAbility"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-muted-foreground">Current Ability (1-10)</FormLabel>
+                <FormControl>
+                  <Input type="number" className="bg-input border-border text-foreground" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="potentialAbility"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-muted-foreground">Potential Ability (1-10)</FormLabel>
+                <FormControl>
+                  <Input type="number" className="bg-input border-border text-foreground" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="teamFit"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-muted-foreground">Team Fit (1-10)</FormLabel>
                 <FormControl>
                   <Input type="number" className="bg-input border-border text-foreground" {...field} />
                 </FormControl>

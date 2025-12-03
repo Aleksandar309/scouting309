@@ -139,6 +139,25 @@ const getHighlightType = (
   return null;
 };
 
+// Helper function to calculate the average rating for an attribute, considering its history
+const getDisplayedAttributeRating = (attribute: PlayerAttribute, isEditMode: boolean): number => {
+  if (isEditMode) {
+    return attribute.rating; // In edit mode, show the current editable rating
+  }
+
+  const allRatings = (attribute.history || []).map(entry => entry.rating);
+  if (attribute.rating !== undefined) {
+    allRatings.push(attribute.rating); // Include the current rating in the average
+  }
+
+  if (allRatings.length === 0) {
+    return 0; // Or attribute.rating if you prefer a default
+  }
+
+  const sum = allRatings.reduce((acc, val) => acc + val, 0);
+  return Math.round(sum / allRatings.length);
+};
+
 const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -388,7 +407,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
           ) : (
             <AttributeRating
               name={attr.name}
-              rating={attr.rating}
+              rating={getDisplayedAttributeRating(attr, isEditMode)} // Use calculated average
               highlightType={getHighlightType(attr.name, categoryName, selectedFmRole)}
               onViewHistory={handleAttributeHistoryClick} // Pass the handler
               attributeCategory={categoryName} // Pass the category
@@ -398,6 +417,35 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
       ))}
     </div>
   );
+
+  // Calculate average scouting profile metrics from reports
+  const calculateAverageScoutingProfile = () => {
+    const reports = player?.scoutingReports || [];
+    if (reports.length === 0) {
+      return { avgCurrentAbility: 0, avgPotentialAbility: 0, avgTeamFit: 0 };
+    }
+
+    let totalCurrentAbility = 0;
+    let totalPotentialAbility = 0;
+    let totalTeamFit = 0;
+    let count = 0;
+
+    reports.forEach(report => {
+      if (report.currentAbility !== undefined) totalCurrentAbility += report.currentAbility;
+      if (report.potentialAbility !== undefined) totalPotentialAbility += report.potentialAbility;
+      if (report.teamFit !== undefined) totalTeamFit += report.teamFit;
+      count++;
+    });
+
+    return {
+      avgCurrentAbility: count > 0 ? Math.round(totalCurrentAbility / count) : 0,
+      avgPotentialAbility: count > 0 ? Math.round(totalPotentialAbility / count) : 0,
+      avgTeamFit: count > 0 ? Math.round(totalTeamFit / count) : 0,
+    };
+  };
+
+  const { avgCurrentAbility, avgPotentialAbility, avgTeamFit } = calculateAverageScoutingProfile();
+
 
   return (
     <div className="min-h-screen bg-background text-foreground p-6">
@@ -999,6 +1047,14 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                         <AttributeRating name="Current Ability" rating={player.scoutingProfile.currentAbility} />
                         <AttributeRating name="Potential Ability" rating={player.scoutingProfile.potentialAbility} />
                         <AttributeRating name="Team Fit" rating={player.scoutingProfile.teamFit} />
+                        {player.scoutingReports.length > 0 && (
+                          <div className="mt-4 pt-3 border-t border-border space-y-2">
+                            <h4 className="text-md font-semibold text-foreground">Average from Reports:</h4>
+                            <AttributeRating name="Avg. Current Ability" rating={avgCurrentAbility} />
+                            <AttributeRating name="Avg. Potential Ability" rating={avgPotentialAbility} />
+                            <AttributeRating name="Avg. Team Fit" rating={avgTeamFit} />
+                          </div>
+                        )}
                       </>
                     )}
                   </CardContent>
@@ -1033,6 +1089,12 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                                 <p className="text-sm">{report.areasForDevelopment}</p>
                               </div>
                             )}
+                            <div className="mt-3 pt-3 border-t border-border space-y-1">
+                              <h4 className="font-semibold text-foreground mb-1">Reported Abilities:</h4>
+                              {report.currentAbility !== undefined && <p className="text-sm">Current Ability: {report.currentAbility}</p>}
+                              {report.potentialAbility !== undefined && <p className="text-sm">Potential Ability: {report.potentialAbility}</p>}
+                              {report.teamFit !== undefined && <p className="text-sm">Team Fit: {report.teamFit}</p>}
+                            </div>
                             <Button variant="ghost" size="sm" className="text-blue-400 hover:text-blue-300 mt-2">
                               Sign Immediately <ArrowRight className="ml-1 h-4 w-4" />
                             </Button>
