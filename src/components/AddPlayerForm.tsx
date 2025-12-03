@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
-import { CalendarIcon, PlusCircle } from "lucide-react";
+import { CalendarIcon, PlusCircle, Trash2 } from "lucide-react"; // Added Trash2 icon
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -33,23 +33,16 @@ import { Player, PlayerAttribute, PlayerPosition } from "@/types/player";
 import { CATEGORIZED_ATTRIBUTES, createDefaultPlayerAttributes } from "@/utils/player-attributes";
 import AttributeRating from "./AttributeRating";
 
-// Zod schema for player attributes
-const attributeSchema = z.object({
-  name: z.string(),
-  rating: z.coerce.number().min(1).max(10, { message: "Rating must be between 1 and 10." }),
-});
-
-// Zod schema for player positions (simplified for initial input)
-const playerPositionSchema = z.object({
+// Zod schema for player positions (now with rating)
+const playerPositionInputSchema = z.object({
   name: z.string().min(1, { message: "Position name cannot be empty." }),
-  type: z.enum(["natural", "alternative", "tertiary"]),
-  rating: z.coerce.number().min(1).max(10, { message: "Rating must be between 1 and 10." }),
+  rating: z.coerce.number().min(0).max(10, { message: "Rating must be between 0 and 10." }),
 });
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   team: z.string().min(2, { message: "Team must be at least 2 characters." }),
-  positions: z.string().min(1, { message: "At least one position is required (comma-separated)." }), // Input as string
+  positionsData: z.array(playerPositionInputSchema).min(1, { message: "At least one position is required." }), // Input as array of objects
   nationality: z.string().min(2, { message: "Nationality must be at least 2 characters." }),
   age: z.coerce.number().min(1, { message: "Age must be at least 1." }),
   value: z.string().min(2, { message: "Value must be specified." }),
@@ -69,12 +62,12 @@ const formSchema = z.object({
     potentialAbility: z.coerce.number().min(1).max(10, { message: "Potential Ability must be between 1 and 10." }),
     teamFit: z.coerce.number().min(1).max(10, { message: "Team Fit must be between 1 and 10." }),
   }),
-  technical: z.array(attributeSchema),
-  tactical: z.array(attributeSchema),
-  physical: z.array(attributeSchema),
-  mentalPsychology: z.array(attributeSchema),
-  setPieces: z.array(attributeSchema),
-  hidden: z.array(attributeSchema),
+  technical: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
+  tactical: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
+  physical: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
+  mentalPsychology: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
+  setPieces: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
+  hidden: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(20) })), // Hidden attributes often have higher scale
   keyStrengths: z.string().optional(),
   areasForDevelopment: z.string().optional(),
   priorityTarget: z.boolean().default(false),
@@ -88,13 +81,21 @@ interface AddPlayerFormProps {
   onClose: () => void;
 }
 
+// Helper function to assign position type based on rating
+const assignPositionType = (rating: number): "natural" | "alternative" | "tertiary" | null => {
+  if (rating >= 8) return "natural";
+  if (rating >= 6) return "alternative";
+  if (rating >= 4) return "tertiary";
+  return null; // Positions with rating < 4 are not considered primary player positions
+};
+
 const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) => {
   const form = useForm<AddPlayerFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       team: "",
-      positions: "",
+      positionsData: [{ name: "", rating: 7 }], // Default to one empty position input
       nationality: "",
       age: 18,
       value: "€1M",
@@ -119,7 +120,7 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
       physical: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.physical),
       mentalPsychology: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.mentalPsychology),
       setPieces: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.setPieces),
-      hidden: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.hidden, 10), // Hidden attributes often have higher scale
+      hidden: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.hidden, 10),
       keyStrengths: "",
       areasForDevelopment: "",
       priorityTarget: false,
@@ -127,17 +128,38 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
     },
   });
 
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "positionsData",
+  });
+
   const onSubmit = (values: AddPlayerFormValues) => {
+    const processedPositionsData: PlayerPosition[] = [];
+    const generalPositions: string[] = [];
+
+    values.positionsData.forEach(posInput => {
+      const type = assignPositionType(posInput.rating);
+      if (type) {
+        processedPositionsData.push({
+          name: posInput.name.toUpperCase(), // Standardize position names
+          type: type,
+          rating: posInput.rating,
+        });
+        generalPositions.push(posInput.name.toUpperCase());
+      }
+    });
+
+    if (processedPositionsData.length === 0) {
+      toast.error("At least one position with a rating of 4 or higher is required.");
+      return;
+    }
+
     const newPlayer: Player = {
-      id: `player-${Date.now()}`, // Simple unique ID
+      id: `player-${Date.now()}`,
       name: values.name,
       team: values.team,
-      positions: values.positions.split(',').map(p => p.trim()).filter(p => p.length > 0),
-      positionsData: values.positions.split(',').map(p => p.trim()).filter(p => p.length > 0).map(posName => ({
-        name: posName,
-        type: "natural", // Default to natural for simplicity in add form
-        rating: 7, // Default rating
-      })),
+      positions: generalPositions, // Derived from processedPositionsData
+      positionsData: processedPositionsData,
       priorityTarget: values.priorityTarget,
       criticalPriority: values.criticalPriority,
       nationality: values.nationality,
@@ -156,7 +178,7 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
       hidden: values.hidden,
       keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
       areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
-      scoutingReports: [], // New players start with no reports
+      scoutingReports: [],
     };
     onAddPlayer(newPlayer);
     toast.success(`Player ${newPlayer.name} added successfully!`);
@@ -291,19 +313,6 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
             />
             <FormField
               control={form.control}
-              name="positions"
-              render={({ field }) => (
-                <FormItem className="md:col-span-2">
-                  <FormLabel className="text-muted-foreground">Positions (comma-separated, e.g., ST, CAM)</FormLabel>
-                  <FormControl>
-                    <Input className="bg-input border-border text-foreground" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name="avatarUrl"
               render={({ field }) => (
                 <FormItem className="md:col-span-2">
@@ -315,6 +324,64 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
                 </FormItem>
               )}
             />
+          </div>
+
+          {/* Positions Data */}
+          <div className="border-t border-border pt-6">
+            <h2 className="text-xl font-bold text-foreground mb-2">Player Positions (Rating 0-10)</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Enter each position and its rating. (Natural: 8-10, Alternative: 6-7, Tertiary: 4-5)
+            </p>
+            <div className="space-y-3">
+              {fields.map((item, index) => (
+                <div key={item.id} className="flex items-center gap-2">
+                  <FormField
+                    control={form.control}
+                    name={`positionsData.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel className={cn(index !== 0 && "sr-only")}>Position Name</FormLabel>
+                        <FormControl>
+                          <Input className="bg-input border-border text-foreground" placeholder="e.g., ST" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`positionsData.${index}.rating`}
+                    render={({ field }) => (
+                      <FormItem className="w-24">
+                        <FormLabel className={cn(index !== 0 && "sr-only")}>Rating</FormLabel>
+                        <FormControl>
+                          <Input type="number" min="0" max="10" className="bg-input border-border text-foreground text-center" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    onClick={() => remove(index)}
+                    className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => append({ name: "", rating: 7 })}
+                className="w-full bg-muted border-border text-muted-foreground hover:bg-accent"
+              >
+                <PlusCircle className="mr-2 h-4 w-4" /> Add Another Position
+              </Button>
+              <FormMessage>{form.formState.errors.positionsData?.message}</FormMessage>
+            </div>
           </div>
 
           {/* Scouting Profile */}

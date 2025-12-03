@@ -29,8 +29,9 @@ import {
   XCircle,
   Camera,
   History,
+  Trash2, // Added Trash2 icon
 } from "lucide-react";
-import { Player, PlayerAttribute, AttributeHistoryEntry } from "@/types/player";
+import { Player, PlayerAttribute, AttributeHistoryEntry, PlayerPosition } from "@/types/player"; // Import PlayerPosition
 import AttributeRating from "@/components/AttributeRating";
 import RadarChart from "@/components/RadarChart";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -47,7 +48,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form"; // Import useFieldArray
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
@@ -86,6 +87,12 @@ const attributeSchema = z.array(z.object({
   })).optional(),
 }));
 
+// Zod schema for player positions input (name and rating)
+const playerPositionInputSchema = z.object({
+  name: z.string().min(1, { message: "Position name cannot be empty." }),
+  rating: z.coerce.number().min(0).max(10, { message: "Rating must be between 0 and 10." }),
+});
+
 // Zod schema for editable player fields
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -110,6 +117,7 @@ const formSchema = z.object({
     potentialAbility: z.coerce.number().min(1).max(10, { message: "Potential Ability must be between 1 and 10." }),
     teamFit: z.coerce.number().min(1).max(10, { message: "Team Fit must be between 1 and 10." }),
   }),
+  positionsData: z.array(playerPositionInputSchema).min(1, { message: "At least one position is required." }), // Now an array of objects
   technical: attributeSchema,
   tactical: attributeSchema,
   physical: attributeSchema,
@@ -128,6 +136,14 @@ interface PlayerProfileProps {
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
   scouts: Scout[]; // Receive scouts as prop
 }
+
+// Helper function to assign position type based on rating
+const assignPositionType = (rating: number): "natural" | "alternative" | "tertiary" | null => {
+  if (rating >= 8) return "natural";
+  if (rating >= 6) return "alternative";
+  if (rating >= 4) return "tertiary";
+  return null; // Positions with rating < 4 are not considered primary player positions
+};
 
 // Helper to get highlight type for an attribute
 const getHighlightType = (
@@ -207,6 +223,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       avatarUrl: currentPlayer.avatarUrl || '',
       details: currentPlayer.details,
       scoutingProfile: currentPlayer.scoutingProfile,
+      positionsData: currentPlayer.positionsData.map(p => ({ name: p.name, rating: p.rating })), // Map existing positionsData for form
       technical: currentPlayer.technical,
       tactical: currentPlayer.tactical,
       physical: currentPlayer.physical,
@@ -217,6 +234,11 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
       changedByScout: "", // Default empty
     } : undefined,
+  });
+
+  const { fields: positionFields, append: appendPosition, remove: removePosition } = useFieldArray({
+    control: form.control,
+    name: "positionsData",
   });
 
   // Effect to update player state and form defaults when the currentPlayer object changes
@@ -234,6 +256,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
         avatarUrl: currentPlayer.avatarUrl || '',
         details: currentPlayer.details,
         scoutingProfile: currentPlayer.scoutingProfile,
+        positionsData: currentPlayer.positionsData.map(p => ({ name: p.name, rating: p.rating })), // Map existing positionsData for form
         technical: currentPlayer.technical,
         tactical: currentPlayer.tactical,
         physical: currentPlayer.physical,
@@ -329,9 +352,31 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
 
     const changedByScoutName = values.changedByScout || "User Edit"; // Use selected scout or default
 
+    const processedPositionsData: PlayerPosition[] = [];
+    const generalPositions: string[] = [];
+
+    values.positionsData.forEach(posInput => {
+      const type = assignPositionType(posInput.rating);
+      if (type) {
+        processedPositionsData.push({
+          name: posInput.name.toUpperCase(),
+          type: type,
+          rating: posInput.rating,
+        });
+        generalPositions.push(posInput.name.toUpperCase());
+      }
+    });
+
+    if (processedPositionsData.length === 0) {
+      toast.error("At least one position with a rating of 4 or higher is required.");
+      return;
+    }
+
     const updatedPlayer: Player = {
-      ...player, // Keep existing properties like positionsData, scoutingReports etc.
+      ...player, // Keep existing properties like scoutingReports etc.
       ...values,
+      positions: generalPositions, // Derived from processedPositionsData
+      positionsData: processedPositionsData, // Updated positionsData
       keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
       areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
       avatarUrl: values.avatarUrl,
@@ -596,6 +641,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                           avatarUrl: currentPlayer.avatarUrl || '',
                           details: currentPlayer.details,
                           scoutingProfile: currentPlayer.scoutingProfile,
+                          positionsData: currentPlayer.positionsData.map(p => ({ name: p.name, rating: p.rating })),
                           technical: currentPlayer.technical,
                           tactical: currentPlayer.tactical,
                           physical: currentPlayer.physical,
@@ -867,7 +913,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Player Pitch Card */}
+                {/* Player Positions Card */}
                 <Card className="bg-card border-border text-card-foreground">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg font-semibold">Player Positions</CardTitle>
@@ -879,11 +925,67 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     />
                   </CardHeader>
                   <CardContent className="flex items-start justify-center h-full p-4">
-                    <PlayerPitch
-                      positionsData={playerFormationFit ? undefined : player.positionsData}
-                      formationPositions={playerFormationFit || undefined}
-                      onPositionClick={handlePositionClick}
-                    />
+                    {isEditMode ? (
+                      <div className="w-full space-y-3">
+                        <p className="text-sm text-muted-foreground">
+                          Enter each position and its rating. (Natural: 8-10, Alternative: 6-7, Tertiary: 4-5)
+                        </p>
+                        {positionFields.map((item, index) => (
+                          <div key={item.id} className="flex items-center gap-2">
+                            <FormField
+                              control={form.control}
+                              name={`positionsData.${index}.name`}
+                              render={({ field }) => (
+                                <FormItem className="flex-1">
+                                  <FormLabel className="sr-only">Position Name</FormLabel>
+                                  <FormControl>
+                                    <Input className="bg-input border-border text-foreground" placeholder="e.g., ST" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name={`positionsData.${index}.rating`}
+                              render={({ field }) => (
+                                <FormItem className="w-24">
+                                  <FormLabel className="sr-only">Rating</FormLabel>
+                                  <FormControl>
+                                    <Input type="number" min="0" max="10" className="bg-input border-border text-foreground text-center" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => removePosition(index)}
+                              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => appendPosition({ name: "", rating: 7 })}
+                          className="w-full bg-muted border-border text-muted-foreground hover:bg-accent"
+                        >
+                          <PlusCircle className="mr-2 h-4 w-4" /> Add Another Position
+                        </Button>
+                        <FormMessage>{form.formState.errors.positionsData?.message}</FormMessage>
+                      </div>
+                    ) : (
+                      <PlayerPitch
+                        positionsData={playerFormationFit ? undefined : player.positionsData}
+                        formationPositions={playerFormationFit || undefined}
+                        onPositionClick={handlePositionClick}
+                      />
+                    )}
                   </CardContent>
                 </Card>
 
