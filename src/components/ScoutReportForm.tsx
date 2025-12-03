@@ -3,7 +3,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import *s z from "zod";
+import * as z from "zod"; // Ispravljeno: Dodato 'as'
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
