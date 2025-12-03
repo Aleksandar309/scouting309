@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import {
   ColumnDef,
   flexRender,
-  getCoreRowModel,
+  getCoreRowModel, // Ispravljeno: getCoreRowModel
   useReactTable,
   getSortedRowModel,
   SortingState,
@@ -750,7 +750,7 @@ const PlayerDatabase: React.FC = () => {
   const table = useReactTable({
     data: mockPlayers,
     columns,
-    getCoreRowModel: getCoreRowodel(),
+    getCoreRowModel: getCoreRowModel(), // Ispravljeno ovde
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     state: {
