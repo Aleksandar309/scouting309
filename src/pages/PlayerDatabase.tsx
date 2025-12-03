@@ -47,6 +47,7 @@ export const mockPlayers: Player[] = [
     age: 26,
     value: "€25M",
     footed: "Right Footed",
+    lastEdited: "2024-07-26T10:00:00Z", // Added
     avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=MW",
     details: {
       height: "188 cm",
@@ -165,6 +166,7 @@ export const mockPlayers: Player[] = [
     age: 23,
     value: "€45M",
     footed: "Left Footed",
+    lastEdited: "2024-07-25T14:30:00Z", // Added
     avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=MK",
     details: {
       height: "177 cm",
@@ -275,6 +277,7 @@ export const mockPlayers: Player[] = [
     age: 21,
     value: "€100M",
     footed: "Right Footed",
+    lastEdited: "2024-07-26T08:15:00Z", // Added
     avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=FW",
     details: {
       height: "177 cm",
@@ -383,6 +386,7 @@ export const mockPlayers: Player[] = [
     age: 21,
     value: "€50M",
     footed: "Left Footed",
+    lastEdited: "2024-07-24T11:00:00Z", // Added
     avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=LC",
     details: {
       height: "187 cm",
@@ -491,6 +495,7 @@ export const mockPlayers: Player[] = [
     age: 19,
     value: "€60M",
     footed: "Right Footed",
+    lastEdited: "2024-07-23T09:45:00Z", // Added
     avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=EF",
     details: {
       height: "188 cm",

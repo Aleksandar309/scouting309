@@ -28,6 +28,7 @@ import {
   Save,
   XCircle,
   Camera,
+  History, // Import History icon
 } from "lucide-react";
 import { Player, PlayerAttribute } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
@@ -77,6 +78,7 @@ const formSchema = z.object({
   age: z.coerce.number().min(1, { message: "Age must be at least 1." }),
   value: z.string().min(2, { message: "Value must be specified." }),
   footed: z.string().min(2, { message: "Footed must be specified." }),
+  lastEdited: z.string().optional(), // Added to schema
   avatarUrl: z.string().optional(),
   details: z.object({
     height: z.string().min(2, { message: "Height must be specified." }),
@@ -159,6 +161,7 @@ const PlayerProfile: React.FC = () => {
       age: currentPlayer.age,
       value: currentPlayer.value,
       footed: currentPlayer.footed,
+      lastEdited: currentPlayer.lastEdited || '', // Added to defaultValues
       avatarUrl: currentPlayer.avatarUrl || '',
       details: currentPlayer.details,
       scoutingProfile: currentPlayer.scoutingProfile,
@@ -184,6 +187,7 @@ const PlayerProfile: React.FC = () => {
         age: currentPlayer.age,
         value: currentPlayer.value,
         footed: currentPlayer.footed,
+        lastEdited: currentPlayer.lastEdited || '', // Added to reset
         avatarUrl: currentPlayer.avatarUrl || '',
         details: currentPlayer.details,
         scoutingProfile: currentPlayer.scoutingProfile,
@@ -280,6 +284,7 @@ const PlayerProfile: React.FC = () => {
         mentalPsychology: values.mentalPsychology,
         setPieces: values.setPieces,
         hidden: values.hidden,
+        lastEdited: new Date().toISOString(), // Update lastEdited on save
       };
     });
     setIsEditMode(false);
@@ -399,6 +404,7 @@ const PlayerProfile: React.FC = () => {
                           age: currentPlayer.age,
                           value: currentPlayer.value,
                           footed: currentPlayer.footed,
+                          lastEdited: currentPlayer.lastEdited || '',
                           avatarUrl: currentPlayer.avatarUrl || '',
                           details: currentPlayer.details,
                           scoutingProfile: currentPlayer.scoutingProfile,
@@ -520,6 +526,12 @@ const PlayerProfile: React.FC = () => {
                     player.footed
                   )}
                 </span>
+                {player.lastEdited && (
+                  <span className="flex items-center ml-4 text-xs text-gray-500">
+                    <History className="mr-1 h-3 w-3" />
+                    Last Edited: {new Date(player.lastEdited).toLocaleDateString()}
+                  </span>
+                )}
               </div>
 
               {/* Main Content Grid */}

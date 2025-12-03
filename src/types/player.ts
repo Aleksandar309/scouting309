@@ -21,6 +21,7 @@ export interface Player {
   age: number;
   value: string;
   footed: string;
+  lastEdited?: string; // NEW: Optional field for last edited timestamp
   avatarUrl?: string; // NEW: Optional field for player avatar image URL
   details: {
     height: string;
