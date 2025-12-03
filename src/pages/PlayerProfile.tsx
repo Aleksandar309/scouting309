@@ -29,9 +29,10 @@ import {
   XCircle,
   Camera,
   History,
-  Trash2, // Added Trash2 icon
+  Trash2,
+  PlusCircle, // Added PlusCircle import
 } from "lucide-react";
-import { Player, PlayerAttribute, AttributeHistoryEntry, PlayerPosition } from "@/types/player"; // Import PlayerPosition
+import { Player, PlayerAttribute, AttributeHistoryEntry, PlayerPosition } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
 import RadarChart from "@/components/RadarChart";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -48,7 +49,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useForm, useFieldArray } from "react-hook-form"; // Import useFieldArray
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
