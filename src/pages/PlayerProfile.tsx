@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,8 +7,10 @@ import { ArrowRight, CalendarDays, Flag, Goal, MapPin, Scale, User, Wallet } fro
 import { Player } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
 import RadarChart from "@/components/RadarChart";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import ScoutReportForm from "@/components/ScoutReportForm";
 
-const mockPlayer: Player = {
+const initialMockPlayer: Player = {
   id: "1",
   name: "Mats Wieffer",
   team: "Feyenoord",
@@ -84,12 +86,19 @@ const mockPlayer: Player = {
 
 const PlayerProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  // In a real app, you would fetch player data based on 'id'
-  const player = mockPlayer; // Using mock data for now
+  const [player, setPlayer] = useState<Player>(initialMockPlayer); // Use useState for player data
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   if (!player) {
     return <div className="text-center text-white mt-10">Player not found.</div>;
   }
+
+  const handleAddReport = (newReport: Player["scoutingReports"][0]) => {
+    setPlayer((prevPlayer) => ({
+      ...prevPlayer,
+      scoutingReports: [...prevPlayer.scoutingReports, newReport],
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
@@ -114,7 +123,12 @@ const PlayerProfile: React.FC = () => {
           </div>
           <div className="flex space-x-2">
             <Button variant="outline" className="bg-gray-800 text-white border-gray-700 hover:bg-gray-700">Edit</Button>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">New Report</Button>
+            <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white">New Report</Button>
+              </DialogTrigger>
+              <ScoutReportForm player={player} onReportSubmit={handleAddReport} onClose={() => setIsFormOpen(false)} />
+            </Dialog>
           </div>
         </div>
 
