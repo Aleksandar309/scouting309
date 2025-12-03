@@ -73,7 +73,7 @@ const AttributeHistoryDialog: React.FC<AttributeHistoryDialogProps> = ({
 
   if (attribute.rating !== undefined && (historyData.length === 0 || latestHistoryDate < currentDate.getTime())) {
     historyData.push({
-      date: currentDate,
+      date: currentDate, // This is already a Date object
       rating: attribute.rating,
       changedBy: "Current", // Indicate it's the current value
       comment: "Current rating",
@@ -82,12 +82,6 @@ const AttributeHistoryDialog: React.FC<AttributeHistoryDialogProps> = ({
 
   // Sort data by date to ensure correct graph rendering
   historyData.sort((a, b) => a.date.getTime() - b.date.getTime());
-
-  // Format dates for display on X-axis
-  const formattedHistoryData = historyData.map(entry => ({
-    ...entry,
-    displayDate: format(entry.date, 'MMM dd, yyyy'),
-  }));
 
   return (
     <DialogContent className="sm:max-w-[800px] bg-card text-card-foreground border-border max-h-[90vh] overflow-y-auto">
@@ -101,13 +95,15 @@ const AttributeHistoryDialog: React.FC<AttributeHistoryDialogProps> = ({
         <h3 className="text-lg font-semibold mb-2 text-foreground">Rating Trend</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart
-            data={formattedHistoryData}
+            data={historyData} // Use historyData directly with Date objects
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
             <XAxis
-              dataKey="displayDate"
-              tickFormatter={(tick) => format(parseISO(tick), 'MMM yy')}
+              dataKey="date" // Use the Date object directly
+              scale="time" // Treat as time series
+              type="number" // Recharts expects numbers for time scale
+              tickFormatter={(unixTime) => format(new Date(unixTime), 'MMM yy')} // Format timestamp
               stroke="hsl(var(--chart-axis-label))"
               tick={{ fill: 'hsl(var(--chart-axis-label))', fontSize: 10 }}
             />
@@ -120,7 +116,7 @@ const AttributeHistoryDialog: React.FC<AttributeHistoryDialogProps> = ({
             <Tooltip
               contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--popover-foreground))' }}
               itemStyle={{ color: 'hsl(var(--popover-foreground))' }}
-              labelFormatter={(label) => `Date: ${label}`}
+              labelFormatter={(label) => `Date: ${format(new Date(label), 'MMM dd, yyyy')}`} // Format timestamp
               formatter={(value, name, props) => [`Rating: ${value}`, props.payload.changedBy ? `Changed by: ${props.payload.changedBy}` : '']}
             />
             <Line
@@ -136,14 +132,14 @@ const AttributeHistoryDialog: React.FC<AttributeHistoryDialogProps> = ({
         </ResponsiveContainer>
 
         <h3 className="text-lg font-semibold mt-6 mb-2 text-foreground">Change Log</h3>
-        {formattedHistoryData.length > 0 ? (
+        {historyData.length > 0 ? (
           <Accordion type="single" collapsible className="w-full">
-            {formattedHistoryData.map((entry, index) => (
+            {historyData.map((entry, index) => (
               <AccordionItem key={index} value={`item-${index}`} className="border-border">
                 <AccordionTrigger className="flex items-center justify-between p-3 bg-muted rounded-md hover:bg-accent transition-colors">
                   <div className="flex flex-col items-start">
                     <p className="font-medium text-foreground">
-                      {entry.displayDate}: Rating changed to {entry.rating}
+                      {format(entry.date, 'MMM dd, yyyy')}: Rating changed to {entry.rating}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Changed by: {entry.changedBy || "N/A"}
