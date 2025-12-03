@@ -46,6 +46,14 @@ const RoleDetailsDialog: React.FC<RoleDetailsDialogProps> = ({
     );
   }
 
+  // Calculate compatibility for each role and then sort them
+  const sortedRoles = roles
+    .map((role) => ({
+      role,
+      compatibility: calculateRoleCompatibility(player, role),
+    }))
+    .sort((a, b) => b.compatibility - a.compatibility); // Sort in descending order
+
   return (
     <DialogContent className="sm:max-w-[600px] bg-gray-800 text-white border-gray-700 max-h-[90vh] overflow-y-auto">
       <DialogHeader>
@@ -55,8 +63,7 @@ const RoleDetailsDialog: React.FC<RoleDetailsDialogProps> = ({
         </DialogDescription>
       </DialogHeader>
       <div className="grid gap-4 py-4">
-        {roles.map((role) => {
-          const compatibility = calculateRoleCompatibility(player, role);
+        {sortedRoles.map(({ role, compatibility }) => {
           const isSelected = selectedRole?.name === role.name;
 
           return (
