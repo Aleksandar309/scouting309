@@ -246,11 +246,32 @@ const PlayerProfile: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Scouting Profile / Statistics Card */}
-          <Card className="bg-gray-800 border-gray-700 text-white col-span-1 md:col-span-1 lg:col-span-2">
+          {/* New Card for Overall, Potential, Brighton Fit */}
+          <Card className="bg-gray-800 border-gray-700 text-white">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">Scouting Summary</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col space-y-2 text-gray-300">
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Overall:</span>
+                <span className="font-bold text-white">{player.scoutingProfile.overall}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Potential:</span>
+                <span className="font-bold text-white">{player.scoutingProfile.potential}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Brighton Fit:</span>
+                <span className="font-bold text-white">{player.scoutingProfile.brightonFit}</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Scouting Profile / Statistics Card (now only Radar Chart) */}
+          <Card className="bg-gray-800 border-gray-700 text-white col-span-1 md:col-span-1 lg:col-span-1"> {/* Adjusted col-span */}
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg font-semibold">
-                {showScoutingProfile ? "Scouting Profile" : "Player Statistics"}
+                {showScoutingProfile ? "Attribute Radar" : "Player Statistics"}
               </CardTitle>
               <Button
                 variant="outline"
@@ -264,19 +285,14 @@ const PlayerProfile: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <Radar className="mr-2 h-4 w-4" /> View Scouting Profile
+                    <Radar className="mr-2 h-4 w-4" /> View Radar
                   </>
                 )}
               </Button>
             </CardHeader>
             {showScoutingProfile ? (
-              <CardContent className="flex flex-col md:flex-row items-center justify-around space-y-4 md:space-y-0 md:space-x-4">
+              <CardContent className="flex items-center justify-center h-full"> {/* Centered content */}
                 <RadarChart playerAttributes={attributesForRadar} />
-                <div className="flex flex-col space-y-2 text-center md:text-left">
-                  <div className="text-xl font-bold">{player.scoutingProfile.overall} <span className="text-sm font-normal text-gray-400">Overall</span></div>
-                  <div className="text-xl font-bold">{player.scoutingProfile.potential} <span className="text-sm font-normal text-gray-400">Potential</span></div>
-                  <div className="text-xl font-bold">{player.scoutingProfile.brightonFit} <span className="text-sm font-normal text-gray-400">Brighton Fit</span></div>
-                </div>
               </CardContent>
             ) : (
               <PlayerStatistics />
