@@ -4,10 +4,12 @@ import React from 'react';
 import { PlayerPosition } from '@/types/player';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from '@/lib/utils';
+import { PlayerFormationFitPosition } from '@/types/formation';
 
 interface PlayerPitchProps {
-  positionsData: PlayerPosition[];
-  onPositionClick: (positionType: string) => void; // New prop
+  positionsData?: PlayerPosition[]; // Player's individual positions (optional)
+  formationPositions?: PlayerFormationFitPosition[]; // Positions from a selected formation with player fit (optional)
+  onPositionClick: (positionType: string) => void;
 }
 
 // Simplified mapping of common football positions to relative coordinates (percentage)
@@ -28,6 +30,10 @@ const positionCoordinates: { [key: string]: { x: string; y: string } } = {
   "RB": { x: "30%", y: "90%" },
   // CDM: { x: "50%", y: "60%" } -> { x: "40%", y: "50%" }
   "CDM": { x: "40%", y: "50%" },
+  // LDM (for 4-2-3-1):
+  "LDM": { x: "40%", y: "30%" },
+  // RDM (for 4-2-3-1):
+  "RDM": { x: "40%", y: "70%" },
   // LCM: { x: "30%", y: "50%" } -> { x: "50%", y: "30%" }
   "LCM": { x: "50%", y: "30%" },
   // RCM: { x: "70%", y: "50%" } -> { x: "50%", y: "70%" }
@@ -50,9 +56,23 @@ const positionCoordinates: { [key: string]: { x: string; y: string } } = {
   "LS": { x: "90%", y: "35%" },
   // RS: { x: "65%", y: "10%" } -> { x: "90%", y: "65%" }
   "RS": { x: "90%", y: "65%" },
+  // LWB (for 3-4-3, 3-5-2):
+  "LWB": { x: "45%", y: "10%" },
+  // RWB (for 3-4-3, 3-5-2):
+  "RWB": { x: "45%", y: "90%" },
 };
 
-const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, onPositionClick }) => {
+const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPositions, onPositionClick }) => {
+  const positionsToRender = formationPositions || positionsData;
+
+  if (!positionsToRender) {
+    return (
+      <div className="relative w-full aspect-[3/2] max-h-[300px] mx-auto bg-gray-900 border-2 border-gray-700 rounded-lg overflow-hidden shadow-inner flex items-center justify-center text-gray-500">
+        No position data available.
+      </div>
+    );
+  }
+
   return (
     <TooltipProvider>
       {/* Main pitch container - now horizontal, with max height and centered */}
@@ -70,30 +90,51 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, onPositionClic
           <div className="absolute right-0 top-1/2 h-[70%] w-[20%] border-l-2 border-t-2 border-b-2 border-gray-600 border-opacity-50 transform -translate-y-1/2 rounded-r-lg"></div>
         </div>
 
-        {positionsData.map((pos, index) => {
-          const coords = positionCoordinates[pos.name];
+        {positionsToRender.map((pos, index) => {
+          const coords = positionCoordinates[pos.name] || { x: pos.x, y: pos.y }; // Use provided coords or fallback
           if (!coords) return null;
 
           let circleClasses = "";
-          let tooltipText = `${pos.name} (${pos.rating}/10)`;
+          let tooltipText = `${pos.name}`;
 
-          switch (pos.type) {
-            case "natural":
-              circleClasses = "bg-blue-500 border-2 border-blue-300 w-6 h-6 text-sm font-bold";
-              tooltipText = `Natural: ${pos.name} (${pos.rating}/10)`;
-              break;
-            case "alternative":
-              circleClasses = "bg-yellow-500 border-2 border-yellow-300 w-5 h-5 text-xs";
-              tooltipText = `Alternative: ${pos.name} (${pos.rating}/10)`;
-              break;
-            case "tertiary":
-              circleClasses = "bg-gray-500 border-2 border-gray-300 w-4 h-4 text-xs";
-              tooltipText = `Tertiary: ${pos.name} (${pos.rating}/10)`;
-              break;
+          // Determine classes and tooltip based on whether it's player's positions or formation fit
+          if ('type' in pos && (pos.type === "natural" || pos.type === "alternative" || pos.type === "tertiary" || pos.type === "unsuited")) {
+            // This is a PlayerFormationFitPosition
+            tooltipText = `${pos.name} (Fit: ${pos.type}, Rating: ${pos.rating}/10)`;
+            switch (pos.type) {
+              case "natural":
+                circleClasses = "bg-blue-500 border-2 border-blue-300 w-6 h-6 text-sm font-bold";
+                break;
+              case "alternative":
+                circleClasses = "bg-yellow-500 border-2 border-yellow-300 w-5 h-5 text-xs";
+                break;
+              case "tertiary":
+                circleClasses = "bg-gray-500 border-2 border-gray-300 w-4 h-4 text-xs";
+                break;
+              case "unsuited":
+                circleClasses = "bg-red-700 border-2 border-red-500 w-4 h-4 text-xs opacity-50";
+                tooltipText = `${pos.name} (Unsuited)`;
+                break;
+            }
+          } else {
+            // This is a PlayerPosition
+            tooltipText = `${pos.name} (${pos.rating}/10)`;
+            switch (pos.type) {
+              case "natural":
+                circleClasses = "bg-blue-500 border-2 border-blue-300 w-6 h-6 text-sm font-bold";
+                break;
+              case "alternative":
+                circleClasses = "bg-yellow-500 border-2 border-yellow-300 w-5 h-5 text-xs";
+                break;
+              case "tertiary":
+                circleClasses = "bg-gray-500 border-2 border-gray-300 w-4 h-4 text-xs";
+                break;
+            }
           }
 
-          // Adjust opacity based on rating (0-10)
-          const opacity = Math.max(0.3, pos.rating / 10); // Min opacity 0.3 for visibility
+          // Adjust opacity based on rating (0-10) for PlayerPosition or PlayerFormationFitPosition
+          const rating = 'rating' in pos ? pos.rating : 0;
+          const opacity = Math.max(0.3, rating / 10); // Min opacity 0.3 for visibility
 
           return (
             <Tooltip key={index}>
@@ -109,7 +150,7 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, onPositionClic
                     transform: "translate(-50%, -50%)",
                     opacity: opacity,
                   }}
-                  onClick={() => onPositionClick(pos.name)} // Added onClick
+                  onClick={() => onPositionClick(pos.name)}
                 >
                   {pos.name}
                 </div>

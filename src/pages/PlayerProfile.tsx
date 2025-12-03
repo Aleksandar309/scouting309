@@ -59,6 +59,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { mockPlayers } from './PlayerDatabase';
+import FormationSelector from '@/components/FormationSelector'; // New import
+import { FM_FORMATIONS, calculateFormationFit } from '@/utils/formations'; // New import
+import { Formation, PlayerFormationFitPosition } from '@/types/formation'; // New import
 
 // Zod schema for player attributes
 const attributeSchema = z.array(z.object({
@@ -141,6 +144,9 @@ const PlayerProfile: React.FC = () => {
   const [selectedPositionForRoles, setSelectedPositionForRoles] = useState<string | null>(null);
   const [selectedFmRole, setSelectedFmRole] = useState<FmRole | null>(null);
 
+  const [selectedFormationId, setSelectedFormationId] = useState<string | null>(null); // New state for selected formation
+  const [playerFormationFit, setPlayerFormationFit] = useState<PlayerFormationFitPosition[] | null>(null); // New state for player fit in formation
+
   const fileInputRef = useRef<HTMLInputElement>(null); // Ref for hidden file input
 
   const form = useForm<PlayerFormValues>({
@@ -192,7 +198,22 @@ const PlayerProfile: React.FC = () => {
     }
     setIsEditMode(false);
     setSelectedFmRole(null);
+    setSelectedFormationId(null); // Reset formation selection on player change
+    setPlayerFormationFit(null); // Reset formation fit on player change
   }, [currentPlayer, form]);
+
+  // Effect to calculate formation fit when selectedFormationId or player changes
+  React.useEffect(() => {
+    if (selectedFormationId && player) {
+      const formation = FM_FORMATIONS.find(f => f.id === selectedFormationId);
+      if (formation) {
+        setPlayerFormationFit(calculateFormationFit(player, formation));
+      }
+    } else {
+      setPlayerFormationFit(null);
+    }
+  }, [selectedFormationId, player]);
+
 
   if (!player) {
     return <div className="text-center text-white mt-10">Player not found.</div>;
@@ -632,11 +653,20 @@ const PlayerProfile: React.FC = () => {
 
                 {/* Player Pitch Card */}
                 <Card className="bg-gray-800 border-gray-700 text-white">
-                  <CardHeader>
+                  <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg font-semibold">Player Positions</CardTitle>
+                    <FormationSelector
+                      formations={FM_FORMATIONS}
+                      selectedFormationId={selectedFormationId}
+                      onSelectFormation={setSelectedFormationId}
+                    />
                   </CardHeader>
                   <CardContent className="flex items-start justify-center h-full p-4">
-                    <PlayerPitch positionsData={player.positionsData} onPositionClick={handlePositionClick} />
+                    <PlayerPitch
+                      positionsData={playerFormationFit ? undefined : player.positionsData}
+                      formationPositions={playerFormationFit || undefined}
+                      onPositionClick={handlePositionClick}
+                    />
                   </CardContent>
                 </Card>
 
