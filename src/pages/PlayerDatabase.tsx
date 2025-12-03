@@ -28,568 +28,14 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import PlayerCard from '@/components/PlayerCard';
-import { ThemeToggle } from "@/components/ThemeToggle"; // Import ThemeToggle
+import { ThemeToggle } from "@/components/ThemeToggle";
+import AddPlayerForm from '@/components/AddPlayerForm'; // New import
+import { ALL_ATTRIBUTE_NAMES } from '@/utils/player-attributes'; // New import
 
-export const mockPlayers: Player[] = [
-  {
-    id: "1",
-    name: "Mats Wieffer",
-    team: "Feyenoord",
-    positions: ["CDM", "CM"],
-    positionsData: [
-      { name: "CDM", type: "natural", rating: 9 },
-      { name: "CM", type: "alternative", rating: 8 },
-      { name: "CB", type: "tertiary", rating: 6 },
-    ],
-    priorityTarget: true,
-    criticalPriority: true,
-    nationality: "Netherlands",
-    age: 26,
-    value: "€25M",
-    footed: "Right Footed",
-    lastEdited: "2024-07-26T10:00:00Z", // Added
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=MW",
-    details: {
-      height: "188 cm",
-      weight: "78 kg",
-      league: "Eredivisie",
-      contractExpiry: "Jun 2027",
-      wageDemands: "60-80k/week",
-      agent: "SEG Football",
-      notes: "Elite ball-winning midfielder. Perfect profile for Brighton's system. Strong in duels, excellent reading of the game.",
-    },
-    scoutingProfile: {
-      overall: 9,
-      potential: 9,
-      brightonFit: 10,
-      currentAbility: 8,
-      potentialAbility: 9,
-      teamFit: 9,
-    },
-    technical: [
-      { name: "First Touch", rating: 9 },
-      { name: "Passing Range", rating: 9 },
-      { name: "Ball Striking", rating: 8 },
-      { name: "Dribbling", rating: 7 },
-      { name: "Crossing", rating: 6 },
-      { name: "Aerial Ability", rating: 8 },
-      { name: "Tackling", rating: 8 },
-      { name: "Finishing", rating: 7 },
-    ],
-    tactical: [
-      { name: "Positioning", rating: 9 },
-      { name: "Decision Making", rating: 9 },
-      { name: "Game Intelligence", rating: 9 },
-      { name: "Off-Ball Movement", rating: 9 },
-      { name: "Pressing", rating: 9 },
-      { name: "Defensive Awareness", rating: 9 },
-      { name: "Vision", rating: 9 },
-    ],
-    physical: [
-      { name: "Pace", rating: 8 },
-      { name: "Acceleration", rating: 8 },
-      { name: "Strength", rating: 9 },
-      { name: "Stamina", rating: 9 },
-      { name: "Agility", rating: 8 },
-      { name: "Recovery", rating: 9 },
-    ],
-    mentalPsychology: [
-      { name: "Composure", rating: 9 },
-      { name: "Leadership", rating: 9 },
-      { name: "Work Rate", rating: 9 },
-      { name: "Concentration", rating: 9 },
-      { name: "Coachability", rating: 9 },
-      { name: "Resilience", rating: 9 },
-    ],
-    setPieces: [
-      { name: "Corners", rating: 7 },
-      { name: "Free Kicks", rating: 8 },
-      { name: "Penalties", rating: 9 },
-      { name: "Long Throws", rating: 6 },
-      { name: "Defending corners", rating: 7 },
-    ],
-    hidden: [
-      { name: "Consistency", rating: 15 },
-      { name: "Important Matches", rating: 16 },
-      { name: "Versatility", rating: 14 },
-      { name: "Dirtiness", rating: 8 },
-      { name: "Injury Proneness", rating: 5 },
-      { name: "Adaptability", rating: 17 },
-      { name: "Ambition", rating: 18 },
-      { name: "Loyalty", rating: 15 },
-    ],
-    keyStrengths: [
-      "Exceptional reading of the game and anticipation.",
-      "Wins possession in dangerous areas consistently.",
-      "Distribution under pressure is elite - rarely loses the ball.",
-      "Commands the midfield zone with authority.",
-    ],
-    areasForDevelopment: [
-      "Could improve final third creativity.",
-      "Occasional tendency to be over-aggressive in challenges.",
-      "Long-range shooting needs work.",
-    ],
-    scoutingReports: [
-      {
-        id: "rep1",
-        date: "Dec 2, 2025",
-        scout: "Mia Scout",
-        rating: 10,
-        title: "Initial Assessment",
-        keyStrengths: "Excellent vision, strong passing, good leadership.",
-        areasForDevelopment: "Needs to improve aerial duels, occasional lapses in concentration."
-      },
-      {
-        id: "rep2",
-        date: "Nov 10, 2024",
-        scout: "James Clark",
-        rating: 9,
-        title: "Feyenoord vs Ajax Match Report",
-        keyStrengths: "Dominant in midfield, crucial interceptions, calm under pressure.",
-        areasForDevelopment: "Sometimes holds onto the ball too long, needs to release quicker."
-      },
-    ],
-  },
-  {
-    id: "2",
-    name: "Mohammed Kudus",
-    team: "West Ham",
-    positions: ["CAM", "RW"],
-    positionsData: [
-      { name: "CAM", type: "natural", rating: 9 },
-      { name: "RW", type: "natural", rating: 9 },
-      { name: "ST", type: "alternative", rating: 8 },
-    ],
-    priorityTarget: false,
-    criticalPriority: false,
-    nationality: "Ghana",
-    age: 23,
-    value: "€45M",
-    footed: "Left Footed",
-    lastEdited: "2024-07-25T14:30:00Z", // Added
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=MK",
-    details: {
-      height: "177 cm",
-      weight: "71 kg",
-      league: "Premier League",
-      contractExpiry: "Jun 2028",
-      wageDemands: "100-120k/week",
-      agent: "N/A",
-      notes: "Explosive attacker with great dribbling and shooting. Can play across the front line.",
-    },
-    scoutingProfile: {
-      overall: 8,
-      potential: 9,
-      brightonFit: 8,
-      currentAbility: 8,
-      potentialAbility: 9,
-      teamFit: 8,
-    },
-    technical: [
-      { name: "First Touch", rating: 8 },
-      { name: "Passing Range", rating: 7 },
-      { name: "Ball Striking", rating: 9 },
-      { name: "Dribbling", rating: 9 },
-      { name: "Crossing", rating: 7 },
-      { name: "Aerial Ability", rating: 6 },
-      { name: "Tackling", rating: 5 },
-      { name: "Finishing", rating: 8 },
-    ],
-    tactical: [
-      { name: "Positioning", rating: 7 },
-      { name: "Decision Making", rating: 8 },
-      { name: "Game Intelligence", rating: 8 },
-      { name: "Off-Ball Movement", rating: 9 },
-      { name: "Pressing", rating: 7 },
-      { name: "Defensive Awareness", rating: 6 },
-      { name: "Vision", rating: 8 },
-    ],
-    physical: [
-      { name: "Pace", rating: 9 },
-      { name: "Acceleration", rating: 9 },
-      { name: "Strength", rating: 7 },
-      { name: "Stamina", rating: 8 },
-      { name: "Agility", rating: 9 },
-      { name: "Recovery", rating: 8 },
-    ],
-    mentalPsychology: [
-      { name: "Composure", rating: 8 },
-      { name: "Leadership", rating: 6 },
-      { name: "Work Rate", rating: 8 },
-      { name: "Concentration", rating: 7 },
-      { name: "Coachability", rating: 8 },
-      { name: "Resilience", rating: 8 },
-    ],
-    setPieces: [
-      { name: "Corners", rating: 6 },
-      { name: "Free Kicks", rating: 7 },
-      { name: "Penalties", rating: 7 },
-      { name: "Long Throws", rating: 5 },
-      { name: "Defending corners", rating: 6 },
-    ],
-    hidden: [
-      { name: "Consistency", rating: 14 },
-      { name: "Important Matches", rating: 15 },
-      { name: "Versatility", rating: 16 },
-      { name: "Dirtiness", rating: 7 },
-      { name: "Injury Proneness", rating: 6 },
-      { name: "Adaptability", rating: 15 },
-      { name: "Ambition", rating: 17 },
-      { name: "Loyalty", rating: 12 },
-    ],
-    keyStrengths: [
-      "Explosive dribbling and close control.",
-      "Powerful long-range shooting.",
-      "Versatile across attacking positions.",
-      "Good off-ball movement in the final third.",
-    ],
-    areasForDevelopment: [
-      "Consistency in defensive contributions.",
-      "Decision-making in crowded areas.",
-      "Aerial duels.",
-      "Passing accuracy under pressure.",
-    ],
-    scoutingReports: [
-      {
-        id: "rep3",
-        date: "Jul 1, 2024",
-        scout: "James Clark",
-        rating: 8,
-        title: "Initial Assessment",
-        keyStrengths: "Dribbling, shooting, versatility.",
-        areasForDevelopment: "Defensive work rate."
-      },
-    ],
-  },
-  {
-    id: "3",
-    name: "Florian Wirtz",
-    team: "Bayer Leverkusen",
-    positions: ["CAM", "LW"],
-    positionsData: [
-      { name: "CAM", type: "natural", rating: 10 },
-      { name: "LW", type: "natural", rating: 9 },
-      { name: "CM", type: "alternative", rating: 8 },
-    ],
-    priorityTarget: true,
-    criticalPriority: true,
-    nationality: "Germany",
-    age: 21,
-    value: "€100M",
-    footed: "Right Footed",
-    lastEdited: "2024-07-26T08:15:00Z", // Added
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=FW",
-    details: {
-      height: "177 cm",
-      weight: "70 kg",
-      league: "Bundesliga",
-      contractExpiry: "Jun 2027",
-      wageDemands: "150-200k/week",
-      agent: "N/A",
-      notes: "World-class talent, incredible vision and passing. Future Ballon d'Or contender.",
-    },
-    scoutingProfile: {
-      overall: 10,
-      potential: 10,
-      brightonFit: 9,
-      currentAbility: 9,
-      potentialAbility: 10,
-      teamFit: 9,
-    },
-    technical: [
-      { name: "First Touch", rating: 10 },
-      { name: "Passing Range", rating: 10 },
-      { name: "Ball Striking", rating: 9 },
-      { name: "Dribbling", rating: 9 },
-      { name: "Crossing", rating: 8 },
-      { name: "Aerial Ability", rating: 5 },
-      { name: "Tackling", rating: 6 },
-      { name: "Finishing", rating: 9 },
-    ],
-    tactical: [
-      { name: "Positioning", rating: 9 },
-      { name: "Decision Making", rating: 10 },
-      { name: "Game Intelligence", rating: 10 },
-      { name: "Off-Ball Movement", rating: 9 },
-      { name: "Pressing", rating: 8 },
-      { name: "Defensive Awareness", rating: 7 },
-      { name: "Vision", rating: 10 },
-    ],
-    physical: [
-      { name: "Pace", rating: 8 },
-      { name: "Acceleration", rating: 8 },
-      { name: "Strength", rating: 6 },
-      { name: "Stamina", rating: 8 },
-      { name: "Agility", rating: 9 },
-      { name: "Recovery", rating: 8 },
-    ],
-    mentalPsychology: [
-      { name: "Composure", rating: 9 },
-      { name: "Leadership", rating: 7 },
-      { name: "Work Rate", rating: 8 },
-      { name: "Concentration", rating: 9 },
-      { name: "Coachability", rating: 9 },
-      { name: "Resilience", rating: 9 },
-    ],
-    setPieces: [
-      { name: "Corners", rating: 8 },
-      { name: "Free Kicks", rating: 9 },
-      { name: "Penalties", rating: 8 },
-      { name: "Long Throws", rating: 5 },
-      { name: "Defending corners", rating: 6 },
-    ],
-    hidden: [
-      { name: "Consistency", rating: 18 },
-      { name: "Important Matches", rating: 19 },
-      { name: "Versatility", rating: 17 },
-      { name: "Dirtiness", rating: 6 },
-      { name: "Injury Proneness", rating: 4 },
-      { name: "Adaptability", rating: 18 },
-      { name: "Ambition", rating: 20 },
-      { name: "Loyalty", rating: 14 },
-    ],
-    keyStrengths: [
-      "Exceptional vision and passing range.",
-      "Elite dribbling and close control.",
-      "High football IQ and decision-making.",
-      "Goal threat from midfield.",
-    ],
-    areasForDevelopment: [
-      "Physical strength and aerial ability.",
-      "Defensive contributions.",
-      "Can sometimes try too much on his own.",
-    ],
-    scoutingReports: [
-      {
-        id: "rep4",
-        date: "Jun 15, 2024",
-        scout: "Mia Scout",
-        rating: 10,
-        title: "Bundesliga Masterclass",
-        keyStrengths: "Vision, passing, goal-scoring.",
-        areasForDevelopment: "Physicality."
-      },
-    ],
-  },
-  {
-    id: "4",
-    name: "Levi Colwill",
-    team: "Chelsea",
-    positions: ["CB", "LB"],
-    positionsData: [
-      { name: "CB", type: "natural", rating: 9 },
-      { name: "LB", type: "alternative", rating: 8 },
-    ],
-    priorityTarget: false,
-    criticalPriority: false,
-    nationality: "England",
-    age: 21,
-    value: "€50M",
-    footed: "Left Footed",
-    lastEdited: "2024-07-24T11:00:00Z", // Added
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=LC",
-    details: {
-      height: "187 cm",
-      weight: "80 kg",
-      league: "Premier League",
-      contractExpiry: "Jun 2029",
-      wageDemands: "80-100k/week",
-      agent: "N/A",
-      notes: "Strong, left-footed center-back. Excellent on the ball and good aerial presence.",
-    },
-    scoutingProfile: {
-      overall: 8,
-      potential: 9,
-      brightonFit: 9,
-      currentAbility: 8,
-      potentialAbility: 9,
-      teamFit: 9,
-    },
-    technical: [
-      { name: "First Touch", rating: 8 },
-      { name: "Passing Range", rating: 8 },
-      { name: "Ball Striking", rating: 7 },
-      { name: "Dribbling", rating: 7 },
-      { name: "Crossing", rating: 6 },
-      { name: "Aerial Ability", rating: 8 },
-      { name: "Tackling", rating: 9 },
-      { name: "Finishing", rating: 4 },
-    ],
-    tactical: [
-      { name: "Positioning", rating: 9 },
-      { name: "Decision Making", rating: 8 },
-      { name: "Game Intelligence", rating: 8 },
-      { name: "Off-Ball Movement", rating: 7 },
-      { name: "Pressing", rating: 8 },
-      { name: "Defensive Awareness", rating: 9 },
-      { name: "Vision", rating: 7 },
-    ],
-    physical: [
-      { name: "Pace", rating: 7 },
-      { name: "Acceleration", rating: 7 },
-      { name: "Strength", rating: 9 },
-      { name: "Stamina", rating: 8 },
-      { name: "Agility", rating: 7 },
-      { name: "Recovery", rating: 8 },
-    ],
-    mentalPsychology: [
-      { name: "Composure", rating: 8 },
-      { name: "Leadership", rating: 7 },
-      { name: "Work Rate", rating: 8 },
-      { name: "Concentration", rating: 9 },
-      { name: "Coachability", rating: 8 },
-      { name: "Resilience", rating: 8 },
-    ],
-    setPieces: [
-      { name: "Corners", rating: 5 },
-      { name: "Free Kicks", rating: 6 },
-      { name: "Penalties", rating: 5 },
-      { name: "Long Throws", rating: 7 },
-      { name: "Defending corners", rating: 9 },
-    ],
-    hidden: [
-      { name: "Consistency", rating: 15 },
-      { name: "Important Matches", rating: 14 },
-      { name: "Versatility", rating: 16 },
-      { name: "Dirtiness", rating: 7 },
-      { name: "Injury Proneness", rating: 6 },
-      { name: "Adaptability", rating: 16 },
-      { name: "Ambition", rating: 16 },
-      { name: "Loyalty", rating: 15 },
-    ],
-    keyStrengths: [
-      "Strong in aerial duels and ground tackles.",
-      "Excellent passing from the back.",
-      "Good positional sense.",
-      "Comfortable playing out from defence.",
-    ],
-    areasForDevelopment: [
-      "Pace against quick attackers.",
-      "Occasional lapses in concentration.",
-      "Contribution in attacking phases from LB.",
-    ],
-    scoutingReports: [
-      {
-        id: "rep5",
-        date: "May 20, 2024",
-        scout: "David Lee",
-        rating: 8,
-        title: "Defensive Solidity",
-        keyStrengths: "Tackling, passing, aerials.",
-        areasForDevelopment: "Pace."
-      },
-    ],
-  },
-  {
-    id: "5",
-    name: "Evan Ferguson",
-    team: "Brighton",
-    positions: ["ST"],
-    positionsData: [
-      { name: "ST", type: "natural", rating: 9 },
-      { name: "CAM", type: "alternative", rating: 7 },
-    ],
-    priorityTarget: false,
-    criticalPriority: false,
-    nationality: "Ireland",
-    age: 19,
-    value: "€60M",
-    footed: "Right Footed",
-    lastEdited: "2024-07-23T09:45:00Z", // Added
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=EF",
-    details: {
-      height: "188 cm",
-      weight: "80 kg",
-      league: "Premier League",
-      contractExpiry: "Jun 2029",
-      wageDemands: "70-90k/week",
-      agent: "N/A",
-      notes: "Prolific young striker with great finishing and hold-up play.",
-    },
-    scoutingProfile: {
-      overall: 8,
-      potential: 10,
-      brightonFit: 10,
-      currentAbility: 8,
-      potentialAbility: 10,
-      teamFit: 10,
-    },
-    technical: [
-      { name: "First Touch", rating: 8 },
-      { name: "Passing Range", rating: 7 },
-      { name: "Ball Striking", rating: 9 },
-      { name: "Dribbling", rating: 7 },
-      { name: "Crossing", rating: 6 },
-      { name: "Aerial Ability", rating: 9 },
-      { name: "Tackling", rating: 5 },
-      { name: "Finishing", rating: 9 },
-    ],
-    tactical: [
-      { name: "Positioning", rating: 9 },
-      { name: "Decision Making", rating: 8 },
-      { name: "Game Intelligence", rating: 8 },
-      { name: "Off-Ball Movement", rating: 9 },
-      { name: "Pressing", rating: 7 },
-      { name: "Defensive Awareness", rating: 6 },
-      { name: "Vision", rating: 7 },
-    ],
-    physical: [
-      { name: "Pace", rating: 7 },
-      { name: "Acceleration", rating: 7 },
-      { name: "Strength", rating: 9 },
-      { name: "Stamina", rating: 8 },
-      { name: "Agility", rating: 7 },
-      { name: "Recovery", rating: 8 },
-    ],
-    mentalPsychology: [
-      { name: "Composure", rating: 8 },
-      { name: "Leadership", rating: 6 },
-      { name: "Work Rate", rating: 8 },
-      { name: "Concentration", rating: 8 },
-      { name: "Coachability", rating: 9 },
-      { name: "Resilience", rating: 9 },
-    ],
-    setPieces: [
-      { name: "Corners", rating: 5 },
-      { name: "Free Kicks", rating: 6 },
-      { name: "Penalties", rating: 8 },
-      { name: "Long Throws", rating: 6 },
-      { name: "Defending corners", rating: 7 },
-    ],
-    hidden: [
-      { name: "Consistency", rating: 16 },
-      { name: "Important Matches", rating: 17 },
-      { name: "Versatility", rating: 14 },
-      { name: "Dirtiness", rating: 6 },
-      { name: "Injury Proneness", rating: 5 },
-      { name: "Adaptability", rating: 17 },
-      { name: "Ambition", rating: 19 },
-      { name: "Loyalty", rating: 16 },
-    ],
-    keyStrengths: [
-      "Exceptional finishing ability.",
-      "Strong hold-up play and aerial presence.",
-      "Good off-ball movement in the box.",
-      "High potential for growth.",
-    ],
-    areasForDevelopment: [
-      "Pace and acceleration.",
-      "Link-up play outside the box.",
-      "Defensive contributions.",
-    ],
-    scoutingReports: [
-      {
-        id: "rep6",
-        date: "Apr 10, 2024",
-        scout: "James Clark",
-        rating: 9,
-        title: "Future Star",
-        keyStrengths: "Finishing, strength, potential.",
-        areasForDevelopment: "Pace."
-      },
-    ],
-  },
-];
+interface PlayerDatabaseProps {
+  players: Player[];
+  setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
+}
 
 // Helper function to find an attribute's rating across all categories
 const getAttributeRating = (player: Player, attributeName: string): number => {
@@ -612,26 +58,7 @@ const getAttributeRating = (player: Player, attributeName: string): number => {
 };
 
 // List of all unique attributes to create columns for
-const allAttributes = [
-  // Technical
-  "First Touch", "Passing Range", "Ball Striking", "Dribbling", "Crossing",
-  "Aerial Ability", "Tackling", "Finishing",
-  // Tactical
-  "Positioning", "Decision Making", "Game Intelligence", "Off-Ball Movement",
-  "Pressing", "Defensive Awareness", "Vision",
-  // Physical
-  "Pace", "Acceleration", "Strength", "Stamina", "Agility", "Recovery",
-  // Mental & Psychology
-  "Composure", "Leadership", "Work Rate", "Concentration", "Coachability",
-  "Resilience",
-  // Set Pieces
-  "Corners", "Free Kicks", "Penalties", "Long Throws", "Defending corners",
-  // Hidden (Note: Hidden attributes usually have a different scale, but we'll display them as is)
-  "Consistency", "Important Matches", "Versatility", "Dirtiness", "Injury Proneness",
-  "Adaptability", "Ambition", "Loyalty",
-];
-
-const attributeColumns: ColumnDef<Player>[] = allAttributes.map(attrName => ({
+const attributeColumns: ColumnDef<Player>[] = ALL_ATTRIBUTE_NAMES.map(attrName => ({
   accessorFn: (row) => getAttributeRating(row, attrName),
   id: attrName.replace(/\s/g, ''), // Create a unique ID for the column
   header: ({ column }) => (
@@ -801,15 +228,15 @@ const columns: ColumnDef<Player>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const player = row.original;
-      const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+      const [isShortlistDialogOpen, setIsShortlistDialogOpen] = React.useState(false);
       return (
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isShortlistDialogOpen} onOpenChange={setIsShortlistDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
               <Plus className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <AddToShortlistDialog player={player} onClose={() => setIsDialogOpen(false)} />
+          <AddToShortlistDialog player={player} onClose={() => setIsShortlistDialogOpen(false)} />
         </Dialog>
       );
     },
@@ -818,7 +245,7 @@ const columns: ColumnDef<Player>[] = [
   },
 ];
 
-const PlayerDatabase: React.FC = () => {
+const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const navigate = useNavigate();
   const [viewMode, setViewMode] = React.useState<'table' | 'card'>(() => {
@@ -828,6 +255,7 @@ const PlayerDatabase: React.FC = () => {
     }
     return 'table';
   });
+  const [isAddPlayerDialogOpen, setIsAddPlayerDialogOpen] = React.useState(false); // State for add player dialog
 
   React.useEffect(() => {
     // Save to localStorage whenever viewMode changes
@@ -836,8 +264,13 @@ const PlayerDatabase: React.FC = () => {
     }
   }, [viewMode]);
 
+  const handleAddPlayer = (newPlayer: Player) => {
+    setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
+    setIsAddPlayerDialogOpen(false);
+  };
+
   const table = useReactTable({
-    data: mockPlayers,
+    data: players, // Use the state variable from props
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
@@ -861,7 +294,17 @@ const PlayerDatabase: React.FC = () => {
 
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Player Database</h1>
-          <div className="flex items-center space-x-4"> {/* Wrap ToggleGroup and ThemeToggle */}
+          <div className="flex items-center space-x-4">
+            {/* Add Player Button */}
+            <Dialog open={isAddPlayerDialogOpen} onOpenChange={setIsAddPlayerDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+                  <Plus className="mr-2 h-4 w-4" /> Add New Player
+                </Button>
+              </DialogTrigger>
+              <AddPlayerForm onAddPlayer={handleAddPlayer} onClose={() => setIsAddPlayerDialogOpen(false)} />
+            </Dialog>
+
             <ToggleGroup
               type="single"
               value={viewMode}
@@ -877,7 +320,7 @@ const PlayerDatabase: React.FC = () => {
                 <LayoutGrid className="h-4 w-4 mr-2" /> Card View
               </ToggleGroupItem>
             </ToggleGroup>
-            <ThemeToggle /> {/* Add ThemeToggle here */}
+            <ThemeToggle />
           </div>
         </div>
 
@@ -929,7 +372,7 @@ const PlayerDatabase: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {mockPlayers.map((player) => (
+            {players.map((player) => ( // Use the state variable from props
               <PlayerCard key={player.id} player={player} />
             ))}
           </div>
