@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -11,21 +13,21 @@ interface AttributeRatingProps {
 
 const getRatingColorClass = (rating: number): string => {
   if (rating >= 1 && rating <= 3) {
-    return "bg-red-500";
+    return "!bg-red-500";
   } else if (rating >= 4 && rating <= 5) {
-    return "bg-orange-500";
+    return "!bg-orange-500";
   } else if (rating === 6) {
-    return "bg-yellow-500";
+    return "!bg-yellow-500";
   } else if (rating === 7) {
-    return "bg-lime-500"; // Yellow-Green
+    return "!bg-lime-500"; // Yellow-Green
   } else if (rating === 8) {
-    return "bg-green-500";
+    return "!bg-green-500";
   } else if (rating === 9) {
-    return "bg-emerald-600"; // Dark Green
+    return "!bg-emerald-600"; // Dark Green
   } else if (rating === 10) {
-    return "bg-blue-500";
+    return "!bg-blue-500";
   }
-  return "bg-gray-400"; // Default color for ratings outside 1-10 or 0
+  return "!bg-gray-400"; // Default color for ratings outside 1-10 or 0
 };
 
 const AttributeRating: React.FC<AttributeRatingProps> = ({ name, rating, className, highlightType }) => {
