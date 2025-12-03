@@ -49,7 +49,7 @@ const AttributeHistoryDialog: React.FC<AttributeHistoryDialogProps> = ({
     return (
       <DialogContent className="sm:max-w-[600px] bg-card text-card-foreground border-border">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Attribute History</DialogTitle>
+          <DialogTitle className="text-2xl">Attribute History for {player.name}</DialogTitle>
           <DialogDescription className="text-muted-foreground">
             No history found for {attributeName}.
           </DialogDescription>
@@ -86,7 +86,7 @@ const AttributeHistoryDialog: React.FC<AttributeHistoryDialogProps> = ({
   return (
     <DialogContent className="sm:max-w-[800px] bg-card text-card-foreground border-border max-h-[90vh] overflow-y-auto">
       <DialogHeader>
-        <DialogTitle className="text-2xl">History for {attribute.name}</DialogTitle>
+        <DialogTitle className="text-2xl">History for {attribute.name} ({player.name})</DialogTitle>
         <DialogDescription className="text-muted-foreground">
           Tracking changes in {attribute.name} over time.
         </DialogDescription>
