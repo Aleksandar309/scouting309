@@ -257,7 +257,7 @@ const PlayerProfile: React.FC = () => {
             <CardHeader>
               <CardTitle className="text-lg font-semibold">Player Positions</CardTitle>
             </CardHeader>
-            <CardContent className="flex items-center justify-center h-full p-4">
+            <CardContent className="flex items-start justify-center h-full p-4"> {/* Changed items-center to items-start */}
               <PlayerPitch positionsData={player.positionsData} />
             </CardContent>
           </Card>
