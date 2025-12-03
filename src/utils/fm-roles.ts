@@ -1,3 +1,5 @@
+import { Player, PlayerAttribute } from '@/types/player';
+
 export type FmAttributeCategory = "technical" | "tactical" | "physical" | "mentalPsychology" | "setPieces" | "hidden";
 
 export interface FmRoleAttribute {
@@ -845,8 +847,6 @@ export const FM_ROLES: FmRole[] = [
 ];
 
 // Helper function to get attributes by category
-import { Player, PlayerAttribute } from '@/types/player';
-
 export const getAttributesByCategory = (player: Player, category: FmAttributeCategory): PlayerAttribute[] => {
   switch (category) {
     case "technical": return player.technical;
@@ -857,6 +857,19 @@ export const getAttributesByCategory = (player: Player, category: FmAttributeCat
     case "hidden": return player.hidden;
     default: return [];
   }
+};
+
+// Mapping of specific pitch positions to general FmRole position types
+const positionTypeMapping: { [key: string]: string } = {
+  "LCB": "CB", "RCB": "CB", "CB": "CB",
+  "LDM": "CDM", "RDM": "CDM", "CDM": "CDM",
+  "LCM": "CM", "RCM": "CM", "CM": "CM",
+  "LS": "ST", "RS": "ST", "ST": "ST",
+  "LW": "RW", "RW": "RW", // Using RW as generic for both wings
+  "LB": "LB", "RB": "LB", // Using LB as generic for both full-backs/wing-backs
+  "LWB": "LB", "RWB": "LB",
+  "CAM": "CAM",
+  "GK": "GK",
 };
 
 // Function to calculate role compatibility
@@ -881,9 +894,8 @@ export const calculateRoleCompatibility = (player: Player, role: FmRole): number
   return Math.round((totalScore / maxPossibleScore) * 100);
 };
 
-// Function to get roles for a specific position type
-export const getRolesForPosition = (positionType: string): FmRole[] => {
-  // Handle generic positions like "RW" for "LW" roles if needed, or vice-versa
-  // For now, direct match
-  return FM_ROLES.filter(role => role.positionType === positionType);
+// Function to get roles for a specific position type, now using the mapping
+export const getRolesForPosition = (pitchPositionType: string): FmRole[] => {
+  const generalPositionType = positionTypeMapping[pitchPositionType] || pitchPositionType;
+  return FM_ROLES.filter(role => role.positionType === generalPositionType);
 };
