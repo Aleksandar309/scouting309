@@ -149,18 +149,29 @@ export const calculateFormationFit = (player: Player, formation: Formation): Pla
 
 // Function to calculate overall formation fit for a player
 export const calculateFormationOverallFit = (player: Player, formation: Formation): number => {
-  const playerFitPositions = calculateFormationFit(player, formation);
   let totalRating = 0;
   let totalPossibleRating = 0;
 
-  playerFitPositions.forEach(pos => {
+  // Iterate through each position in the formation
+  formation.positions.forEach(formPos => {
+    let positionRating = 0;
+    let positionType: "natural" | "alternative" | "tertiary" | "unsuited" = "unsuited";
+
+    // Find the player's best rating for this specific formation position
+    const playerPosition = player.positionsData.find(p => p.name === formPos.name);
+
+    if (playerPosition) {
+      positionRating = playerPosition.rating;
+      positionType = playerPosition.type;
+    }
+
     // Give more weight to natural and alternative positions
     let weight = 1;
-    if (pos.type === "natural") weight = 3;
-    else if (pos.type === "alternative") weight = 2;
+    if (positionType === "natural") weight = 3;
+    else if (positionType === "alternative") weight = 2;
     // Tertiary and unsuited positions get less or no weight for overall score
 
-    totalRating += pos.rating * weight;
+    totalRating += positionRating * weight;
     totalPossibleRating += 10 * weight; // Max rating is 10 for each position
   });
 
@@ -170,10 +181,10 @@ export const calculateFormationOverallFit = (player: Player, formation: Formatio
 
 // Function to get star rating based on overall fit percentage (0-100)
 export const getStarRating = (overallFit: number): number => {
-  if (overallFit < 10) return 0.5;
-  if (overallFit < 26) return 1;
-  if (overallFit < 41) return 1.5;
-  if (overallFit < 60) return 2;
-  if (overallFit < 80) return 2.5;
-  return 3;
+  if (overallFit < 5) return 0.5;
+  if (overallFit < 10) return 1;
+  if (overallFit < 15) return 1.5;
+  if (overallFit < 20) return 2;
+  if (overallFit < 25) return 2.5;
+  return 3; // 25% and above
 };
