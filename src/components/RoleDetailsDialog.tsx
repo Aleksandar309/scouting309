@@ -32,15 +32,15 @@ const RoleDetailsDialog: React.FC<RoleDetailsDialogProps> = ({
 
   if (!roles || roles.length === 0) {
     return (
-      <DialogContent className="sm:max-w-[425px] bg-gray-800 text-white border-gray-700">
+      <DialogContent className="sm:max-w-[425px] bg-card text-card-foreground border-border">
         <DialogHeader>
           <DialogTitle className="text-2xl">Roles for {positionType}</DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription className="text-muted-foreground">
             No specific Football Manager roles defined for this position yet.
           </DialogDescription>
         </DialogHeader>
         <div className="py-4 text-center">
-          <Button onClick={onClose} className="bg-blue-600 hover:bg-blue-700 text-white">Close</Button>
+          <Button onClick={onClose} className="bg-primary hover:bg-primary/90 text-primary-foreground">Close</Button>
         </div>
       </DialogContent>
     );
@@ -55,10 +55,10 @@ const RoleDetailsDialog: React.FC<RoleDetailsDialogProps> = ({
     .sort((a, b) => b.compatibility - a.compatibility); // Sort in descending order
 
   return (
-    <DialogContent className="sm:max-w-[600px] bg-gray-800 text-white border-gray-700 max-h-[90vh] overflow-y-auto">
+    <DialogContent className="sm:max-w-[600px] bg-card text-card-foreground border-border max-h-[90vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle className="text-2xl">Roles for {positionType}</DialogTitle>
-        <DialogDescription className="text-gray-400">
+        <DialogDescription className="text-muted-foreground">
           Select a role to see {player.name}'s compatibility and highlight key attributes.
         </DialogDescription>
       </DialogHeader>
@@ -71,13 +71,13 @@ const RoleDetailsDialog: React.FC<RoleDetailsDialogProps> = ({
               key={role.name}
               className={cn(
                 "p-4 border rounded-md cursor-pointer transition-all duration-200",
-                "bg-gray-700 border-gray-600 hover:bg-gray-600",
+                "bg-muted border-border hover:bg-accent",
                 isSelected ? "ring-2 ring-blue-500 border-blue-500" : ""
               )}
               onClick={() => onRoleSelect(isSelected ? null : role)}
             >
               <div className="flex justify-between items-center mb-2">
-                <h3 className="font-semibold text-lg text-white">{role.name}</h3>
+                <h3 className="font-semibold text-foreground">{role.name}</h3>
                 <span
                   className={cn(
                     "px-3 py-1 rounded-full text-sm font-medium",
@@ -89,7 +89,7 @@ const RoleDetailsDialog: React.FC<RoleDetailsDialogProps> = ({
                   {compatibility}%
                 </span>
               </div>
-              <p className="text-sm text-gray-300 mb-2">{role.description}</p>
+              <p className="text-muted-foreground mb-2">{role.description}</p>
               {isSelected && (
                 <div className="mt-3">
                   <h4 className="font-medium text-blue-300 mb-1">Key Attributes:</h4>
@@ -115,7 +115,7 @@ const RoleDetailsDialog: React.FC<RoleDetailsDialogProps> = ({
         })}
       </div>
       <div className="flex justify-end">
-        <Button onClick={onClose} className="bg-gray-600 hover:bg-gray-700 text-white">Close</Button>
+        <Button onClick={onClose} className="bg-muted hover:bg-accent text-muted-foreground">Close</Button>
       </div>
     </DialogContent>
   );

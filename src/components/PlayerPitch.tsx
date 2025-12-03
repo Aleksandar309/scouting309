@@ -67,7 +67,7 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
 
   if (!positionsToRender) {
     return (
-      <div className="relative w-full aspect-[3/2] max-h-[300px] mx-auto bg-gray-900 border-2 border-gray-700 rounded-lg overflow-hidden shadow-inner flex items-center justify-center text-gray-500">
+      <div className="relative w-full aspect-[3/2] max-h-[300px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner flex items-center justify-center text-muted-foreground">
         No position data available.
       </div>
     );
@@ -76,18 +76,18 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
   return (
     <TooltipProvider>
       {/* Main pitch container - now horizontal, with max height and centered */}
-      <div className="relative w-full aspect-[3/2] max-h-[300px] mx-auto bg-gray-900 border-2 border-gray-700 rounded-lg overflow-hidden shadow-inner">
+      <div className="relative w-full aspect-[3/2] max-h-[300px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner">
         {/* Pitch Lines (simplified) */}
-        <div className="absolute inset-0 border-gray-600 border-dashed border-opacity-50">
+        <div className="absolute inset-0 border-border border-dashed border-opacity-50">
           {/* Halfway line (now vertical) */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gray-600 bg-opacity-50 transform -translate-x-1/2"></div>
+          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-border bg-opacity-50 transform -translate-x-1/2"></div>
           {/* Center circle */}
-          <div className="absolute top-1/2 left-1/2 w-20 h-20 border-2 border-gray-600 border-opacity-50 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute top-1/2 left-1/2 w-20 h-20 border-2 border-border border-opacity-50 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
           {/* Penalty boxes (now on left/right sides) */}
           {/* Left Penalty Box */}
-          <div className="absolute left-0 top-1/2 h-[70%] w-[20%] border-r-2 border-t-2 border-b-2 border-gray-600 border-opacity-50 transform -translate-y-1/2 rounded-l-lg"></div>
+          <div className="absolute left-0 top-1/2 h-[70%] w-[20%] border-r-2 border-t-2 border-b-2 border-border border-opacity-50 transform -translate-y-1/2 rounded-l-lg"></div>
           {/* Right Penalty Box */}
-          <div className="absolute right-0 top-1/2 h-[70%] w-[20%] border-l-2 border-t-2 border-b-2 border-gray-600 border-opacity-50 transform -translate-y-1/2 rounded-r-lg"></div>
+          <div className="absolute right-0 top-1/2 h-[70%] w-[20%] border-l-2 border-t-2 border-b-2 border-border border-opacity-50 transform -translate-y-1/2 rounded-r-lg"></div>
         </div>
 
         {positionsToRender.map((pos, index) => {
@@ -109,10 +109,10 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
                 circleClasses = "bg-yellow-500 border-2 border-yellow-300 w-5 h-5 text-xs";
                 break;
               case "tertiary":
-                circleClasses = "bg-gray-500 border-2 border-gray-300 w-4 h-4 text-xs";
+                circleClasses = "bg-muted-foreground border-2 border-muted w-4 h-4 text-xs";
                 break;
               case "unsuited":
-                circleClasses = "bg-red-700 border-2 border-red-500 w-4 h-4 text-xs opacity-50";
+                circleClasses = "bg-destructive border-2 border-destructive-foreground w-4 h-4 text-xs opacity-50";
                 tooltipText = `${pos.name} (Unsuited)`;
                 break;
             }
@@ -127,7 +127,7 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
                 circleClasses = "bg-yellow-500 border-2 border-yellow-300 w-5 h-5 text-xs";
                 break;
               case "tertiary":
-                circleClasses = "bg-gray-500 border-2 border-gray-300 w-4 h-4 text-xs";
+                circleClasses = "bg-muted-foreground border-2 border-muted w-4 h-4 text-xs";
                 break;
             }
           }
@@ -155,7 +155,7 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
                   {pos.name}
                 </div>
               </TooltipTrigger>
-              <TooltipContent className="bg-gray-700 text-white border-gray-600">
+              <TooltipContent className="bg-popover text-popover-foreground border-border">
                 <p>{tooltipText}</p>
               </TooltipContent>
             </Tooltip>

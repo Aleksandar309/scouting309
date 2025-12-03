@@ -169,7 +169,7 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
     fieldArrayName: "technical" | "tactical" | "physical" | "mentalPsychology" | "setPieces" | "hidden"
   ) => (
     <div className="space-y-2">
-      <h3 className="text-lg font-semibold text-gray-200">{label}</h3>
+      <h3 className="text-lg font-semibold text-foreground">{label}</h3>
       {form.watch(fieldArrayName).map((attr, index) => (
         <FormField
           key={attr.name}
@@ -177,13 +177,13 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
           name={`${fieldArrayName}.${index}.rating`}
           render={({ field }) => (
             <FormItem className="flex items-center justify-between">
-              <FormLabel className="text-gray-300 w-1/2">{attr.name}</FormLabel>
+              <FormLabel className="text-muted-foreground w-1/2">{attr.name}</FormLabel>
               <FormControl className="w-1/2">
                 <Input
                   type="number"
                   min="1"
                   max="10"
-                  className="bg-gray-700 border-gray-600 text-white text-sm text-center h-8"
+                  className="bg-input border-border text-foreground text-sm text-center h-8"
                   {...field}
                   onChange={(e) => {
                     const value = parseInt(e.target.value, 10);
@@ -200,10 +200,10 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
   );
 
   return (
-    <DialogContent className="sm:max-w-[800px] bg-gray-800 text-white border-gray-700 max-h-[90vh] overflow-y-auto">
+    <DialogContent className="sm:max-w-[800px] bg-card text-card-foreground border-border max-h-[90vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle className="text-2xl">Add New Player</DialogTitle>
-        <DialogDescription className="text-gray-400">
+        <DialogDescription className="text-muted-foreground">
           Fill in the details to add a new player to the database.
         </DialogDescription>
       </DialogHeader>
@@ -216,9 +216,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Player Name</FormLabel>
+                  <FormLabel className="text-muted-foreground">Player Name</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -229,9 +229,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="team"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Team</FormLabel>
+                  <FormLabel className="text-muted-foreground">Team</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -242,9 +242,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="nationality"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Nationality</FormLabel>
+                  <FormLabel className="text-muted-foreground">Nationality</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -255,9 +255,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="age"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Age</FormLabel>
+                  <FormLabel className="text-muted-foreground">Age</FormLabel>
                   <FormControl>
-                    <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input type="number" className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -268,9 +268,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="value"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Value</FormLabel>
+                  <FormLabel className="text-muted-foreground">Value</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -281,9 +281,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="footed"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Footed</FormLabel>
+                  <FormLabel className="text-muted-foreground">Footed</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -294,9 +294,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="positions"
               render={({ field }) => (
                 <FormItem className="md:col-span-2">
-                  <FormLabel className="text-gray-300">Positions (comma-separated, e.g., ST, CAM)</FormLabel>
+                  <FormLabel className="text-muted-foreground">Positions (comma-separated, e.g., ST, CAM)</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -307,9 +307,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="avatarUrl"
               render={({ field }) => (
                 <FormItem className="md:col-span-2">
-                  <FormLabel className="text-gray-300">Avatar URL (Optional)</FormLabel>
+                  <FormLabel className="text-muted-foreground">Avatar URL (Optional)</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -318,16 +318,16 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
           </div>
 
           {/* Scouting Profile */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-gray-700 pt-6">
-            <h2 className="text-xl font-bold text-white md:col-span-3 mb-2">Scouting Profile</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-border pt-6">
+            <h2 className="text-xl font-bold text-foreground md:col-span-3 mb-2">Scouting Profile</h2>
             <FormField
               control={form.control}
               name="scoutingProfile.currentAbility"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Current Ability (1-10)</FormLabel>
+                  <FormLabel className="text-muted-foreground">Current Ability (1-10)</FormLabel>
                   <FormControl>
-                    <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input type="number" className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -338,9 +338,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="scoutingProfile.potentialAbility"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Potential Ability (1-10)</FormLabel>
+                  <FormLabel className="text-muted-foreground">Potential Ability (1-10)</FormLabel>
                   <FormControl>
-                    <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input type="number" className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -351,9 +351,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="scoutingProfile.teamFit"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Team Fit (1-10)</FormLabel>
+                  <FormLabel className="text-muted-foreground">Team Fit (1-10)</FormLabel>
                   <FormControl>
-                    <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input type="number" className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -362,16 +362,16 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
           </div>
 
           {/* Player Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-700 pt-6">
-            <h2 className="text-xl font-bold text-white md:col-span-2 mb-2">Player Details</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-border pt-6">
+            <h2 className="text-xl font-bold text-foreground md:col-span-2 mb-2">Player Details</h2>
             <FormField
               control={form.control}
               name="details.height"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Height</FormLabel>
+                  <FormLabel className="text-muted-foreground">Height</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -382,9 +382,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="details.weight"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Weight</FormLabel>
+                  <FormLabel className="text-muted-foreground">Weight</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -395,9 +395,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="details.league"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">League</FormLabel>
+                  <FormLabel className="text-muted-foreground">League</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -408,9 +408,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="details.contractExpiry"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Contract Expiry</FormLabel>
+                  <FormLabel className="text-muted-foreground">Contract Expiry</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -421,9 +421,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="details.wageDemands"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Wage Demands</FormLabel>
+                  <FormLabel className="text-muted-foreground">Wage Demands</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -434,9 +434,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="details.agent"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Agent</FormLabel>
+                  <FormLabel className="text-muted-foreground">Agent</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                    <Input className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -447,9 +447,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="details.notes"
               render={({ field }) => (
                 <FormItem className="md:col-span-2">
-                  <FormLabel className="text-gray-300">Notes (Optional)</FormLabel>
+                  <FormLabel className="text-muted-foreground">Notes (Optional)</FormLabel>
                   <FormControl>
-                    <Textarea className="bg-gray-700 border-gray-600 text-white min-h-[80px]" {...field} />
+                    <Textarea className="bg-input border-border text-foreground min-h-[80px]" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -458,8 +458,8 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
           </div>
 
           {/* Attributes Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 border-t border-gray-700 pt-6">
-            <h2 className="text-xl font-bold text-white md:col-span-full mb-2">Attributes (1-10)</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 border-t border-border pt-6">
+            <h2 className="text-xl font-bold text-foreground md:col-span-full mb-2">Attributes (1-10)</h2>
             {renderAttributeSection("technical", "Technical", "technical")}
             {renderAttributeSection("tactical", "Tactical", "tactical")}
             {renderAttributeSection("physical", "Physical", "physical")}
@@ -469,15 +469,15 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
           </div>
 
           {/* Strengths & Development */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-700 pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-border pt-6">
             <FormField
               control={form.control}
               name="keyStrengths"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Key Strengths (one per line)</FormLabel>
+                  <FormLabel className="text-muted-foreground">Key Strengths (one per line)</FormLabel>
                   <FormControl>
-                    <Textarea className="bg-gray-700 border-gray-600 text-white min-h-[100px]" {...field} />
+                    <Textarea className="bg-input border-border text-foreground min-h-[100px]" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -488,9 +488,9 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
               name="areasForDevelopment"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Areas for Development (one per line)</FormLabel>
+                  <FormLabel className="text-muted-foreground">Areas for Development (one per line)</FormLabel>
                   <FormControl>
-                    <Textarea className="bg-gray-700 border-gray-600 text-white min-h-[100px]" {...field} />
+                    <Textarea className="bg-input border-border text-foreground min-h-[100px]" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -499,10 +499,10 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
           </div>
 
           <DialogFooter className="mt-6">
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
               <PlusCircle className="mr-2 h-4 w-4" /> Add Player
             </Button>
-            <Button variant="outline" onClick={onClose} className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600">
+            <Button variant="outline" onClick={onClose} className="bg-muted border-border text-muted-foreground hover:bg-accent">
               Cancel
             </Button>
           </DialogFooter>

@@ -65,7 +65,7 @@ const attributeColumns: ColumnDef<Player>[] = ALL_ATTRIBUTE_NAMES.map(attrName =
     <Button
       variant="ghost"
       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      className="text-white hover:bg-gray-700"
+      className="text-foreground hover:bg-accent"
     >
       {attrName}
       <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -73,7 +73,7 @@ const attributeColumns: ColumnDef<Player>[] = ALL_ATTRIBUTE_NAMES.map(attrName =
   ),
   cell: ({ row }) => {
     const rating = getAttributeRating(row.original, attrName);
-    return <span className="text-gray-200">{rating}</span>;
+    return <span className="text-foreground">{rating}</span>;
   },
   enableSorting: true,
 }));
@@ -84,11 +84,11 @@ const columns: ColumnDef<Player>[] = [
     accessorKey: "name",
     header: ({ column }) => {
       return (
-        <TableHead className="sticky left-0 z-10 bg-gray-800 text-gray-300"> {/* Added sticky classes */}
+        <TableHead className="sticky left-0 z-10 bg-background text-foreground"> {/* Updated sticky classes */}
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="text-white hover:bg-gray-700"
+            className="text-foreground hover:bg-accent"
           >
             Name
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -97,7 +97,7 @@ const columns: ColumnDef<Player>[] = [
       );
     },
     cell: ({ row }) => (
-      <TableCell className="sticky left-0 z-10 bg-gray-800 text-gray-200"> {/* Added sticky classes */}
+      <TableCell className="sticky left-0 z-10 bg-card text-foreground"> {/* Updated sticky classes */}
         <Link to={`/player/${row.original.id}`} className="text-blue-400 hover:underline">
           {row.getValue("name")}
         </Link>
@@ -110,7 +110,7 @@ const columns: ColumnDef<Player>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-white hover:bg-gray-700"
+        className="text-foreground hover:bg-accent"
       >
         Team
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -123,7 +123,7 @@ const columns: ColumnDef<Player>[] = [
     cell: ({ row }) => (
       <div className="flex flex-wrap gap-1">
         {row.original.positions.map((pos) => (
-          <Badge key={pos} variant="secondary" className="bg-gray-700 text-gray-200">
+          <Badge key={pos} variant="secondary" className="bg-muted text-muted-foreground">
             {pos}
           </Badge>
         ))}
@@ -137,7 +137,7 @@ const columns: ColumnDef<Player>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-white hover:bg-gray-700"
+        className="text-foreground hover:bg-accent"
       >
         Nationality
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -150,7 +150,7 @@ const columns: ColumnDef<Player>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-white hover:bg-gray-700"
+        className="text-foreground hover:bg-accent"
       >
         Age
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -163,7 +163,7 @@ const columns: ColumnDef<Player>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-white hover:bg-gray-700"
+        className="text-foreground hover:bg-accent"
       >
         Value
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -176,7 +176,7 @@ const columns: ColumnDef<Player>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-white hover:bg-gray-700"
+        className="text-foreground hover:bg-accent"
       >
         Current Ability
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -188,8 +188,8 @@ const columns: ColumnDef<Player>[] = [
       const progressValue = Math.min(Math.max(rating * 10, 0), 100);
       return (
         <div className="flex items-center w-full">
-          <Progress value={progressValue} className="h-2 w-full bg-gray-700" indicatorClassName="bg-blue-500" />
-          <span className="ml-2 text-sm text-gray-200">{rating}</span>
+          <Progress value={progressValue} className="h-2 w-full bg-muted" indicatorClassName="bg-blue-500" />
+          <span className="ml-2 text-sm text-foreground">{rating}</span>
         </div>
       );
     },
@@ -200,7 +200,7 @@ const columns: ColumnDef<Player>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-white hover:bg-gray-700"
+        className="text-foreground hover:bg-accent"
       >
         Potential Ability
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -212,8 +212,8 @@ const columns: ColumnDef<Player>[] = [
       const progressValue = Math.min(Math.max(rating * 10, 0), 100);
       return (
         <div className="flex items-center w-full">
-          <Progress value={progressValue} className="h-2 w-full bg-gray-700" indicatorClassName="bg-green-500" />
-          <span className="ml-2 text-sm text-gray-200">{rating}</span>
+          <Progress value={progressValue} className="h-2 w-full bg-muted" indicatorClassName="bg-green-500" />
+          <span className="ml-2 text-sm text-foreground">{rating}</span>
         </div>
       );
     },
@@ -222,7 +222,7 @@ const columns: ColumnDef<Player>[] = [
     accessorKey: "priorityTarget",
     header: "Priority",
     cell: ({ row }) => (
-      row.getValue("priorityTarget") ? <Badge className="bg-yellow-600 text-white">Yes</Badge> : <Badge variant="secondary" className="bg-gray-700 text-gray-200">No</Badge>
+      row.getValue("priorityTarget") ? <Badge className="bg-yellow-600 text-white">Yes</Badge> : <Badge variant="secondary" className="bg-muted text-muted-foreground">No</Badge>
     ),
     enableSorting: true,
   },
@@ -236,7 +236,7 @@ const columns: ColumnDef<Player>[] = [
       return (
         <Dialog open={isShortlistDialogOpen} onOpenChange={setIsShortlistDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Button variant="outline" size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
               <Plus className="h-4 w-4" />
             </Button>
           </DialogTrigger>
@@ -285,13 +285,13 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
   });
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
+    <div className="min-h-screen bg-background text-foreground p-6">
       <div className="max-w-7xl mx-auto">
         {/* Back Button */}
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
-          className="text-gray-400 hover:text-white p-0 h-auto mb-4"
+          className="text-muted-foreground hover:text-foreground p-0 h-auto mb-4"
         >
           <ChevronLeft className="h-5 w-5 mr-1" /> Back
         </Button>
@@ -315,12 +315,12 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
               onValueChange={(value: 'table' | 'card') => {
                 if (value) setViewMode(value);
               }}
-              className="bg-gray-800 rounded-md p-1 border border-gray-700"
+              className="bg-muted rounded-md p-1 border border-border"
             >
-              <ToggleGroupItem value="table" aria-label="Toggle table view" className="data-[state=on]:bg-blue-600 data-[state=on]:text-white text-gray-300 hover:bg-gray-700">
+              <ToggleGroupItem value="table" aria-label="Toggle table view" className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground text-muted-foreground hover:bg-accent">
                 <Table2 className="h-4 w-4 mr-2" /> Table View
               </ToggleGroupItem>
-              <ToggleGroupItem value="card" aria-label="Toggle card view" className="data-[state=on]:bg-blue-600 data-[state=on]:text-white text-gray-300 hover:bg-gray-700">
+              <ToggleGroupItem value="card" aria-label="Toggle card view" className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground text-muted-foreground hover:bg-accent">
                 <LayoutGrid className="h-4 w-4 mr-2" /> Card View
               </ToggleGroupItem>
             </ToggleGroup>
@@ -329,28 +329,21 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
         </div>
 
         {viewMode === 'table' ? (
-          <div className="rounded-md border border-gray-700 bg-gray-800 overflow-x-auto">
+          <div className="rounded-md border border-border bg-card overflow-x-auto">
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="border-gray-700">
+                  <TableRow key={headerGroup.id} className="border-border">
                     {headerGroup.headers.map((header) => {
                       return (
-                        <React.Fragment key={header.id}>
-                          {header.id === 'name' ? (
-                            // Render the sticky header directly here
-                            flexRender(header.column.columnDef.header, header.getContext())
-                          ) : (
-                            <TableHead className="text-gray-300">
-                              {header.isPlaceholder
-                                ? null
-                                : flexRender(
-                                    header.column.columnDef.header,
-                                    header.getContext()
-                                  )}
-                            </TableHead>
-                          )}
-                        </React.Fragment>
+                        <TableHead key={header.id} className="text-foreground">
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
                       );
                     })}
                   </TableRow>
@@ -362,25 +355,18 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
-                      className="border-gray-700 hover:bg-gray-700"
+                      className="border-border hover:bg-accent"
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <React.Fragment key={cell.id}>
-                          {cell.column.id === 'name' ? (
-                            // Render the sticky cell directly here
-                            flexRender(cell.column.columnDef.cell, cell.getContext())
-                          ) : (
-                            <TableCell className="text-gray-200">
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </TableCell>
-                          )}
-                        </React.Fragment>
+                        <TableCell key={cell.id} className="text-foreground">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
                       ))}
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                    <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
                       No results.
                     </TableCell>
                   </TableRow>

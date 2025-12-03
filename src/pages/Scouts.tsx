@@ -45,13 +45,13 @@ const Scouts: React.FC = () => {
   const navigate = useNavigate(); // Initialize useNavigate
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
+    <div className="min-h-screen bg-background text-foreground p-6">
       <div className="max-w-7xl mx-auto">
         {/* Back Button */}
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
-          className="text-gray-400 hover:text-white p-0 h-auto mb-4"
+          className="text-muted-foreground hover:text-foreground p-0 h-auto mb-4"
         >
           <ChevronLeft className="h-5 w-5 mr-1" /> Back
         </Button>
@@ -59,7 +59,7 @@ const Scouts: React.FC = () => {
         <h1 className="text-3xl font-bold mb-8">Our Scouting Team</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {mockScouts.map((scout) => (
-            <Card key={scout.id} className="bg-gray-800 border-gray-700 text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <Card key={scout.id} className="bg-card border-border text-card-foreground shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader className="flex flex-row items-center space-x-4 pb-4">
                 <Avatar className="h-16 w-16">
                   <AvatarImage src={scout.avatarUrl} alt={scout.name} />
@@ -67,23 +67,23 @@ const Scouts: React.FC = () => {
                 </Avatar>
                 <div>
                   <CardTitle className="text-xl font-semibold">{scout.name}</CardTitle>
-                  <p className="text-gray-400 text-sm">{scout.role}</p>
+                  <p className="text-muted-foreground text-sm">{scout.role}</p>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-3 text-gray-300">
+              <CardContent className="space-y-3 text-muted-foreground">
                 <div className="flex items-center text-sm">
-                  <Mail className="mr-2 h-4 w-4 text-gray-500" /> {scout.email}
+                  <Mail className="mr-2 h-4 w-4 text-muted-foreground" /> {scout.email}
                 </div>
                 <div className="flex items-center text-sm">
-                  <Phone className="mr-2 h-4 w-4 text-gray-500" /> {scout.phone}
+                  <Phone className="mr-2 h-4 w-4 text-muted-foreground" /> {scout.phone}
                 </div>
                 <div className="flex items-center text-sm">
-                  <User className="mr-2 h-4 w-4 text-gray-500" /> Active Players: {scout.activePlayers}
+                  <User className="mr-2 h-4 w-4 text-muted-foreground" /> Active Players: {scout.activePlayers}
                 </div>
-                <div className="text-xs text-gray-500">Last Report: {scout.lastReportDate}</div>
+                <div className="text-xs text-muted-foreground">Last Report: {scout.lastReportDate}</div>
                 {/* You could add a link to a detailed scout profile here if needed */}
                 {/* <Link to={`/scouts/${scout.id}`}>
-                  <Button variant="outline" className="mt-4 w-full bg-gray-700 border-gray-600 text-white hover:bg-gray-600">View Profile</Button>
+                  <Button variant="outline" className="mt-4 w-full bg-muted border-border text-muted-foreground hover:bg-accent">View Profile</Button>
                 </Link> */}
               </CardContent>
             </Card>

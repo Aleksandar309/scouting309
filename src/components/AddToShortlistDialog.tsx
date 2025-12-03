@@ -50,10 +50,10 @@ const AddToShortlistDialog: React.FC<AddToShortlistDialogProps> = ({ player, onC
   };
 
   return (
-    <DialogContent className="sm:max-w-[425px] bg-gray-800 text-white border-gray-700">
+    <DialogContent className="sm:max-w-[425px] bg-card text-card-foreground border-border">
       <DialogHeader>
         <DialogTitle className="text-2xl">Add {player.name} to Shortlist</DialogTitle>
-        <DialogDescription className="text-gray-400">
+        <DialogDescription className="text-muted-foreground">
           Select an existing shortlist or create a new one.
         </DialogDescription>
       </DialogHeader>
@@ -61,14 +61,14 @@ const AddToShortlistDialog: React.FC<AddToShortlistDialogProps> = ({ player, onC
         {!isCreatingNew ? (
           <>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="shortlist" className="text-right text-gray-300">
+              <Label htmlFor="shortlist" className="text-right text-muted-foreground">
                 Shortlist
               </Label>
               <Select onValueChange={setSelectedShortlistId} value={selectedShortlistId}>
-                <SelectTrigger className="col-span-3 bg-gray-700 border-gray-600 text-white">
+                <SelectTrigger className="col-span-3 bg-input border-border text-foreground">
                   <SelectValue placeholder="Select a shortlist" />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                <SelectContent className="bg-popover border-border text-popover-foreground">
                   {shortlists.map((sl) => (
                     <SelectItem key={sl.id} value={sl.id}>
                       {sl.name} ({sl.players.length})
@@ -80,7 +80,7 @@ const AddToShortlistDialog: React.FC<AddToShortlistDialogProps> = ({ player, onC
             <Button
               variant="outline"
               onClick={() => setIsCreatingNew(true)}
-              className="w-full bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+              className="w-full bg-muted border-border text-muted-foreground hover:bg-accent"
             >
               Create New Shortlist
             </Button>
@@ -88,21 +88,21 @@ const AddToShortlistDialog: React.FC<AddToShortlistDialogProps> = ({ player, onC
         ) : (
           <>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="newShortlistName" className="text-right text-gray-300">
+              <Label htmlFor="newShortlistName" className="text-right text-muted-foreground">
                 New Name
               </Label>
               <Input
                 id="newShortlistName"
                 value={newShortlistName}
                 onChange={(e) => setNewShortlistName(e.target.value)}
-                className="col-span-3 bg-gray-700 border-gray-600 text-white"
+                className="col-span-3 bg-input border-border text-foreground"
                 placeholder="e.g., Summer Targets 2025"
               />
             </div>
             <Button
               variant="outline"
               onClick={() => setIsCreatingNew(false)}
-              className="w-full bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+              className="w-full bg-muted border-border text-muted-foreground hover:bg-accent"
             >
               Back to Existing Shortlists
             </Button>
@@ -114,7 +114,7 @@ const AddToShortlistDialog: React.FC<AddToShortlistDialogProps> = ({ player, onC
           type="submit"
           onClick={handleAddToShortlist}
           disabled={(!selectedShortlistId && !newShortlistName.trim()) || (isCreatingNew && !newShortlistName.trim())}
-          className="bg-blue-600 hover:bg-blue-700 text-white"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground"
         >
           Add to Shortlist
         </Button>

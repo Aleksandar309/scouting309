@@ -30,7 +30,7 @@ const getRatingColorClass = (rating: number): string => {
   } else if (rating === 10) {
     return "!bg-blue-500";
   }
-  return "!bg-gray-400"; // Default color for ratings outside 1-10 or 0
+  return "!bg-muted-foreground"; // Default color for ratings outside 1-10 or 0
 };
 
 const AttributeRating: React.FC<AttributeRatingProps> = ({ name, rating, className, highlightType, isEditable = false, onRatingChange }) => {
@@ -40,7 +40,7 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({ name, rating, classNa
   const highlightClasses = {
     primary: "bg-blue-600 ring-1 ring-blue-400",
     secondary: "bg-purple-600 ring-1 ring-purple-400",
-    tertiary: "bg-gray-600 ring-1 ring-gray-500",
+    tertiary: "bg-muted ring-1 ring-muted-foreground",
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,7 +60,7 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({ name, rating, classNa
       highlightType ? highlightClasses[highlightType] : "",
       className
     )}>
-      <span className={cn("text-sm w-1/2", highlightType ? "text-white" : "text-gray-300")}>{name}</span>
+      <span className={cn("text-sm w-1/2", highlightType ? "text-white" : "text-muted-foreground")}>{name}</span>
       <div className="flex items-center w-1/2">
         {isEditable ? (
           <Input
@@ -69,16 +69,16 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({ name, rating, classNa
             max="10"
             value={rating === 0 ? "" : rating} // Display empty string if rating is 0 (e.g., during invalid input)
             onChange={handleInputChange}
-            className="w-full h-6 bg-gray-700 border-gray-600 text-white text-sm text-center"
+            className="w-full h-6 bg-input border-border text-foreground text-sm text-center"
           />
         ) : (
           <>
             <Progress 
               value={progressValue} 
-              className="h-2 w-full bg-gray-500"
+              className="h-2 w-full bg-muted"
               indicatorClassName={indicatorColorClass}
             />
-            <span className={cn("ml-2 text-sm", highlightType ? "text-white" : "text-gray-300")}>{rating}</span>
+            <span className={cn("ml-2 text-sm", highlightType ? "text-white" : "text-muted-foreground")}>{rating}</span>
           </>
         )}
       </div>

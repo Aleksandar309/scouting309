@@ -81,10 +81,10 @@ const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmi
   };
 
   return (
-    <DialogContent className="sm:max-w-[600px] bg-gray-800 text-white border-gray-700">
+    <DialogContent className="sm:max-w-[600px] bg-card text-card-foreground border-border">
       <DialogHeader>
         <DialogTitle className="text-2xl">Create New Scout Report for {player.name}</DialogTitle>
-        <DialogDescription className="text-gray-400">
+        <DialogDescription className="text-muted-foreground">
           Fill in the details for the new scouting report.
         </DialogDescription>
       </DialogHeader>
@@ -95,9 +95,9 @@ const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmi
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-300">Report Title</FormLabel>
+                <FormLabel className="text-muted-foreground">Report Title</FormLabel>
                 <FormControl>
-                  <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                  <Input className="bg-input border-border text-foreground" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -108,9 +108,9 @@ const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmi
             name="scout"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-300">Scout Name</FormLabel>
+                <FormLabel className="text-muted-foreground">Scout Name</FormLabel>
                 <FormControl>
-                  <Input className="bg-gray-700 border-gray-600 text-white" {...field} />
+                  <Input className="bg-input border-border text-foreground" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -121,14 +121,14 @@ const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmi
             name="date"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel className="text-gray-300">Report Date</FormLabel>
+                <FormLabel className="text-muted-foreground">Report Date</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-full pl-3 text-left font-normal bg-gray-700 border-gray-600 text-white hover:bg-gray-600",
+                          "w-full pl-3 text-left font-normal bg-input border-border text-foreground hover:bg-accent",
                           !field.value && "text-muted-foreground"
                         )}
                       >
@@ -141,7 +141,7 @@ const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmi
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-700 text-white" align="start">
+                  <PopoverContent className="w-auto p-0 bg-popover border-border text-popover-foreground" align="start">
                     <Calendar
                       mode="single"
                       selected={field.value}
@@ -162,9 +162,9 @@ const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmi
             name="rating"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-300">Overall Rating (1-10)</FormLabel>
+                <FormLabel className="text-muted-foreground">Overall Rating (1-10)</FormLabel>
                 <FormControl>
-                  <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
+                  <Input type="number" className="bg-input border-border text-foreground" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -175,9 +175,9 @@ const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmi
             name="keyStrengths"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-300">Key Strengths</FormLabel>
+                <FormLabel className="text-muted-foreground">Key Strengths</FormLabel>
                 <FormControl>
-                  <Textarea className="bg-gray-700 border-gray-600 text-white min-h-[80px]" {...field} />
+                  <Textarea className="bg-input border-border text-foreground min-h-[80px]" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -188,16 +188,16 @@ const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmi
             name="areasForDevelopment"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-300">Areas for Development</FormLabel>
+                <FormLabel className="text-muted-foreground">Areas for Development</FormLabel>
                 <FormControl>
-                  <Textarea className="bg-gray-700 border-gray-600 text-white min-h-[80px]" {...field} />
+                  <Textarea className="bg-input border-border text-foreground min-h-[80px]" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <DialogFooter className="mt-4">
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">Submit Report</Button>
+            <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">Submit Report</Button>
           </DialogFooter>
         </form>
       </Form>

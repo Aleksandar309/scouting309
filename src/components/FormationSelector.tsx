@@ -43,17 +43,17 @@ const FormationSelector: React.FC<FormationSelectorProps> = ({
     }
     // Fill remaining with empty stars for visual consistency up to 3 stars
     for (let i = stars.length; i < 3; i++) {
-      stars.push(<Star key={`empty-${i}`} className="h-4 w-4 text-gray-500" />);
+      stars.push(<Star key={`empty-${i}`} className="h-4 w-4 text-muted-foreground" />);
     }
     return <div className="flex items-center ml-2">{stars}</div>;
   };
 
   return (
     <Select value={selectedFormationId || ""} onValueChange={onSelectFormation}>
-      <SelectTrigger className="w-[220px] bg-gray-700 border-gray-600 text-white hover:bg-gray-600">
+      <SelectTrigger className="w-[220px] bg-input border-border text-foreground hover:bg-accent">
         <SelectValue placeholder="Select Formation" />
       </SelectTrigger>
-      <SelectContent className="bg-gray-800 border-gray-700 text-white">
+      <SelectContent className="bg-popover border-border text-popover-foreground">
         {formations.map((formation) => (
           <SelectItem key={formation.id} value={formation.id} className="flex items-center">
             <div className="flex items-center justify-between w-full">

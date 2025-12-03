@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 100%; /* Light theme background */
+    --foreground: 222.2 84% 4.9%; /* Light theme text */
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -52,8 +52,8 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 222.2 84% 4.9%; /* Dark theme background */
+    --foreground: 210 40% 98%; /* Dark theme text */
 
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
@@ -117,5 +117,5 @@
 
 /* Adjust background for hover state on sticky cells */
 .sticky-column-cell:hover {
-  background-color: hsl(var(--secondary)); /* Match table row hover background */
+  background-color: hsl(var(--accent)); /* Match table row hover background */
 }

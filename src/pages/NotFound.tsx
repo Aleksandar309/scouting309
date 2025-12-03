@@ -15,10 +15,10 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6">
-      <div className="text-center bg-gray-800 p-8 rounded-lg shadow-lg border border-gray-700">
-        <h1 className="text-5xl font-bold mb-4 text-red-500">404</h1>
-        <p className="text-xl text-gray-300 mb-6">Oops! Page not found</p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-6">
+      <div className="text-center bg-card p-8 rounded-lg shadow-lg border border-border">
+        <h1 className="text-5xl font-bold mb-4 text-destructive">404</h1>
+        <p className="text-xl text-muted-foreground mb-6">Oops! Page not found</p>
         <Button
           variant="ghost"
           onClick={() => navigate(-1)} // Go back to the previous page

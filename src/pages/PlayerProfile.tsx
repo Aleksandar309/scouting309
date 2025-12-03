@@ -62,7 +62,7 @@ import { Textarea } from "@/components/ui/textarea";
 import FormationSelector from '@/components/FormationSelector';
 import { FM_FORMATIONS, calculateFormationFit, calculateFormationOverallFit, getStarRating } from '@/utils/formations';
 import { Formation, PlayerFormationFitPosition } from '@/types/formation';
-import { ALL_ATTRIBUTE_NAMES, CATEGORIZED_ATTRIBUTES } from '@/utils/player-attributes'; // New import
+import { ALL_ATTRIBUTE_NAMES, CATEGORIZED_ATTRIBUTES } from '@/utils/player-attributes';
 
 // Zod schema for player attributes
 const attributeSchema = z.array(z.object({
@@ -236,7 +236,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
 
 
   if (!player) {
-    return <div className="text-center text-white mt-10">Player not found.</div>;
+    return <div className="text-center text-foreground mt-10">Player not found.</div>;
   }
 
   const handleAddReport = (newReport: Player["scoutingReports"][0]) => {
@@ -313,7 +313,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
     fieldArrayName: "technical" | "tactical" | "physical" | "mentalPsychology" | "setPieces" | "hidden"
   ) => (
     <div className="space-y-2">
-      <h3 className="text-lg font-semibold text-gray-200">{label}</h3>
+      <h3 className="text-lg font-semibold text-foreground">{label}</h3>
       {form.watch(fieldArrayName).map((attr, index) => (
         <FormField
           key={attr.name}
@@ -321,13 +321,13 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
           name={`${fieldArrayName}.${index}.rating`}
           render={({ field }) => (
             <FormItem className="flex items-center justify-between">
-              <FormLabel className="text-gray-300 w-1/2">{attr.name}</FormLabel>
+              <FormLabel className="text-muted-foreground w-1/2">{attr.name}</FormLabel>
               <FormControl className="w-1/2">
                 <Input
                   type="number"
                   min="1"
                   max="10"
-                  className="bg-gray-700 border-gray-600 text-white text-sm text-center h-8"
+                  className="bg-input border-border text-foreground text-sm text-center h-8"
                   {...field}
                   onChange={(e) => {
                     const value = parseInt(e.target.value, 10);
@@ -344,13 +344,13 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
   );
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
+    <div className="min-h-screen bg-background text-foreground p-6">
       <div className="max-w-7xl mx-auto">
         {/* Back Button */}
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
-          className="text-gray-400 hover:text-white p-0 h-auto mb-4"
+          className="text-muted-foreground hover:text-foreground p-0 h-auto mb-4"
         >
           <ChevronLeft className="h-5 w-5 mr-1" /> Back
         </Button>
@@ -399,7 +399,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input className="text-3xl font-bold bg-gray-700 border-gray-600 text-white" {...field} />
+                            <Input className="text-3xl font-bold bg-input border-border text-foreground" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -415,18 +415,18 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input className="text-gray-400 bg-gray-700 border-gray-600 text-white" {...field} />
+                            <Input className="text-muted-foreground bg-input border-border text-foreground" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   ) : (
-                    <p className="text-gray-400">{player.team}</p>
+                    <p className="text-muted-foreground">{player.team}</p>
                   )}
                   <div className="flex items-center space-x-2 mt-1">
                     {player.positions.map((pos) => (
-                      <Badge key={pos} variant="secondary" className="bg-gray-700 text-gray-200">{pos}</Badge>
+                      <Badge key={pos} variant="secondary" className="bg-muted text-muted-foreground">{pos}</Badge>
                     ))}
                     {player.priorityTarget && <Badge className="bg-yellow-600 text-white">Priority Target</Badge>}
                     {player.criticalPriority && <Badge className="bg-red-600 text-white">Critical Priority</Badge>}
@@ -464,7 +464,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                           areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
                         } : undefined);
                       }}
-                      className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+                      className="bg-card border-border text-foreground hover:bg-accent"
                     >
                       <XCircle className="mr-2 h-4 w-4" /> Cancel
                     </Button>
@@ -473,7 +473,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                   <Button
                     variant="outline"
                     onClick={() => setIsEditMode(true)}
-                    className="bg-gray-800 text-white border-gray-700 hover:bg-gray-700"
+                    className="bg-card text-foreground border-border hover:bg-accent"
                   >
                     <Edit className="mr-2 h-4 w-4" /> Edit Profile
                   </Button>
@@ -495,9 +495,9 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
               </div>
             </div>
 
-            <div className="flex items-center space-x-4 text-gray-400 mb-8">
+            <div className="flex items-center space-x-4 text-muted-foreground mb-8">
               <span className="flex items-center">
-                <Flag className="mr-1 h-4 w-4" />
+                <Flag className="mr-1 h-4 w-4 text-muted-foreground" />
                 {isEditMode ? (
                   <FormField
                     control={form.control}
@@ -505,7 +505,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                     render={({ field }) => (
                       <FormItem className="inline-block">
                         <FormControl>
-                          <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
+                          <Input className="bg-input border-border text-foreground h-6 w-24" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -516,7 +516,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 )}
               </span>
               <span className="flex items-center">
-                <CalendarDays className="mr-1 h-4 w-4" />
+                <CalendarDays className="mr-1 h-4 w-4 text-muted-foreground" />
                 {isEditMode ? (
                   <FormField
                     control={form.control}
@@ -524,7 +524,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                     render={({ field }) => (
                       <FormItem className="inline-block">
                         <FormControl>
-                          <Input type="number" className="bg-gray-700 border-gray-600 text-white h-6 w-16" {...field} />
+                          <Input type="number" className="bg-input border-border text-foreground h-6 w-16" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -535,7 +535,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 )}
               </span>
               <span className="flex items-center">
-                <Wallet className="mr-1 h-4 w-4" />
+                <Wallet className="mr-1 h-4 w-4 text-muted-foreground" />
                 {isEditMode ? (
                   <FormField
                     control={form.control}
@@ -543,7 +543,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                     render={({ field }) => (
                       <FormItem className="inline-block">
                         <FormControl>
-                          <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
+                          <Input className="bg-input border-border text-foreground h-6 w-24" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -554,7 +554,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 )}
               </span>
               <span className="flex items-center">
-                <Goal className="mr-1 h-4 w-4" />
+                <Goal className="mr-1 h-4 w-4 text-muted-foreground" />
                 {isEditMode ? (
                   <FormField
                     control={form.control}
@@ -562,7 +562,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                     render={({ field }) => (
                       <FormItem className="inline-block">
                         <FormControl>
-                          <Input className="bg-gray-700 border-gray-600 text-white h-6 w-28" {...field} />
+                          <Input className="bg-input border-border text-foreground h-6 w-28" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -573,7 +573,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                   )}
                 </span>
                 {player.lastEdited && (
-                  <span className="flex items-center ml-4 text-xs text-gray-500">
+                  <span className="flex items-center ml-4 text-xs text-muted-foreground">
                     <History className="mr-1 h-3 w-3" />
                     Last Edited: {new Date(player.lastEdited).toLocaleDateString()}
                   </span>
@@ -583,14 +583,14 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
               {/* Main Content Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Player Details Card */}
-                <Card className="bg-gray-800 border-gray-700 text-white">
+                <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold">Player Details</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3 text-gray-300">
+                  <CardContent className="space-y-3 text-muted-foreground">
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                       <div className="flex items-center">
-                        <Maximize className="mr-2 h-4 w-4 text-gray-500" />
+                        <Maximize className="mr-2 h-4 w-4 text-muted-foreground" />
                         {isEditMode ? (
                           <FormField
                             control={form.control}
@@ -598,18 +598,18 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                             render={({ field }) => (
                               <FormItem className="inline-block">
                                 <FormControl>
-                                  <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
+                                  <Input className="bg-input border-border text-foreground h-6 w-24" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
                         ) : (
-                          <span className="font-medium text-white">{player.details.height}</span>
+                          <span className="font-medium text-foreground">{player.details.height}</span>
                         )}
                       </div>
                       <div className="flex items-center">
-                        <Weight className="mr-2 h-4 w-4 text-gray-500" />
+                        <Weight className="mr-2 h-4 w-4 text-muted-foreground" />
                         {isEditMode ? (
                           <FormField
                             control={form.control}
@@ -617,18 +617,18 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                             render={({ field }) => (
                               <FormItem className="inline-block">
                                 <FormControl>
-                                  <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
+                                  <Input className="bg-input border-border text-foreground h-6 w-24" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
                         ) : (
-                          <span className="font-medium text-white">{player.details.weight}</span>
+                          <span className="font-medium text-foreground">{player.details.weight}</span>
                         )}
                       </div>
                       <div className="flex items-center">
-                        <Trophy className="mr-2 h-4 w-4 text-gray-500" />
+                        <Trophy className="mr-2 h-4 w-4 text-muted-foreground" />
                         {isEditMode ? (
                           <FormField
                             control={form.control}
@@ -636,18 +636,18 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                             render={({ field }) => (
                               <FormItem className="inline-block">
                                 <FormControl>
-                                  <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
+                                  <Input className="bg-input border-border text-foreground h-6 w-24" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
                         ) : (
-                          <span className="font-medium text-white">{player.details.league}</span>
+                          <span className="font-medium text-foreground">{player.details.league}</span>
                         )}
                       </div>
                       <div className="flex items-center">
-                        <CalendarDays className="mr-2 h-4 w-4 text-gray-500" />
+                        <CalendarDays className="mr-2 h-4 w-4 text-muted-foreground" />
                         {isEditMode ? (
                           <FormField
                             control={form.control}
@@ -655,18 +655,18 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                             render={({ field }) => (
                               <FormItem className="inline-block">
                                 <FormControl>
-                                  <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
+                                  <Input className="bg-input border-border text-foreground h-6 w-24" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
                         ) : (
-                          <span className="font-medium text-white">{player.details.contractExpiry}</span>
+                          <span className="font-medium text-foreground">{player.details.contractExpiry}</span>
                         )}
                       </div>
                       <div className="flex items-center">
-                        <DollarSign className="mr-2 h-4 w-4 text-gray-500" />
+                        <DollarSign className="mr-2 h-4 w-4 text-muted-foreground" />
                         {isEditMode ? (
                           <FormField
                             control={form.control}
@@ -674,18 +674,18 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                             render={({ field }) => (
                               <FormItem className="inline-block">
                                 <FormControl>
-                                  <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
+                                  <Input className="bg-input border-border text-foreground h-6 w-24" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
                         ) : (
-                          <span className="font-medium text-white">{player.details.wageDemands}</span>
+                          <span className="font-medium text-foreground">{player.details.wageDemands}</span>
                         )}
                       </div>
                       <div className="flex items-center">
-                        <Briefcase className="mr-2 h-4 w-4 text-gray-500" />
+                        <Briefcase className="mr-2 h-4 w-4 text-muted-foreground" />
                         {isEditMode ? (
                           <FormField
                             control={form.control}
@@ -693,14 +693,14 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                             render={({ field }) => (
                               <FormItem className="inline-block">
                                 <FormControl>
-                                  <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
+                                  <Input className="bg-input border-border text-foreground h-6 w-24" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
                         ) : (
-                          <span className="font-medium text-white">{player.details.agent}</span>
+                          <span className="font-medium text-foreground">{player.details.agent}</span>
                         )}
                       </div>
                     </div>
@@ -710,22 +710,22 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                         name="details.notes"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-300">Notes</FormLabel>
+                            <FormLabel className="text-muted-foreground">Notes</FormLabel>
                             <FormControl>
-                              <Textarea className="bg-gray-700 border-gray-600 text-white min-h-[80px]" {...field} />
+                              <Textarea className="bg-input border-border text-foreground min-h-[80px]" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                     ) : (
-                      <p className="text-sm mt-4 border-t border-gray-700 pt-3">{player.details.notes}</p>
+                      <p className="text-sm mt-4 border-t border-border pt-3">{player.details.notes}</p>
                     )}
                   </CardContent>
                 </Card>
 
                 {/* Player Pitch Card */}
-                <Card className="bg-gray-800 border-gray-700 text-white">
+                <Card className="bg-card border-border text-card-foreground">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg font-semibold">Player Positions</CardTitle>
                     <FormationSelector
@@ -745,7 +745,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 </Card>
 
                 {/* Scouting Profile / Statistics Card (now only Radar Chart) */}
-                <Card className="bg-gray-800 border-gray-700 text-white col-span-1 md:col-span-1 lg:col-span-1">
+                <Card className="bg-card border-border text-card-foreground col-span-1 md:col-span-1 lg:col-span-1">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg font-semibold">
                       {showScoutingProfile ? "Attribute Radar" : "Player Statistics"}
@@ -754,7 +754,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                       variant="outline"
                       size="sm"
                       onClick={() => setShowScoutingProfile(!showScoutingProfile)}
-                      className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+                      className="bg-muted border-border text-muted-foreground hover:bg-accent"
                     >
                       {showScoutingProfile ? (
                         <>
@@ -777,7 +777,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 </Card>
 
                 {/* Technical Attributes Card */}
-                <Card className="bg-gray-800 border-gray-700 text-white">
+                <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><User className="mr-2 h-5 w-5" /> Technical</CardTitle>
                   </CardHeader>
@@ -798,7 +798,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 </Card>
 
                 {/* Set Pieces Attributes Card */}
-                <Card className="bg-gray-800 border-gray-700 text-white">
+                <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><Target className="mr-2 h-5 w-5" /> Set Pieces</CardTitle>
                   </CardHeader>
@@ -819,7 +819,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 </Card>
 
                 {/* Tactical Attributes Card */}
-                <Card className="bg-gray-800 border-gray-700 text-white">
+                <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><MapPin className="mr-2 h-5 w-5" /> Tactical</CardTitle>
                   </CardHeader>
@@ -840,7 +840,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 </Card>
 
                 {/* Physical Attributes Card */}
-                <Card className="bg-gray-800 border-gray-700 text-white">
+                <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><Scale className="mr-2 h-5 w-5" /> Physical</CardTitle>
                   </CardHeader>
@@ -861,7 +861,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 </Card>
 
                 {/* Mental & Psychology Attributes Card */}
-                <Card className="bg-gray-800 border-gray-700 text-white">
+                <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><User className="mr-2 h-5 w-5" /> Mental & Psychology</CardTitle>
                   </CardHeader>
@@ -882,7 +882,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 </Card>
 
                 {/* Hidden Attributes Card */}
-                <Card className="bg-gray-800 border-gray-700 text-white">
+                <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><EyeOff className="mr-2 h-5 w-5" /> Hidden Attributes</CardTitle>
                   </CardHeader>
@@ -903,11 +903,11 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 </Card>
 
                 {/* Key Strengths Card */}
-                <Card className="bg-gray-800 border-gray-700 text-white">
+                <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold">Key Strengths</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-2 text-gray-300 text-sm">
+                  <CardContent className="space-y-2 text-muted-foreground text-sm">
                     {isEditMode ? (
                       <FormField
                         control={form.control}
@@ -915,7 +915,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
-                              <Textarea className="bg-gray-700 border-gray-600 text-white min-h-[100px]" {...field} />
+                              <Textarea className="bg-input border-border text-foreground min-h-[100px]" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -930,11 +930,11 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 </Card>
 
                 {/* Areas for Development Card */}
-                <Card className="bg-gray-800 border-gray-700 text-white">
+                <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold">Areas for Development</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-2 text-gray-300 text-sm">
+                  <CardContent className="space-y-2 text-muted-foreground text-sm">
                     {isEditMode ? (
                       <FormField
                         control={form.control}
@@ -942,7 +942,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
-                              <Textarea className="bg-gray-700 border-gray-600 text-white min-h-[100px]" {...field} />
+                              <Textarea className="bg-input border-border text-foreground min-h-[100px]" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -957,7 +957,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 </Card>
 
                 {/* Overview Card */}
-                <Card className="bg-gray-800 border-gray-700 text-white">
+                <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><Gauge className="mr-2 h-5 w-5" /> Overview</CardTitle>
                   </CardHeader>
@@ -969,9 +969,9 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                           name="scoutingProfile.currentAbility"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-gray-300">Current Ability</FormLabel>
+                              <FormLabel className="text-muted-foreground">Current Ability</FormLabel>
                               <FormControl>
-                                <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
+                                <Input type="number" className="bg-input border-border text-foreground" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -982,9 +982,9 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                           name="scoutingProfile.potentialAbility"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-gray-300">Potential Ability</FormLabel>
+                              <FormLabel className="text-muted-foreground">Potential Ability</FormLabel>
                               <FormControl>
-                                <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
+                                <Input type="number" className="bg-input border-border text-foreground" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -995,9 +995,9 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                           name="scoutingProfile.teamFit"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-gray-300">Team Fit</FormLabel>
+                              <FormLabel className="text-muted-foreground">Team Fit</FormLabel>
                               <FormControl>
-                                <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
+                                <Input type="number" className="bg-input border-border text-foreground" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -1015,31 +1015,31 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 </Card>
 
                 {/* Scouting Reports Card */}
-                <Card className="bg-gray-800 border-gray-700 text-white col-span-full">
+                <Card className="bg-card border-border text-card-foreground col-span-full">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold">Scouting Reports ({player.scoutingReports.length})</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <Accordion type="single" collapsible className="w-full">
                       {player.scoutingReports.map((report) => (
-                        <AccordionItem key={report.id} value={report.id} className="border-gray-700">
-                          <AccordionTrigger className="flex items-center justify-between p-3 bg-gray-700 rounded-md hover:bg-gray-600 transition-colors">
+                        <AccordionItem key={report.id} value={report.id} className="border-border">
+                          <AccordionTrigger className="flex items-center justify-between p-3 bg-muted rounded-md hover:bg-accent transition-colors">
                             <div className="flex flex-col items-start">
-                              <p className="font-medium text-white">{report.title}</p>
-                              <p className="text-xs text-gray-400">{report.date} • {report.scout}</p>
+                              <p className="font-medium text-foreground">{report.title}</p>
+                              <p className="text-xs text-muted-foreground">{report.date} • {report.scout}</p>
                             </div>
                             <Badge className="bg-blue-500 text-white">{report.rating}</Badge>
                           </AccordionTrigger>
-                          <AccordionContent className="p-4 bg-gray-700 rounded-b-md text-gray-300 space-y-2">
+                          <AccordionContent className="p-4 bg-muted rounded-b-md text-muted-foreground space-y-2">
                             {report.keyStrengths && (
                               <div>
-                                <h4 className="font-semibold text-white mb-1">Key Strengths:</h4>
+                                <h4 className="font-semibold text-foreground mb-1">Key Strengths:</h4>
                                 <p className="text-sm">{report.keyStrengths}</p>
                               </div>
                             )}
                             {report.areasForDevelopment && (
                               <div>
-                                <h4 className="font-semibold text-white mb-1">Areas for Development:</h4>
+                                <h4 className="font-semibold text-foreground mb-1">Areas for Development:</h4>
                                 <p className="text-sm">{report.areasForDevelopment}</p>
                               </div>
                             )}
