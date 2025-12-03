@@ -60,7 +60,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { mockPlayers } from './PlayerDatabase';
 import FormationSelector from '@/components/FormationSelector'; // New import
-import { FM_FORMATIONS, calculateFormationFit, calculateFormationOverallFit } from '@/utils/formations'; // New import
+import { FM_FORMATIONS, calculateFormationFit, calculateFormationOverallFit, getStarRating } from '@/utils/formations'; // New import
 import { Formation, PlayerFormationFitPosition } from '@/types/formation'; // New import
 
 // Zod schema for player attributes
@@ -146,6 +146,7 @@ const PlayerProfile: React.FC = () => {
 
   const [selectedFormationId, setSelectedFormationId] = useState<string | null>(null); // New state for selected formation
   const [playerFormationFit, setPlayerFormationFit] = useState<PlayerFormationFitPosition[] | null>(null); // New state for player fit in formation
+  const [formationsWithFit, setFormationsWithFit] = useState<Array<Formation & { overallFit: number }>>([]); // State to hold formations with calculated fit
 
   const fileInputRef = useRef<HTMLInputElement>(null); // Ref for hidden file input
 
@@ -196,17 +197,18 @@ const PlayerProfile: React.FC = () => {
         areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
       });
 
-      // Calculate and set the best fitting formation by default
       let bestFormationId: string | null = null;
       let highestFitScore = -1;
-
-      FM_FORMATIONS.forEach(formation => {
+      const calculatedFormationsWithFit = FM_FORMATIONS.map(formation => {
         const fitScore = calculateFormationOverallFit(currentPlayer, formation);
         if (fitScore > highestFitScore) {
           highestFitScore = fitScore;
           bestFormationId = formation.id;
         }
+        return { ...formation, overallFit: fitScore };
       });
+
+      setFormationsWithFit(calculatedFormationsWithFit);
       setSelectedFormationId(bestFormationId);
     }
     setIsEditMode(false);
@@ -668,9 +670,10 @@ const PlayerProfile: React.FC = () => {
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg font-semibold">Player Positions</CardTitle>
                     <FormationSelector
-                      formations={FM_FORMATIONS}
+                      formations={formationsWithFit}
                       selectedFormationId={selectedFormationId}
                       onSelectFormation={setSelectedFormationId}
+                      getStarRating={getStarRating}
                     />
                   </CardHeader>
                   <CardContent className="flex items-start justify-center h-full p-4">

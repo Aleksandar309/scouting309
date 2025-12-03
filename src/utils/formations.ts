@@ -147,7 +147,7 @@ export const calculateFormationFit = (player: Player, formation: Formation): Pla
   return playerFitPositions;
 };
 
-// New function to calculate overall formation fit for a player
+// Function to calculate overall formation fit for a player
 export const calculateFormationOverallFit = (player: Player, formation: Formation): number => {
   const playerFitPositions = calculateFormationFit(player, formation);
   let totalRating = 0;
@@ -166,4 +166,14 @@ export const calculateFormationOverallFit = (player: Player, formation: Formatio
 
   if (totalPossibleRating === 0) return 0;
   return Math.round((totalRating / totalPossibleRating) * 100);
+};
+
+// Function to get star rating based on overall fit percentage (0-100)
+export const getStarRating = (overallFit: number): number => {
+  if (overallFit < 17) return 0.5;
+  if (overallFit < 34) return 1;
+  if (overallFit < 51) return 1.5;
+  if (overallFit < 68) return 2;
+  if (overallFit < 85) return 2.5;
+  return 3;
 };
