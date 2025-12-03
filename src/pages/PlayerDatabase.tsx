@@ -29,8 +29,8 @@ import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import PlayerCard from '@/components/PlayerCard';
 import { ThemeToggle } from "@/components/ThemeToggle";
-import AddPlayerForm from '@/components/AddPlayerForm'; // New import
-import { ALL_ATTRIBUTE_NAMES } from '@/utils/player-attributes'; // New import
+import AddPlayerForm from '@/components/AddPlayerForm';
+import { ALL_ATTRIBUTE_NAMES } from '@/utils/player-attributes';
 
 interface PlayerDatabaseProps {
   players: Player[];
@@ -84,20 +84,24 @@ const columns: ColumnDef<Player>[] = [
     accessorKey: "name",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-white hover:bg-gray-700"
-        >
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <TableHead className="sticky left-0 z-10 bg-gray-800 text-gray-300"> {/* Added sticky classes */}
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="text-white hover:bg-gray-700"
+          >
+            Name
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </TableHead>
       );
     },
     cell: ({ row }) => (
-      <Link to={`/player/${row.original.id}`} className="text-blue-400 hover:underline">
-        {row.getValue("name")}
-      </Link>
+      <TableCell className="sticky left-0 z-10 bg-gray-800 text-gray-200"> {/* Added sticky classes */}
+        <Link to={`/player/${row.original.id}`} className="text-blue-400 hover:underline">
+          {row.getValue("name")}
+        </Link>
+      </TableCell>
     ),
   },
   {
@@ -332,14 +336,21 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                   <TableRow key={headerGroup.id} className="border-gray-700">
                     {headerGroup.headers.map((header) => {
                       return (
-                        <TableHead key={header.id} className="text-gray-300">
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                        </TableHead>
+                        <React.Fragment key={header.id}>
+                          {header.id === 'name' ? (
+                            // Render the sticky header directly here
+                            flexRender(header.column.columnDef.header, header.getContext())
+                          ) : (
+                            <TableHead className="text-gray-300">
+                              {header.isPlaceholder
+                                ? null
+                                : flexRender(
+                                    header.column.columnDef.header,
+                                    header.getContext()
+                                  )}
+                            </TableHead>
+                          )}
+                        </React.Fragment>
                       );
                     })}
                   </TableRow>
@@ -354,9 +365,16 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                       className="border-gray-700 hover:bg-gray-700"
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="text-gray-200">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
+                        <React.Fragment key={cell.id}>
+                          {cell.column.id === 'name' ? (
+                            // Render the sticky cell directly here
+                            flexRender(cell.column.columnDef.cell, cell.getContext())
+                          ) : (
+                            <TableCell className="text-gray-200">
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </TableCell>
+                          )}
+                        </React.Fragment>
                       ))}
                     </TableRow>
                   ))
@@ -372,7 +390,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {players.map((player) => ( // Use the state variable from props
+            {players.map((player) => (
               <PlayerCard key={player.id} player={player} />
             ))}
           </div>

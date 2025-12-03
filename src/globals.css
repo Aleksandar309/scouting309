@@ -99,3 +99,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom styles for sticky table columns */
+.sticky-column-header {
+  position: sticky;
+  left: 0;
+  z-index: 10; /* Ensure it stays above other scrolling content */
+  background-color: hsl(var(--background)); /* Match table header background */
+}
+
+.sticky-column-cell {
+  position: sticky;
+  left: 0;
+  z-index: 5; /* Slightly lower z-index than header, but still above scrolling cells */
+  background-color: hsl(var(--card)); /* Match table row background */
+}
+
+/* Adjust background for hover state on sticky cells */
+.sticky-column-cell:hover {
+  background-color: hsl(var(--secondary)); /* Match table row hover background */
+}
