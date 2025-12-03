@@ -57,124 +57,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
-const initialMockPlayer: Player = {
-  id: "1",
-  name: "Mats Wieffer",
-  team: "Feyenoord",
-  positions: ["CDM", "CM"],
-  positionsData: [
-    { name: "CDM", type: "natural", rating: 9 },
-    { name: "CM", type: "alternative", rating: 8 },
-    { name: "CB", type: "tertiary", rating: 6 },
-  ],
-  priorityTarget: true,
-  criticalPriority: true,
-  nationality: "Netherlands",
-  age: 26,
-  value: "€25M",
-  footed: "Right Footed",
-  details: {
-    height: "188 cm",
-    weight: "78 kg",
-    league: "Eredivisie",
-    contractExpiry: "Jun 2027",
-    wageDemands: "60-80k/week",
-    agent: "SEG Football",
-    notes: "Elite ball-winning midfielder. Perfect profile for Brighton's system. Strong in duels, excellent reading of the game.",
-  },
-  scoutingProfile: {
-    overall: 9,
-    potential: 9,
-    brightonFit: 10,
-    currentAbility: 8,
-    potentialAbility: 9,
-    teamFit: 9,
-  },
-  technical: [
-    { name: "First Touch", rating: 9 },
-    { name: "Passing Range", rating: 9 },
-    { name: "Ball Striking", rating: 8 },
-    { name: "Dribbling", rating: 7 },
-    { name: "Crossing", rating: 6 },
-    { name: "Aerial Ability", rating: 8 },
-    { name: "Tackling", rating: 8 },
-    { name: "Finishing", rating: 7 },
-  ],
-  tactical: [
-    { name: "Positioning", rating: 9 },
-    { name: "Decision Making", rating: 9 },
-    { name: "Game Intelligence", rating: 9 },
-    { name: "Off-Ball Movement", rating: 9 },
-    { name: "Pressing", rating: 9 },
-    { name: "Defensive Awareness", rating: 9 },
-    { name: "Vision", rating: 9 },
-  ],
-  physical: [
-    { name: "Pace", rating: 8 },
-    { name: "Acceleration", rating: 8 },
-    { name: "Strength", rating: 9 },
-    { name: "Stamina", rating: 9 },
-    { name: "Agility", rating: 8 },
-    { name: "Recovery", rating: 9 },
-  ],
-  mentalPsychology: [
-    { name: "Composure", rating: 9 },
-    { name: "Leadership", rating: 9 },
-    { name: "Work Rate", rating: 9 },
-    { name: "Concentration", rating: 9 },
-    { name: "Coachability", rating: 9 },
-    { name: "Resilience", rating: 9 },
-  ],
-  setPieces: [
-    { name: "Corners", rating: 7 },
-    { name: "Free Kicks", rating: 8 },
-    { name: "Penalties", rating: 9 },
-    { name: "Long Throws", rating: 6 },
-    { name: "Defending corners", rating: 7 },
-  ],
-  hidden: [
-    { name: "Consistency", rating: 15 },
-    { name: "Important Matches", rating: 16 },
-    { name: "Versatility", rating: 14 },
-    { name: "Dirtiness", rating: 8 },
-    { name: "Injury Proneness", rating: 5 },
-    { name: "Adaptability", rating: 17 },
-    { name: "Ambition", rating: 18 },
-    { name: "Loyalty", rating: 15 },
-  ],
-  keyStrengths: [
-    "Exceptional reading of the game and anticipation.",
-    "Wins possession in dangerous areas consistently.",
-    "Distribution under pressure is elite - rarely loses the ball.",
-    "Commands the midfield zone with authority.",
-  ],
-  areasForDevelopment: [
-    "Could improve final third creativity.",
-    "Occasional tendency to be over-aggressive in challenges.",
-    "Long-range shooting needs work.",
-  ],
-  scoutingReports: [
-    {
-      id: "rep1",
-      date: "Dec 2, 2025",
-      scout: "Mia Scout",
-      rating: 10,
-      title: "Initial Assessment",
-      keyStrengths: "Excellent vision, strong passing, good leadership.",
-      areasForDevelopment: "Needs to improve aerial duels, occasional lapses in concentration."
-    },
-    {
-      id: "rep2",
-      date: "Nov 10, 2024",
-      scout: "James Clark",
-      rating: 9,
-      title: "Feyenoord vs Ajax Match Report",
-      keyStrengths: "Dominant in midfield, crucial interceptions, calm under pressure.",
-      areasForDevelopment: "Sometimes holds onto the ball too long, needs to release quicker."
-    },
-  ],
-};
+import { mockPlayers } from './PlayerDatabase'; // Import mockPlayers
 
 // Zod schema for editable player fields
 const formSchema = z.object({
@@ -230,36 +113,21 @@ const getHighlightType = (
 const PlayerProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [player, setPlayer] = useState<Player>(initialMockPlayer);
+  const foundPlayer = mockPlayers.find(p => p.id === id);
+
+  const [player, setPlayer] = useState<Player | null>(foundPlayer || null);
   const [isReportFormOpen, setIsReportFormOpen] = useState(false);
   const [isShortlistFormOpen, setIsShortlistFormOpen] = useState(false);
   const [showScoutingProfile, setShowScoutingProfile] = useState(true);
-  const [isEditMode, setIsEditMode] = useState(false); // New state for edit mode
+  const [isEditMode, setIsEditMode] = useState(false);
 
-  // State for role details dialog
   const [isRoleDetailsDialogOpen, setIsRoleDetailsDialogOpen] = useState(false);
   const [selectedPositionForRoles, setSelectedPositionForRoles] = useState<string | null>(null);
   const [selectedFmRole, setSelectedFmRole] = useState<FmRole | null>(null);
 
   const form = useForm<PlayerFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: player.name,
-      team: player.team,
-      nationality: player.nationality,
-      age: player.age,
-      value: player.value,
-      footed: player.footed,
-      details: player.details,
-      scoutingProfile: player.scoutingProfile,
-      keyStrengths: player.keyStrengths.join('\n'), // Convert array to string for textarea
-      areasForDevelopment: player.areasForDevelopment.join('\n'), // Convert array to string for textarea
-    },
-  });
-
-  // Reset form values when player changes or edit mode is toggled
-  React.useEffect(() => {
-    form.reset({
+    defaultValues: player ? {
       name: player.name,
       team: player.team,
       nationality: player.nationality,
@@ -270,7 +138,24 @@ const PlayerProfile: React.FC = () => {
       scoutingProfile: player.scoutingProfile,
       keyStrengths: player.keyStrengths.join('\n'),
       areasForDevelopment: player.areasForDevelopment.join('\n'),
-    });
+    } : undefined,
+  });
+
+  React.useEffect(() => {
+    if (player) {
+      form.reset({
+        name: player.name,
+        team: player.team,
+        nationality: player.nationality,
+        age: player.age,
+        value: player.value,
+        footed: player.footed,
+        details: player.details,
+        scoutingProfile: player.scoutingProfile,
+        keyStrengths: player.keyStrengths.join('\n'),
+        areasForDevelopment: player.areasForDevelopment.join('\n'),
+      });
+    }
   }, [player, isEditMode, form]);
 
   if (!player) {
@@ -278,16 +163,19 @@ const PlayerProfile: React.FC = () => {
   }
 
   const handleAddReport = (newReport: Player["scoutingReports"][0]) => {
-    setPlayer((prevPlayer) => ({
-      ...prevPlayer,
-      scoutingReports: [...prevPlayer.scoutingReports, newReport],
-    }));
+    setPlayer((prevPlayer) => {
+      if (!prevPlayer) return null;
+      return {
+        ...prevPlayer,
+        scoutingReports: [...prevPlayer.scoutingReports, newReport],
+      };
+    });
   };
 
   const handlePositionClick = (positionType: string) => {
     setSelectedPositionForRoles(positionType);
     setIsRoleDetailsDialogOpen(true);
-    setSelectedFmRole(null); // Reset selected role when opening for a new position
+    setSelectedFmRole(null);
   };
 
   const handleRoleSelect = (role: FmRole | null) => {
@@ -295,12 +183,15 @@ const PlayerProfile: React.FC = () => {
   };
 
   const onSubmit = (values: PlayerFormValues) => {
-    setPlayer((prevPlayer) => ({
-      ...prevPlayer,
-      ...values,
-      keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
-      areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
-    }));
+    setPlayer((prevPlayer) => {
+      if (!prevPlayer) return null;
+      return {
+        ...prevPlayer,
+        ...values,
+        keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
+        areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
+      };
+    });
     setIsEditMode(false);
   };
 
