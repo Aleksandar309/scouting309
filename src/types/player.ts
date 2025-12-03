@@ -21,6 +21,7 @@ export interface Player {
   age: number;
   value: string;
   footed: string;
+  avatarUrl?: string; // NEW: Optional field for player avatar image URL
   details: {
     height: string;
     weight: string;

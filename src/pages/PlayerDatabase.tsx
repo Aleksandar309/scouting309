@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import {
   ColumnDef,
   flexRender,
-  getCoreRowModel, // Ispravljeno: getCoreRowModel
+  getCoreRowModel,
   useReactTable,
   getSortedRowModel,
   SortingState,
@@ -44,6 +44,7 @@ export const mockPlayers: Player[] = [
     age: 26,
     value: "€25M",
     footed: "Right Footed",
+    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=MW", // Added avatarUrl
     details: {
       height: "188 cm",
       weight: "78 kg",
@@ -161,6 +162,7 @@ export const mockPlayers: Player[] = [
     age: 23,
     value: "€45M",
     footed: "Left Footed",
+    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=MK", // Added avatarUrl
     details: {
       height: "177 cm",
       weight: "71 kg",
@@ -270,6 +272,7 @@ export const mockPlayers: Player[] = [
     age: 21,
     value: "€100M",
     footed: "Right Footed",
+    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=FW", // Added avatarUrl
     details: {
       height: "177 cm",
       weight: "70 kg",
@@ -377,6 +380,7 @@ export const mockPlayers: Player[] = [
     age: 21,
     value: "€50M",
     footed: "Left Footed",
+    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=LC", // Added avatarUrl
     details: {
       height: "187 cm",
       weight: "80 kg",
@@ -484,6 +488,7 @@ export const mockPlayers: Player[] = [
     age: 19,
     value: "€60M",
     footed: "Right Footed",
+    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=EF", // Added avatarUrl
     details: {
       height: "188 cm",
       weight: "80 kg",
@@ -750,7 +755,7 @@ const PlayerDatabase: React.FC = () => {
   const table = useReactTable({
     data: mockPlayers,
     columns,
-    getCoreRowModel: getCoreRowModel(), // Ispravljeno ovde
+    getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     state: {

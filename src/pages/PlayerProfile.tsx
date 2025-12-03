@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +27,7 @@ import {
   Edit,
   Save,
   XCircle,
+  Camera, // Added Camera icon for upload
 } from "lucide-react";
 import { Player, PlayerAttribute } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
@@ -67,6 +68,7 @@ const formSchema = z.object({
   age: z.coerce.number().min(1, { message: "Age must be at least 1." }),
   value: z.string().min(2, { message: "Value must be specified." }),
   footed: z.string().min(2, { message: "Footed must be specified." }),
+  avatarUrl: z.string().optional(), // NEW: Add avatarUrl to form schema
   details: z.object({
     height: z.string().min(2, { message: "Height must be specified." }),
     weight: z.string().min(2, { message: "Weight must be specified." }),
@@ -127,6 +129,8 @@ const PlayerProfile: React.FC = () => {
   const [selectedPositionForRoles, setSelectedPositionForRoles] = useState<string | null>(null);
   const [selectedFmRole, setSelectedFmRole] = useState<FmRole | null>(null);
 
+  const fileInputRef = useRef<HTMLInputElement>(null); // Ref for hidden file input
+
   const form = useForm<PlayerFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: currentPlayer ? {
@@ -136,6 +140,7 @@ const PlayerProfile: React.FC = () => {
       age: currentPlayer.age,
       value: currentPlayer.value,
       footed: currentPlayer.footed,
+      avatarUrl: currentPlayer.avatarUrl || '', // Include avatarUrl in default values
       details: currentPlayer.details,
       scoutingProfile: currentPlayer.scoutingProfile,
       keyStrengths: currentPlayer.keyStrengths.join('\n'),
@@ -154,6 +159,7 @@ const PlayerProfile: React.FC = () => {
         age: currentPlayer.age,
         value: currentPlayer.value,
         footed: currentPlayer.footed,
+        avatarUrl: currentPlayer.avatarUrl || '', // Reset avatarUrl
         details: currentPlayer.details,
         scoutingProfile: currentPlayer.scoutingProfile,
         keyStrengths: currentPlayer.keyStrengths.join('\n'),
@@ -188,6 +194,17 @@ const PlayerProfile: React.FC = () => {
     setSelectedFmRole(role);
   };
 
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue('avatarUrl', reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const onSubmit = (values: PlayerFormValues) => {
     setPlayer((prevPlayer) => {
       if (!prevPlayer) return null;
@@ -196,6 +213,7 @@ const PlayerProfile: React.FC = () => {
         ...values,
         keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
         areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
+        avatarUrl: values.avatarUrl, // Save the new avatar URL
       };
     });
     setIsEditMode(false);
@@ -225,8 +243,36 @@ const PlayerProfile: React.FC = () => {
             {/* Header Section */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
-                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-2xl font-bold mr-4">
-                  {player.name.charAt(0)}
+                {/* Avatar/Initial Display */}
+                <div className="relative w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mr-4 overflow-hidden bg-blue-600">
+                  {isEditMode ? (
+                    <>
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleImageChange}
+                        className="hidden"
+                        accept="image/*"
+                      />
+                      <div
+                        className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white cursor-pointer hover:bg-opacity-70 transition-opacity"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <Camera className="h-8 w-8" />
+                      </div>
+                      {form.watch('avatarUrl') ? (
+                        <img src={form.watch('avatarUrl')} alt="Player Avatar" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-white">{player.name.charAt(0)}</span>
+                      )}
+                    </>
+                  ) : (
+                    player.avatarUrl ? (
+                      <img src={player.avatarUrl} alt="Player Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-white">{player.name.charAt(0)}</span>
+                    )
+                  )}
                 </div>
                 <div>
                   {isEditMode ? (
@@ -378,478 +424,478 @@ const PlayerProfile: React.FC = () => {
                       <FormItem className="inline-block">
                         <FormControl>
                           <Input className="bg-gray-700 border-gray-600 text-white h-6 w-28" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ) : (
-                  player.footed
-                )}
-              </span>
-            </div>
-
-            {/* Main Content Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Player Details Card */}
-              <Card className="bg-gray-800 border-gray-700 text-white">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold">Player Details</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3 text-gray-300">
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                    <div className="flex items-center">
-                      <Maximize className="mr-2 h-4 w-4 text-gray-500" />
-                      {isEditMode ? (
-                        <FormField
-                          control={form.control}
-                          name="details.height"
-                          render={({ field }) => (
-                            <FormItem className="inline-block">
-                              <FormControl>
-                                <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      ) : (
-                        <span className="font-medium text-white">{player.details.height}</span>
-                      )}
-                    </div>
-                    <div className="flex items-center">
-                      <Weight className="mr-2 h-4 w-4 text-gray-500" />
-                      {isEditMode ? (
-                        <FormField
-                          control={form.control}
-                          name="details.weight"
-                          render={({ field }) => (
-                            <FormItem className="inline-block">
-                              <FormControl>
-                                <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      ) : (
-                        <span className="font-medium text-white">{player.details.weight}</span>
-                      )}
-                    </div>
-                    <div className="flex items-center">
-                      <Trophy className="mr-2 h-4 w-4 text-gray-500" />
-                      {isEditMode ? (
-                        <FormField
-                          control={form.control}
-                          name="details.league"
-                          render={({ field }) => (
-                            <FormItem className="inline-block">
-                              <FormControl>
-                                <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      ) : (
-                        <span className="font-medium text-white">{player.details.league}</span>
-                      )}
-                    </div>
-                    <div className="flex items-center">
-                      <CalendarDays className="mr-2 h-4 w-4 text-gray-500" />
-                      {isEditMode ? (
-                        <FormField
-                          control={form.control}
-                          name="details.contractExpiry"
-                          render={({ field }) => (
-                            <FormItem className="inline-block">
-                              <FormControl>
-                                <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      ) : (
-                        <span className="font-medium text-white">{player.details.contractExpiry}</span>
-                      )}
-                    </div>
-                    <div className="flex items-center">
-                      <DollarSign className="mr-2 h-4 w-4 text-gray-500" />
-                      {isEditMode ? (
-                        <FormField
-                          control={form.control}
-                          name="details.wageDemands"
-                          render={({ field }) => (
-                            <FormItem className="inline-block">
-                              <FormControl>
-                                <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      ) : (
-                        <span className="font-medium text-white">{player.details.wageDemands}</span>
-                      )}
-                    </div>
-                    <div className="flex items-center">
-                      <Briefcase className="mr-2 h-4 w-4 text-gray-500" />
-                      {isEditMode ? (
-                        <FormField
-                          control={form.control}
-                          name="details.agent"
-                          render={({ field }) => (
-                            <FormItem className="inline-block">
-                              <FormControl>
-                                <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      ) : (
-                        <span className="font-medium text-white">{player.details.agent}</span>
-                      )}
-                    </div>
-                  </div>
-                  {isEditMode ? (
-                    <FormField
-                      control={form.control}
-                      name="details.notes"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-gray-300">Notes</FormLabel>
-                          <FormControl>
-                            <Textarea className="bg-gray-700 border-gray-600 text-white min-h-[80px]" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   ) : (
-                    <p className="text-sm mt-4 border-t border-gray-700 pt-3">{player.details.notes}</p>
+                    player.footed
                   )}
-                </CardContent>
-              </Card>
+                </span>
+              </div>
 
-              {/* Player Pitch Card */}
-              <Card className="bg-gray-800 border-gray-700 text-white">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold">Player Positions</CardTitle>
-                </CardHeader>
-                <CardContent className="flex items-start justify-center h-full p-4">
-                  <PlayerPitch positionsData={player.positionsData} onPositionClick={handlePositionClick} />
-                </CardContent>
-              </Card>
+              {/* Main Content Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Player Details Card */}
+                <Card className="bg-gray-800 border-gray-700 text-white">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold">Player Details</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3 text-gray-300">
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                      <div className="flex items-center">
+                        <Maximize className="mr-2 h-4 w-4 text-gray-500" />
+                        {isEditMode ? (
+                          <FormField
+                            control={form.control}
+                            name="details.height"
+                            render={({ field }) => (
+                              <FormItem className="inline-block">
+                                <FormControl>
+                                  <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        ) : (
+                          <span className="font-medium text-white">{player.details.height}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center">
+                        <Weight className="mr-2 h-4 w-4 text-gray-500" />
+                        {isEditMode ? (
+                          <FormField
+                            control={form.control}
+                            name="details.weight"
+                            render={({ field }) => (
+                              <FormItem className="inline-block">
+                                <FormControl>
+                                  <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        ) : (
+                          <span className="font-medium text-white">{player.details.weight}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center">
+                        <Trophy className="mr-2 h-4 w-4 text-gray-500" />
+                        {isEditMode ? (
+                          <FormField
+                            control={form.control}
+                            name="details.league"
+                            render={({ field }) => (
+                              <FormItem className="inline-block">
+                                <FormControl>
+                                  <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        ) : (
+                          <span className="font-medium text-white">{player.details.league}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center">
+                        <CalendarDays className="mr-2 h-4 w-4 text-gray-500" />
+                        {isEditMode ? (
+                          <FormField
+                            control={form.control}
+                            name="details.contractExpiry"
+                            render={({ field }) => (
+                              <FormItem className="inline-block">
+                                <FormControl>
+                                  <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        ) : (
+                          <span className="font-medium text-white">{player.details.contractExpiry}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center">
+                        <DollarSign className="mr-2 h-4 w-4 text-gray-500" />
+                        {isEditMode ? (
+                          <FormField
+                            control={form.control}
+                            name="details.wageDemands"
+                            render={({ field }) => (
+                              <FormItem className="inline-block">
+                                <FormControl>
+                                  <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        ) : (
+                          <span className="font-medium text-white">{player.details.wageDemands}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center">
+                        <Briefcase className="mr-2 h-4 w-4 text-gray-500" />
+                        {isEditMode ? (
+                          <FormField
+                            control={form.control}
+                            name="details.agent"
+                            render={({ field }) => (
+                              <FormItem className="inline-block">
+                                <FormControl>
+                                  <Input className="bg-gray-700 border-gray-600 text-white h-6 w-24" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        ) : (
+                          <span className="font-medium text-white">{player.details.agent}</span>
+                        )}
+                      </div>
+                    </div>
+                    {isEditMode ? (
+                      <FormField
+                        control={form.control}
+                        name="details.notes"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-300">Notes</FormLabel>
+                            <FormControl>
+                              <Textarea className="bg-gray-700 border-gray-600 text-white min-h-[80px]" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    ) : (
+                      <p className="text-sm mt-4 border-t border-gray-700 pt-3">{player.details.notes}</p>
+                    )}
+                  </CardContent>
+                </Card>
 
-              {/* Scouting Profile / Statistics Card (now only Radar Chart) */}
-              <Card className="bg-gray-800 border-gray-700 text-white col-span-1 md:col-span-1 lg:col-span-1">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-lg font-semibold">
-                    {showScoutingProfile ? "Attribute Radar" : "Player Statistics"}
-                  </CardTitle>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowScoutingProfile(!showScoutingProfile)}
-                    className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
-                  >
-                    {showScoutingProfile ? (
+                {/* Player Pitch Card */}
+                <Card className="bg-gray-800 border-gray-700 text-white">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold">Player Positions</CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex items-start justify-center h-full p-4">
+                    <PlayerPitch positionsData={player.positionsData} onPositionClick={handlePositionClick} />
+                  </CardContent>
+                </Card>
+
+                {/* Scouting Profile / Statistics Card (now only Radar Chart) */}
+                <Card className="bg-gray-800 border-gray-700 text-white col-span-1 md:col-span-1 lg:col-span-1">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-lg font-semibold">
+                      {showScoutingProfile ? "Attribute Radar" : "Player Statistics"}
+                    </CardTitle>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowScoutingProfile(!showScoutingProfile)}
+                      className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+                    >
+                      {showScoutingProfile ? (
+                        <>
+                          <BarChart2 className="mr-2 h-4 w-4" /> View Statistics
+                        </>
+                      ) : (
+                        <>
+                          <Radar className="mr-2 h-4 w-4" /> View Radar
+                        </>
+                      )}
+                    </Button>
+                  </CardHeader>
+                  {showScoutingProfile ? (
+                    <CardContent className="flex items-start justify-center h-full p-4">
+                      <RadarChart playerAttributes={attributesForRadar} />
+                    </CardContent>
+                  ) : (
+                    <PlayerStatistics />
+                  )}
+                </Card>
+
+                {/* Technical Attributes Card */}
+                <Card className="bg-gray-800 border-gray-700 text-white">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold flex items-center"><User className="mr-2 h-5 w-5" /> Technical</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {player.technical.map((attr) => (
+                      <AttributeRating
+                        key={attr.name}
+                        name={attr.name}
+                        rating={attr.rating}
+                        highlightType={getHighlightType(attr.name, "technical", selectedFmRole)}
+                      />
+                    ))}
+                  </CardContent>
+                </Card>
+
+                {/* Set Pieces Attributes Card */}
+                <Card className="bg-gray-800 border-gray-700 text-white">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold flex items-center"><Target className="mr-2 h-5 w-5" /> Set Pieces</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {player.setPieces.map((attr) => (
+                      <AttributeRating
+                        key={attr.name}
+                        name={attr.name}
+                        rating={attr.rating}
+                        highlightType={getHighlightType(attr.name, "setPieces", selectedFmRole)}
+                      />
+                    ))}
+                  </CardContent>
+                </Card>
+
+                {/* Tactical Attributes Card */}
+                <Card className="bg-gray-800 border-gray-700 text-white">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold flex items-center"><MapPin className="mr-2 h-5 w-5" /> Tactical</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {player.tactical.map((attr) => (
+                      <AttributeRating
+                        key={attr.name}
+                        name={attr.name}
+                        rating={attr.rating}
+                        highlightType={getHighlightType(attr.name, "tactical", selectedFmRole)}
+                      />
+                    ))}
+                  </CardContent>
+                </Card>
+
+                {/* Physical Attributes Card */}
+                <Card className="bg-gray-800 border-gray-700 text-white">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold flex items-center"><Scale className="mr-2 h-5 w-5" /> Physical</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {player.physical.map((attr) => (
+                      <AttributeRating
+                        key={attr.name}
+                        name={attr.name}
+                        rating={attr.rating}
+                        highlightType={getHighlightType(attr.name, "physical", selectedFmRole)}
+                      />
+                    ))}
+                  </CardContent>
+                </Card>
+
+                {/* Mental & Psychology Attributes Card */}
+                <Card className="bg-gray-800 border-gray-700 text-white">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold flex items-center"><User className="mr-2 h-5 w-5" /> Mental & Psychology</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {player.mentalPsychology.map((attr) => (
+                      <AttributeRating
+                        key={attr.name}
+                        name={attr.name}
+                        rating={attr.rating}
+                        highlightType={getHighlightType(attr.name, "mentalPsychology", selectedFmRole)}
+                      />
+                    ))}
+                  </CardContent>
+                </Card>
+
+                {/* Hidden Attributes Card */}
+                <Card className="bg-gray-800 border-gray-700 text-white">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold flex items-center"><EyeOff className="mr-2 h-5 w-5" /> Hidden Attributes</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {player.hidden.map((attr) => (
+                      <AttributeRating
+                        key={attr.name}
+                        name={attr.name}
+                        rating={attr.rating}
+                        highlightType={getHighlightType(attr.name, "hidden", selectedFmRole)}
+                      />
+                    ))}
+                  </CardContent>
+                </Card>
+
+                {/* Key Strengths Card */}
+                <Card className="bg-gray-800 border-gray-700 text-white">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold">Key Strengths</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-gray-300 text-sm">
+                    {isEditMode ? (
+                      <FormField
+                        control={form.control}
+                        name="keyStrengths"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Textarea className="bg-gray-700 border-gray-600 text-white min-h-[100px]" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    ) : (
+                      player.keyStrengths.map((strength, index) => (
+                        <p key={index}>• {strength}</p>
+                      ))
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Areas for Development Card */}
+                <Card className="bg-gray-800 border-gray-700 text-white">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold">Areas for Development</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-gray-300 text-sm">
+                    {isEditMode ? (
+                      <FormField
+                        control={form.control}
+                        name="areasForDevelopment"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Textarea className="bg-gray-700 border-gray-600 text-white min-h-[100px]" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    ) : (
+                      player.areasForDevelopment.map((area, index) => (
+                        <p key={index}>• {area}</p>
+                      ))
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Overview Card */}
+                <Card className="bg-gray-800 border-gray-700 text-white">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold flex items-center"><Gauge className="mr-2 h-5 w-5" /> Overview</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {isEditMode ? (
                       <>
-                        <BarChart2 className="mr-2 h-4 w-4" /> View Statistics
+                        <FormField
+                          control={form.control}
+                          name="scoutingProfile.currentAbility"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-gray-300">Current Ability</FormLabel>
+                              <FormControl>
+                                <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="scoutingProfile.potentialAbility"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-gray-300">Potential Ability</FormLabel>
+                              <FormControl>
+                                <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="scoutingProfile.teamFit"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-gray-300">Team Fit</FormLabel>
+                              <FormControl>
+                                <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
                       </>
                     ) : (
                       <>
-                        <Radar className="mr-2 h-4 w-4" /> View Radar
+                        <AttributeRating name="Current Ability" rating={player.scoutingProfile.currentAbility} />
+                        <AttributeRating name="Potential Ability" rating={player.scoutingProfile.potentialAbility} />
+                        <AttributeRating name="Team Fit" rating={player.scoutingProfile.teamFit} />
                       </>
                     )}
-                  </Button>
-                </CardHeader>
-                {showScoutingProfile ? (
-                  <CardContent className="flex items-start justify-center h-full p-4">
-                    <RadarChart playerAttributes={attributesForRadar} />
                   </CardContent>
-                ) : (
-                  <PlayerStatistics />
-                )}
-              </Card>
+                </Card>
 
-              {/* Technical Attributes Card */}
-              <Card className="bg-gray-800 border-gray-700 text-white">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold flex items-center"><User className="mr-2 h-5 w-5" /> Technical</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {player.technical.map((attr) => (
-                    <AttributeRating
-                      key={attr.name}
-                      name={attr.name}
-                      rating={attr.rating}
-                      highlightType={getHighlightType(attr.name, "technical", selectedFmRole)}
-                    />
-                  ))}
-                </CardContent>
-              </Card>
-
-              {/* Set Pieces Attributes Card */}
-              <Card className="bg-gray-800 border-gray-700 text-white">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold flex items-center"><Target className="mr-2 h-5 w-5" /> Set Pieces</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {player.setPieces.map((attr) => (
-                    <AttributeRating
-                      key={attr.name}
-                      name={attr.name}
-                      rating={attr.rating}
-                      highlightType={getHighlightType(attr.name, "setPieces", selectedFmRole)}
-                    />
-                  ))}
-                </CardContent>
-              </Card>
-
-              {/* Tactical Attributes Card */}
-              <Card className="bg-gray-800 border-gray-700 text-white">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold flex items-center"><MapPin className="mr-2 h-5 w-5" /> Tactical</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {player.tactical.map((attr) => (
-                    <AttributeRating
-                      key={attr.name}
-                      name={attr.name}
-                      rating={attr.rating}
-                      highlightType={getHighlightType(attr.name, "tactical", selectedFmRole)}
-                    />
-                  ))}
-                </CardContent>
-              </Card>
-
-              {/* Physical Attributes Card */}
-              <Card className="bg-gray-800 border-gray-700 text-white">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold flex items-center"><Scale className="mr-2 h-5 w-5" /> Physical</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {player.physical.map((attr) => (
-                    <AttributeRating
-                      key={attr.name}
-                      name={attr.name}
-                      rating={attr.rating}
-                      highlightType={getHighlightType(attr.name, "physical", selectedFmRole)}
-                    />
-                  ))}
-                </CardContent>
-              </Card>
-
-              {/* Mental & Psychology Attributes Card */}
-              <Card className="bg-gray-800 border-gray-700 text-white">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold flex items-center"><User className="mr-2 h-5 w-5" /> Mental & Psychology</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {player.mentalPsychology.map((attr) => (
-                    <AttributeRating
-                      key={attr.name}
-                      name={attr.name}
-                      rating={attr.rating}
-                      highlightType={getHighlightType(attr.name, "mentalPsychology", selectedFmRole)}
-                    />
-                  ))}
-                </CardContent>
-              </Card>
-
-              {/* Hidden Attributes Card */}
-              <Card className="bg-gray-800 border-gray-700 text-white">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold flex items-center"><EyeOff className="mr-2 h-5 w-5" /> Hidden Attributes</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {player.hidden.map((attr) => (
-                    <AttributeRating
-                      key={attr.name}
-                      name={attr.name}
-                      rating={attr.rating}
-                      highlightType={getHighlightType(attr.name, "hidden", selectedFmRole)}
-                    />
-                  ))}
-                </CardContent>
-              </Card>
-
-              {/* Key Strengths Card */}
-              <Card className="bg-gray-800 border-gray-700 text-white">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold">Key Strengths</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 text-gray-300 text-sm">
-                  {isEditMode ? (
-                    <FormField
-                      control={form.control}
-                      name="keyStrengths"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Textarea className="bg-gray-700 border-gray-600 text-white min-h-[100px]" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  ) : (
-                    player.keyStrengths.map((strength, index) => (
-                      <p key={index}>• {strength}</p>
-                    ))
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Areas for Development Card */}
-              <Card className="bg-gray-800 border-gray-700 text-white">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold">Areas for Development</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 text-gray-300 text-sm">
-                  {isEditMode ? (
-                    <FormField
-                      control={form.control}
-                      name="areasForDevelopment"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Textarea className="bg-gray-700 border-gray-600 text-white min-h-[100px]" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  ) : (
-                    player.areasForDevelopment.map((area, index) => (
-                      <p key={index}>• {area}</p>
-                    ))
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Overview Card */}
-              <Card className="bg-gray-800 border-gray-700 text-white">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold flex items-center"><Gauge className="mr-2 h-5 w-5" /> Overview</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {isEditMode ? (
-                    <>
-                      <FormField
-                        control={form.control}
-                        name="scoutingProfile.currentAbility"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-300">Current Ability</FormLabel>
-                            <FormControl>
-                              <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="scoutingProfile.potentialAbility"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-300">Potential Ability</FormLabel>
-                            <FormControl>
-                              <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="scoutingProfile.teamFit"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-300">Team Fit</FormLabel>
-                            <FormControl>
-                              <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <AttributeRating name="Current Ability" rating={player.scoutingProfile.currentAbility} />
-                      <AttributeRating name="Potential Ability" rating={player.scoutingProfile.potentialAbility} />
-                      <AttributeRating name="Team Fit" rating={player.scoutingProfile.teamFit} />
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Scouting Reports Card */}
-              <Card className="bg-gray-800 border-gray-700 text-white col-span-full">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold">Scouting Reports ({player.scoutingReports.length})</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Accordion type="single" collapsible className="w-full">
-                    {player.scoutingReports.map((report) => (
-                      <AccordionItem key={report.id} value={report.id} className="border-gray-700">
-                        <AccordionTrigger className="flex items-center justify-between p-3 bg-gray-700 rounded-md hover:bg-gray-600 transition-colors">
-                          <div className="flex flex-col items-start">
-                            <p className="font-medium text-white">{report.title}</p>
-                            <p className="text-xs text-gray-400">{report.date} • {report.scout}</p>
-                          </div>
-                          <Badge className="bg-blue-500 text-white">{report.rating}</Badge>
-                        </AccordionTrigger>
-                        <AccordionContent className="p-4 bg-gray-700 rounded-b-md text-gray-300 space-y-2">
-                          {report.keyStrengths && (
-                            <div>
-                              <h4 className="font-semibold text-white mb-1">Key Strengths:</h4>
-                              <p className="text-sm">{report.keyStrengths}</p>
+                {/* Scouting Reports Card */}
+                <Card className="bg-gray-800 border-gray-700 text-white col-span-full">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold">Scouting Reports ({player.scoutingReports.length})</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Accordion type="single" collapsible className="w-full">
+                      {player.scoutingReports.map((report) => (
+                        <AccordionItem key={report.id} value={report.id} className="border-gray-700">
+                          <AccordionTrigger className="flex items-center justify-between p-3 bg-gray-700 rounded-md hover:bg-gray-600 transition-colors">
+                            <div className="flex flex-col items-start">
+                              <p className="font-medium text-white">{report.title}</p>
+                              <p className="text-xs text-gray-400">{report.date} • {report.scout}</p>
                             </div>
-                          )}
-                          {report.areasForDevelopment && (
-                            <div>
-                              <h4 className="font-semibold text-white mb-1">Areas for Development:</h4>
-                              <p className="text-sm">{report.areasForDevelopment}</p>
-                            </div>
-                          )}
-                          <Button variant="ghost" size="sm" className="text-blue-400 hover:text-blue-300 mt-2">
-                            Sign Immediately <ArrowRight className="ml-1 h-4 w-4" />
-                          </Button>
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </CardContent>
-              </Card>
-            </div>
-          </form>
-        </Form>
+                            <Badge className="bg-blue-500 text-white">{report.rating}</Badge>
+                          </AccordionTrigger>
+                          <AccordionContent className="p-4 bg-gray-700 rounded-b-md text-gray-300 space-y-2">
+                            {report.keyStrengths && (
+                              <div>
+                                <h4 className="font-semibold text-white mb-1">Key Strengths:</h4>
+                                <p className="text-sm">{report.keyStrengths}</p>
+                              </div>
+                            )}
+                            {report.areasForDevelopment && (
+                              <div>
+                                <h4 className="font-semibold text-white mb-1">Areas for Development:</h4>
+                                <p className="text-sm">{report.areasForDevelopment}</p>
+                              </div>
+                            )}
+                            <Button variant="ghost" size="sm" className="text-blue-400 hover:text-blue-300 mt-2">
+                              Sign Immediately <ArrowRight className="ml-1 h-4 w-4" />
+                            </Button>
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  </CardContent>
+                </Card>
+              </div>
+            </form>
+          </Form>
+        </div>
+
+        {/* Role Details Dialog */}
+        <Dialog open={isRoleDetailsDialogOpen} onOpenChange={setIsRoleDetailsDialogOpen}>
+          {selectedPositionForRoles && (
+            <RoleDetailsDialog
+              player={player}
+              positionType={selectedPositionForRoles}
+              onClose={() => {
+                setIsRoleDetailsDialogOpen(false);
+                setSelectedPositionForRoles(null);
+                setSelectedFmRole(null);
+              }}
+              onRoleSelect={handleRoleSelect}
+              selectedRole={selectedFmRole}
+            />
+          )}
+        </Dialog>
       </div>
-
-      {/* Role Details Dialog */}
-      <Dialog open={isRoleDetailsDialogOpen} onOpenChange={setIsRoleDetailsDialogOpen}>
-        {selectedPositionForRoles && (
-          <RoleDetailsDialog
-            player={player}
-            positionType={selectedPositionForRoles}
-            onClose={() => {
-              setIsRoleDetailsDialogOpen(false);
-              setSelectedPositionForRoles(null);
-              setSelectedFmRole(null);
-            }}
-            onRoleSelect={handleRoleSelect}
-            selectedRole={selectedFmRole}
-          />
-        )}
-      </Dialog>
-    </div>
-  );
-};
+    );
+  };
 
 export default PlayerProfile;
