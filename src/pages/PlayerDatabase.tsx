@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress"; // Import Progress component
 import { Player } from "@/types/player";
 
 const mockPlayers: Player[] = [
@@ -262,6 +263,16 @@ const columns: ColumnDef<Player>[] = [
       </Button>
     ),
     id: "overallRating",
+    cell: ({ row }) => {
+      const rating = row.original.scoutingProfile.overall;
+      const progressValue = Math.min(Math.max(rating * 10, 0), 100);
+      return (
+        <div className="flex items-center w-full">
+          <Progress value={progressValue} className="h-2 w-full bg-gray-700" indicatorClassName="bg-blue-500" />
+          <span className="ml-2 text-sm text-gray-200">{rating}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "scoutingProfile.potential",
@@ -276,6 +287,16 @@ const columns: ColumnDef<Player>[] = [
       </Button>
     ),
     id: "potentialRating",
+    cell: ({ row }) => {
+      const rating = row.original.scoutingProfile.potential;
+      const progressValue = Math.min(Math.max(rating * 10, 0), 100);
+      return (
+        <div className="flex items-center w-full">
+          <Progress value={progressValue} className="h-2 w-full bg-gray-700" indicatorClassName="bg-green-500" />
+          <span className="ml-2 text-sm text-gray-200">{rating}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "priorityTarget",
