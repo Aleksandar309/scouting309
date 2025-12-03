@@ -90,9 +90,6 @@ const formSchema = z.object({
     notes: z.string().optional(),
   }),
   scoutingProfile: z.object({
-    overall: z.coerce.number().min(1).max(10, { message: "Overall rating must be between 1 and 10." }),
-    potential: z.coerce.number().min(1).max(10, { message: "Potential rating must be between 1 and 10." }),
-    brightonFit: z.coerce.number().min(1).max(10, { message: "Brighton Fit rating must be between 1 and 10." }),
     currentAbility: z.coerce.number().min(1).max(10, { message: "Current Ability must be between 1 and 10." }),
     potentialAbility: z.coerce.number().min(1).max(10, { message: "Potential Ability must be between 1 and 10." }),
     teamFit: z.coerce.number().min(1).max(10, { message: "Team Fit must be between 1 and 10." }),

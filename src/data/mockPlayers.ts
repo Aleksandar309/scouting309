@@ -29,9 +29,6 @@ export const initialMockPlayers: Player[] = [
       notes: "Elite ball-winning midfielder. Perfect profile for Brighton's system. Strong in duels, excellent reading of the game.",
     },
     scoutingProfile: {
-      overall: 9,
-      potential: 9,
-      brightonFit: 10,
       currentAbility: 8,
       potentialAbility: 9,
       teamFit: 9,
@@ -162,9 +159,6 @@ export const initialMockPlayers: Player[] = [
       notes: "Explosive attacker with great dribbling and shooting. Can play across the front line.",
     },
     scoutingProfile: {
-      overall: 8,
-      potential: 9,
-      brightonFit: 8,
       currentAbility: 8,
       potentialAbility: 9,
       teamFit: 8,
@@ -287,9 +281,6 @@ export const initialMockPlayers: Player[] = [
       notes: "World-class talent, incredible vision and passing. Future Ballon d'Or contender.",
     },
     scoutingProfile: {
-      overall: 10,
-      potential: 10,
-      brightonFit: 9,
       currentAbility: 9,
       potentialAbility: 10,
       teamFit: 9,
@@ -410,9 +401,6 @@ export const initialMockPlayers: Player[] = [
       notes: "Strong, left-footed center-back. Excellent on the ball and good aerial presence.",
     },
     scoutingProfile: {
-      overall: 8,
-      potential: 9,
-      brightonFit: 9,
       currentAbility: 8,
       potentialAbility: 9,
       teamFit: 9,
@@ -533,9 +521,6 @@ export const initialMockPlayers: Player[] = [
       notes: "Prolific young striker with great finishing and hold-up play.",
     },
     scoutingProfile: {
-      overall: 8,
-      potential: 10,
-      brightonFit: 10,
       currentAbility: 8,
       potentialAbility: 10,
       teamFit: 10,

@@ -167,20 +167,20 @@ const columns: ColumnDef<Player>[] = [
     ),
   },
   {
-    accessorKey: "scoutingProfile.overall",
+    accessorKey: "scoutingProfile.currentAbility",
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="text-white hover:bg-gray-700"
       >
-        Overall
+        Current Ability
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    id: "overallRating",
+    id: "currentAbilityRating",
     cell: ({ row }) => {
-      const rating = row.original.scoutingProfile.overall;
+      const rating = row.original.scoutingProfile.currentAbility;
       const progressValue = Math.min(Math.max(rating * 10, 0), 100);
       return (
         <div className="flex items-center w-full">
@@ -191,20 +191,20 @@ const columns: ColumnDef<Player>[] = [
     },
   },
   {
-    accessorKey: "scoutingProfile.potential",
+    accessorKey: "scoutingProfile.potentialAbility",
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="text-white hover:bg-gray-700"
       >
-        Potential
+        Potential Ability
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    id: "potentialRating",
+    id: "potentialAbilityRating",
     cell: ({ row }) => {
-      const rating = row.original.scoutingProfile.potential;
+      const rating = row.original.scoutingProfile.potentialAbility;
       const progressValue = Math.min(Math.max(rating * 10, 0), 100);
       return (
         <div className="flex items-center w-full">

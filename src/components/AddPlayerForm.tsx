@@ -65,9 +65,6 @@ const formSchema = z.object({
     notes: z.string().optional(),
   }),
   scoutingProfile: z.object({
-    overall: z.coerce.number().min(1).max(10, { message: "Overall rating must be between 1 and 10." }),
-    potential: z.coerce.number().min(1).max(10, { message: "Potential rating must be between 1 and 10." }),
-    brightonFit: z.coerce.number().min(1).max(10, { message: "Brighton Fit rating must be between 1 and 10." }),
     currentAbility: z.coerce.number().min(1).max(10, { message: "Current Ability must be between 1 and 10." }),
     potentialAbility: z.coerce.number().min(1).max(10, { message: "Potential Ability must be between 1 and 10." }),
     teamFit: z.coerce.number().min(1).max(10, { message: "Team Fit must be between 1 and 10." }),
@@ -113,9 +110,6 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
         notes: "",
       },
       scoutingProfile: {
-        overall: 5,
-        potential: 7,
-        brightonFit: 5,
         currentAbility: 5,
         potentialAbility: 7,
         teamFit: 5,
@@ -326,45 +320,6 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
           {/* Scouting Profile */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-gray-700 pt-6">
             <h2 className="text-xl font-bold text-white md:col-span-3 mb-2">Scouting Profile</h2>
-            <FormField
-              control={form.control}
-              name="scoutingProfile.overall"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-300">Overall Rating (1-10)</FormLabel>
-                  <FormControl>
-                    <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="scoutingProfile.potential"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-300">Potential Rating (1-10)</FormLabel>
-                  <FormControl>
-                    <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="scoutingProfile.brightonFit"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-300">Brighton Fit (1-10)</FormLabel>
-                  <FormControl>
-                    <Input type="number" className="bg-gray-700 border-gray-600 text-white" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="scoutingProfile.currentAbility"

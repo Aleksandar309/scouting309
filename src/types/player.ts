@@ -33,12 +33,9 @@ export interface Player {
     notes: string;
   };
   scoutingProfile: {
-    overall: number;
-    potential: number;
-    brightonFit: number;
-    currentAbility: number; // NEW
-    potentialAbility: number; // NEW
-    teamFit: number; // NEW
+    currentAbility: number;
+    potentialAbility: number;
+    teamFit: number;
   };
   technical: PlayerAttribute[];
   tactical: PlayerAttribute[];
