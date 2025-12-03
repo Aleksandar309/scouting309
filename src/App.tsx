@@ -6,7 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import PlayerProfile from "./pages/PlayerProfile";
-import PlayerDatabase from "./pages/PlayerDatabase"; // Import the new PlayerDatabase component
+import PlayerDatabase from "./pages/PlayerDatabase";
+import Scouts from "./pages/Scouts"; // Import the new Scouts component
 
 const queryClient = new QueryClient();
 
@@ -19,7 +20,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/player/:id" element={<PlayerProfile />} />
-          <Route path="/players" element={<PlayerDatabase />} /> {/* Add the new player database route */}
+          <Route path="/players" element={<PlayerDatabase />} />
+          <Route path="/scouts" element={<Scouts />} /> {/* Add the new scouts route */}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

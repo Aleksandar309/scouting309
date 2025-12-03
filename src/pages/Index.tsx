@@ -1,26 +1,65 @@
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Users, LayoutDashboard, Search, UserRound } from "lucide-react"; // Import new icons
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
-      <div className="text-center p-6 bg-gray-800 rounded-lg shadow-lg">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Brighton Scouting App</h1>
-        <p className="text-xl text-gray-400 mb-6">
-          Start building your amazing project here!
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6">
+      <div className="max-w-4xl w-full text-center p-8 bg-gray-800 rounded-lg shadow-2xl border border-gray-700">
+        <h1 className="text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
+          Brighton Scouting Dashboard
+        </h1>
+        <p className="text-xl text-gray-300 mb-10">
+          Your central hub for player analysis and team management.
         </p>
-        <div className="flex flex-col space-y-4">
-          <Link to="/player/1">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-4">
-              View Player Profile (Example)
-            </Button>
-          </Link>
-          <Link to="/players"> {/* Link to the new player database */}
-            <Button className="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-4">
-              View Player Database
-            </Button>
-          </Link>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+          <Card className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600 transition-colors duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-lg font-medium">Player Database</CardTitle>
+              <Search className="h-6 w-6 text-blue-400" />
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-300 mb-4">Browse and manage all scouted players.</p>
+              <Link to="/players">
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                  View Players
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600 transition-colors duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-lg font-medium">Scouting Team</CardTitle>
+              <Users className="h-6 w-6 text-green-400" />
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-300 mb-4">Meet our dedicated scouting personnel.</p>
+              <Link to="/scouts">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
+                  View Scouts
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600 transition-colors duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-lg font-medium">Example Profile</CardTitle>
+              <UserRound className="h-6 w-6 text-purple-400" />
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-300 mb-4">See a detailed player profile in action.</p>
+              <Link to="/player/1">
+                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                  View Example Player
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         </div>
       </div>
       <MadeWithDyad />
