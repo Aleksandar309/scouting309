@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import {
   ColumnDef,
   flexRender,
@@ -10,7 +10,7 @@ import {
   getSortedRowModel,
   SortingState,
 } from '@tanstack/react-table';
-import { ArrowUpDown, Plus } from 'lucide-react';
+import { ArrowUpDown, Plus, ChevronLeft } from 'lucide-react'; // Added ChevronLeft icon
 
 import {
   Table,
@@ -332,6 +332,7 @@ const columns: ColumnDef<Player>[] = [
 
 const PlayerDatabase: React.FC = () => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const table = useReactTable({
     data: mockPlayers,
@@ -347,6 +348,15 @@ const PlayerDatabase: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          onClick={() => navigate(-1)}
+          className="text-gray-400 hover:text-white p-0 h-auto mb-4"
+        >
+          <ChevronLeft className="h-5 w-5 mr-1" /> Back
+        </Button>
+
         <h1 className="text-3xl font-bold mb-6">Player Database</h1>
 
         <div className="rounded-md border border-gray-700 bg-gray-800">

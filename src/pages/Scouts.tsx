@@ -1,11 +1,11 @@
 "use client";
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, User } from 'lucide-react';
+import { Mail, Phone, User, ChevronLeft } from 'lucide-react'; // Added ChevronLeft icon
 import { Scout } from '@/types/scout';
 
 const mockScouts: Scout[] = [
@@ -42,9 +42,20 @@ const mockScouts: Scout[] = [
 ];
 
 const Scouts: React.FC = () => {
+  const navigate = useNavigate(); // Initialize useNavigate
+
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          onClick={() => navigate(-1)}
+          className="text-gray-400 hover:text-white p-0 h-auto mb-4"
+        >
+          <ChevronLeft className="h-5 w-5 mr-1" /> Back
+        </Button>
+
         <h1 className="text-3xl font-bold mb-8">Our Scouting Team</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {mockScouts.map((scout) => (

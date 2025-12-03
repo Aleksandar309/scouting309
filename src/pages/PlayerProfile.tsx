@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CalendarDays, Flag, Goal, MapPin, Scale, User, Wallet, Plus, BarChart2, Radar } from "lucide-react"; // Added BarChart2 and Radar icons
+import { ArrowRight, CalendarDays, Flag, Goal, MapPin, Scale, User, Wallet, Plus, BarChart2, Radar, ChevronLeft } from "lucide-react"; // Added ChevronLeft icon
 import { Player } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
 import RadarChart from "@/components/RadarChart";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ScoutReportForm from "@/components/ScoutReportForm";
 import AddToShortlistDialog from '@/components/AddToShortlistDialog';
-import PlayerStatistics from '@/components/PlayerStatistics'; // Import the new PlayerStatistics component
+import PlayerStatistics from '@/components/PlayerStatistics';
 import {
   Accordion,
   AccordionContent,
@@ -110,6 +110,7 @@ const initialMockPlayer: Player = {
 
 const PlayerProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate(); // Initialize useNavigate
   const [player, setPlayer] = useState<Player>(initialMockPlayer);
   const [isReportFormOpen, setIsReportFormOpen] = useState(false);
   const [isShortlistFormOpen, setIsShortlistFormOpen] = useState(false);
@@ -137,6 +138,15 @@ const PlayerProfile: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          onClick={() => navigate(-1)}
+          className="text-gray-400 hover:text-white p-0 h-auto mb-4"
+        >
+          <ChevronLeft className="h-5 w-5 mr-1" /> Back
+        </Button>
+
         {/* Header Section */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">

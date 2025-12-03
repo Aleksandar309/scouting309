@@ -1,11 +1,11 @@
 "use client";
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useShortlists } from '@/context/ShortlistContext';
-import { PlusCircle, Trash2 } from 'lucide-react';
+import { PlusCircle, Trash2, ChevronLeft } from 'lucide-react'; // Added ChevronLeft icon
 import { Badge } from '@/components/ui/badge';
 import {
   Accordion,
@@ -24,10 +24,20 @@ import {
 
 const ShortlistPage: React.FC = () => {
   const { shortlists, removePlayerFromShortlist } = useShortlists();
+  const navigate = useNavigate(); // Initialize useNavigate
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          onClick={() => navigate(-1)}
+          className="text-gray-400 hover:text-white p-0 h-auto mb-4"
+        >
+          <ChevronLeft className="h-5 w-5 mr-1" /> Back
+        </Button>
+
         <h1 className="text-3xl font-bold mb-8">My Shortlists</h1>
 
         {shortlists.length === 0 ? (
