@@ -29,7 +29,8 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({ name, rating, classNa
     <div className={cn("flex items-center justify-between py-1", className)}>
       <span className="text-sm text-gray-300 w-1/2">{name}</span>
       <div className="flex items-center w-1/2">
-        <Progress value={progressValue} className="h-2 w-full bg-gray-700" indicatorClassName={getIndicatorColor(rating)} />
+        {/* Removed bg-gray-700 from className to allow indicatorClassName to take full effect */}
+        <Progress value={progressValue} className="h-2 w-full" indicatorClassName={getIndicatorColor(rating)} />
         <span className="ml-2 text-sm text-gray-300">{rating}</span>
       </div>
     </div>
