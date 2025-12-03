@@ -40,5 +40,7 @@ export interface Player {
     scout: string;
     rating: number;
     title: string;
+    keyStrengths?: string; // Added
+    areasForDevelopment?: string; // Added
   }[];
 }

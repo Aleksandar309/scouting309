@@ -3,7 +3,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import *s z from "zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
@@ -73,6 +73,8 @@ const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmi
       scout: values.scout,
       rating: values.rating,
       title: values.title,
+      keyStrengths: values.keyStrengths, // Added
+      areasForDevelopment: values.areasForDevelopment, // Added
     };
     onReportSubmit(newReport);
     onClose();

@@ -9,6 +9,12 @@ import AttributeRating from "@/components/AttributeRating";
 import RadarChart from "@/components/RadarChart";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ScoutReportForm from "@/components/ScoutReportForm";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"; // Import Accordion components
 
 const initialMockPlayer: Player = {
   id: "1",
@@ -79,8 +85,24 @@ const initialMockPlayer: Player = {
     "Long-range shooting needs work.",
   ],
   scoutingReports: [
-    { id: "rep1", date: "Dec 2, 2025", scout: "Mia Scout", rating: 10, title: "dessa" },
-    { id: "rep2", date: "Nov 10, 2024", scout: "James Clark", rating: 9, title: "Feyenoord vs Ajax" },
+    { 
+      id: "rep1", 
+      date: "Dec 2, 2025", 
+      scout: "Mia Scout", 
+      rating: 10, 
+      title: "Initial Assessment",
+      keyStrengths: "Excellent vision, strong passing, good leadership.",
+      areasForDevelopment: "Needs to improve aerial duels, occasional lapses in concentration."
+    },
+    { 
+      id: "rep2", 
+      date: "Nov 10, 2024", 
+      scout: "James Clark", 
+      rating: 9, 
+      title: "Feyenoord vs Ajax Match Report",
+      keyStrengths: "Dominant in midfield, crucial interceptions, calm under pressure.",
+      areasForDevelopment: "Sometimes holds onto the ball too long, needs to release quicker."
+    },
   ],
 };
 
@@ -260,20 +282,36 @@ const PlayerProfile: React.FC = () => {
               <CardTitle className="text-lg font-semibold">Scouting Reports ({player.scoutingReports.length})</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {player.scoutingReports.map((report) => (
-                <div key={report.id} className="flex items-center justify-between p-3 bg-gray-700 rounded-md">
-                  <div>
-                    <p className="font-medium">{report.title}</p>
-                    <p className="text-xs text-gray-400">{report.date} • {report.scout}</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge className="bg-blue-500 text-white">{report.rating}</Badge>
-                    <Button variant="ghost" size="sm" className="text-blue-400 hover:text-blue-300">
-                      Sign Immediately <ArrowRight className="ml-1 h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
+              <Accordion type="single" collapsible className="w-full">
+                {player.scoutingReports.map((report) => (
+                  <AccordionItem key={report.id} value={report.id} className="border-gray-700">
+                    <AccordionTrigger className="flex items-center justify-between p-3 bg-gray-700 rounded-md hover:bg-gray-600 transition-colors">
+                      <div className="flex flex-col items-start">
+                        <p className="font-medium text-white">{report.title}</p>
+                        <p className="text-xs text-gray-400">{report.date} • {report.scout}</p>
+                      </div>
+                      <Badge className="bg-blue-500 text-white">{report.rating}</Badge>
+                    </AccordionTrigger>
+                    <AccordionContent className="p-4 bg-gray-700 rounded-b-md text-gray-300 space-y-2">
+                      {report.keyStrengths && (
+                        <div>
+                          <h4 className="font-semibold text-white mb-1">Key Strengths:</h4>
+                          <p className="text-sm">{report.keyStrengths}</p>
+                        </div>
+                      )}
+                      {report.areasForDevelopment && (
+                        <div>
+                          <h4 className="font-semibold text-white mb-1">Areas for Development:</h4>
+                          <p className="text-sm">{report.areasForDevelopment}</p>
+                        </div>
+                      )}
+                      <Button variant="ghost" size="sm" className="text-blue-400 hover:text-blue-300 mt-2">
+                        Sign Immediately <ArrowRight className="ml-1 h-4 w-4" />
+                      </Button>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </CardContent>
           </Card>
         </div>
