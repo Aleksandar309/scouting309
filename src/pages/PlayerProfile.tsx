@@ -215,34 +215,34 @@ const PlayerProfile: React.FC = () => {
             <CardHeader>
               <CardTitle className="text-lg font-semibold">Player Details</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-gray-300"> {/* Increased space-y for better separation */}
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2"> {/* Adjusted gap */}
+            <CardContent className="space-y-3 text-gray-300">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                 <div className="flex items-center">
                   <Maximize className="mr-2 h-4 w-4 text-gray-500" />
-                  <span>Height: <span className="font-medium text-white">{player.details.height}</span></span>
+                  <span className="font-medium text-white">{player.details.height}</span>
                 </div>
                 <div className="flex items-center">
                   <Weight className="mr-2 h-4 w-4 text-gray-500" />
-                  <span>Weight: <span className="font-medium text-white">{player.details.weight}</span></span>
+                  <span className="font-medium text-white">{player.details.weight}</span>
                 </div>
                 <div className="flex items-center">
                   <Trophy className="mr-2 h-4 w-4 text-gray-500" />
-                  <span>League: <span className="font-medium text-white">{player.details.league}</span></span>
+                  <span className="font-medium text-white">{player.details.league}</span>
                 </div>
                 <div className="flex items-center">
                   <CalendarDays className="mr-2 h-4 w-4 text-gray-500" />
-                  <span>Contract expiry: <span className="font-medium text-white">{player.details.contractExpiry}</span></span>
+                  <span className="font-medium text-white">{player.details.contractExpiry}</span>
                 </div>
                 <div className="flex items-center">
                   <DollarSign className="mr-2 h-4 w-4 text-gray-500" />
-                  <span>Wage Demands: <span className="font-medium text-white">{player.details.wageDemands}</span></span>
+                  <span className="font-medium text-white">{player.details.wageDemands}</span>
                 </div>
                 <div className="flex items-center">
                   <Briefcase className="mr-2 h-4 w-4 text-gray-500" />
-                  <span>Agent: <span className="font-medium text-white">{player.details.agent}</span></span>
+                  <span className="font-medium text-white">{player.details.agent}</span>
                 </div>
               </div>
-              <p className="text-sm mt-4 border-t border-gray-700 pt-3">{player.details.notes}</p> {/* Added border-top for separation */}
+              <p className="text-sm mt-4 border-t border-gray-700 pt-3">{player.details.notes}</p>
             </CardContent>
           </Card>
 
