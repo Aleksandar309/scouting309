@@ -13,9 +13,9 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({ name, rating, classNa
   const progressValue = Math.min(Math.max(rating * 10, 0), 100); // Ensure value is between 0 and 100
 
   const highlightClasses = {
-    primary: "bg-blue-800 ring-2 ring-blue-500", // Strong highlight for primary
-    secondary: "bg-purple-800 ring-1 ring-purple-500", // Medium highlight for secondary
-    tertiary: "bg-gray-600 ring-1 ring-gray-400", // Subtle highlight for tertiary
+    primary: "bg-blue-600 ring-1 ring-blue-400", // More subtle blue
+    secondary: "bg-purple-600 ring-1 ring-purple-400", // More subtle purple
+    tertiary: "bg-gray-600 ring-1 ring-gray-500", // Subtle gray
   };
 
   return (
