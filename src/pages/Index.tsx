@@ -1,6 +1,6 @@
 import { MadeWithDyad } from "@/components/made-with-dyad";
-import { Link } from "react-router-dom"; // Import Link for navigation
-import { Button } from "@/components/ui/button"; // Import Button component
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   return (
@@ -10,11 +10,18 @@ const Index = () => {
         <p className="text-xl text-gray-400 mb-6">
           Start building your amazing project here!
         </p>
-        <Link to="/player/1"> {/* Link to the mock player profile */}
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-4">
-            View Player Profile (Example)
-          </Button>
-        </Link>
+        <div className="flex flex-col space-y-4">
+          <Link to="/player/1">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-4">
+              View Player Profile (Example)
+            </Button>
+          </Link>
+          <Link to="/players"> {/* Link to the new player database */}
+            <Button className="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-4">
+              View Player Database
+            </Button>
+          </Link>
+        </div>
       </div>
       <MadeWithDyad />
     </div>
