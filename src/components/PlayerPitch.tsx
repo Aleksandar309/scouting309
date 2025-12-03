@@ -44,8 +44,8 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData }) => {
           {/* Center circle */}
           <div className="absolute top-1/2 left-1/2 w-20 h-20 border-2 border-gray-600 border-opacity-50 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
           {/* Penalty boxes (simplified) - adjusted width/height and removed individual rounded corners */}
-          <div className="absolute top-0 left-1/2 w-[80%] h-[20%] border-b-2 border-l-2 border-r-2 border-gray-600 border-opacity-50 transform -translate-x-1/2"></div>
-          <div className="absolute bottom-0 left-1/2 w-[80%] h-[20%] border-t-2 border-l-2 border-r-2 border-gray-600 border-opacity-50 transform -translate-x-1/2"></div>
+          <div className="absolute top-0 left-1/2 w-[70%] h-[20%] border-b-2 border-l-2 border-r-2 border-gray-600 border-opacity-50 transform -translate-x-1/2 rounded-t-lg"></div>
+          <div className="absolute bottom-0 left-1/2 w-[70%] h-[20%] border-t-2 border-l-2 border-r-2 border-gray-600 border-opacity-50 transform -translate-x-1/2 rounded-b-lg"></div>
         </div>
 
         {positionsData.map((pos, index) => {
