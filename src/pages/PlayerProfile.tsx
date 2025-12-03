@@ -100,6 +100,14 @@ const PlayerProfile: React.FC = () => {
     }));
   };
 
+  // Combine the first 3 attributes from each category for the radar chart
+  const attributesForRadar = [
+    ...player.technical.slice(0, 3),
+    ...player.tactical.slice(0, 3),
+    ...player.physical.slice(0, 3),
+    ...player.mentalPsychology.slice(0, 3),
+  ];
+
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <div className="max-w-7xl mx-auto">
@@ -165,7 +173,7 @@ const PlayerProfile: React.FC = () => {
               <CardTitle className="text-lg font-semibold">Scouting Profile</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col md:flex-row items-center justify-around space-y-4 md:space-y-0 md:space-x-4">
-              <RadarChart />
+              <RadarChart playerAttributes={attributesForRadar} /> {/* Pass combined attributes */}
               <div className="flex flex-col space-y-2 text-center md:text-left">
                 <div className="text-xl font-bold">{player.scoutingProfile.overall} <span className="text-sm font-normal text-gray-400">Overall</span></div>
                 <div className="text-xl font-bold">{player.scoutingProfile.potential} <span className="text-sm font-normal text-gray-400">Potential</span></div>
