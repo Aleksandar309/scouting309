@@ -110,17 +110,14 @@ const initialMockPlayer: Player = {
     { name: "Coachability", rating: 9 },
     { name: "Resilience", rating: 9 },
   ],
-  setPieces: [ // NEW: Set Pieces attributes
+  setPieces: [
     { name: "Corners", rating: 7 },
     { name: "Free Kicks", rating: 8 },
     { name: "Penalties", rating: 9 },
     { name: "Long Throws", rating: 6 },
-    { name: "Technique", rating: 8 },
-    { name: "Flair", rating: 7 },
-    { name: "Anticipation", rating: 8 },
-    { name: "Balance", rating: 7 },
+    { name: "Defending corners", rating: 7 }, // Added new attribute
   ],
-  hidden: [ // NEW: Hidden attributes
+  hidden: [
     { name: "Consistency", rating: 15 }, // FM ratings are 1-20 for hidden
     { name: "Important Matches", rating: 16 },
     { name: "Versatility", rating: 14 },
