@@ -35,8 +35,8 @@ const positionCoordinates: { [key: string]: { x: string; y: string } } = {
 const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData }) => {
   return (
     <TooltipProvider>
-      {/* Main pitch container - now responsive with aspect ratio */}
-      <div className="relative w-full aspect-[2/3] bg-gray-900 border-2 border-gray-700 rounded-lg overflow-hidden shadow-inner">
+      {/* Main pitch container - now responsive, prioritizing height and maintaining aspect ratio */}
+      <div className="relative h-full aspect-[2/3] max-w-full bg-gray-900 border-2 border-gray-700 rounded-lg overflow-hidden shadow-inner">
         {/* Pitch Lines (simplified) */}
         <div className="absolute inset-0 border-gray-600 border-dashed border-opacity-50">
           {/* Halfway line */}

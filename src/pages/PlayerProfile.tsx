@@ -286,7 +286,7 @@ const PlayerProfile: React.FC = () => {
               </Button>
             </CardHeader>
             {showScoutingProfile ? (
-              <CardContent className="flex items-center justify-center h-full"> {/* Centered content */}
+              <CardContent className="flex items-center justify-center h-full p-4"> {/* Centered content */}
                 <RadarChart playerAttributes={attributesForRadar} />
               </CardContent>
             ) : (
