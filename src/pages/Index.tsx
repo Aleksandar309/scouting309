@@ -2,11 +2,15 @@ import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, LayoutDashboard, Search, UserRound, ListChecks } from "lucide-react"; // Import new icon
+import { Users, LayoutDashboard, Search, UserRound, ListChecks } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle"; // Import ThemeToggle
 
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle /> {/* Add ThemeToggle here */}
+      </div>
       <div className="max-w-4xl w-full text-center p-8 bg-gray-800 rounded-lg shadow-2xl border border-gray-700">
         <h1 className="text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
           Brighton Scouting Dashboard

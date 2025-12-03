@@ -28,6 +28,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import PlayerCard from '@/components/PlayerCard';
+import { ThemeToggle } from "@/components/ThemeToggle"; // Import ThemeToggle
 
 export const mockPlayers: Player[] = [
   {
@@ -855,25 +856,28 @@ const PlayerDatabase: React.FC = () => {
 
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Player Database</h1>
-          <ToggleGroup
-            type="single"
-            value={viewMode}
-            onValueChange={(value: 'table' | 'card') => {
-              if (value) setViewMode(value);
-            }}
-            className="bg-gray-800 rounded-md p-1 border border-gray-700"
-          >
-            <ToggleGroupItem value="table" aria-label="Toggle table view" className="data-[state=on]:bg-blue-600 data-[state=on]:text-white text-gray-300 hover:bg-gray-700">
-              <Table2 className="h-4 w-4 mr-2" /> Table View
-            </ToggleGroupItem>
-            <ToggleGroupItem value="card" aria-label="Toggle card view" className="data-[state=on]:bg-blue-600 data-[state=on]:text-white text-gray-300 hover:bg-gray-700">
-              <LayoutGrid className="h-4 w-4 mr-2" /> Card View
-            </ToggleGroupItem>
-          </ToggleGroup>
+          <div className="flex items-center space-x-4"> {/* Wrap ToggleGroup and ThemeToggle */}
+            <ToggleGroup
+              type="single"
+              value={viewMode}
+              onValueChange={(value: 'table' | 'card') => {
+                if (value) setViewMode(value);
+              }}
+              className="bg-gray-800 rounded-md p-1 border border-gray-700"
+            >
+              <ToggleGroupItem value="table" aria-label="Toggle table view" className="data-[state=on]:bg-blue-600 data-[state=on]:text-white text-gray-300 hover:bg-gray-700">
+                <Table2 className="h-4 w-4 mr-2" /> Table View
+              </ToggleGroupItem>
+              <ToggleGroupItem value="card" aria-label="Toggle card view" className="data-[state=on]:bg-blue-600 data-[state=on]:text-white text-gray-300 hover:bg-gray-700">
+                <LayoutGrid className="h-4 w-4 mr-2" /> Card View
+              </ToggleGroupItem>
+            </ToggleGroup>
+            <ThemeToggle /> {/* Add ThemeToggle here */}
+          </div>
         </div>
 
         {viewMode === 'table' ? (
-          <div className="rounded-md border border-gray-700 bg-gray-800 overflow-x-auto"> {/* Added overflow-x-auto */}
+          <div className="rounded-md border border-gray-700 bg-gray-800 overflow-x-auto">
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
