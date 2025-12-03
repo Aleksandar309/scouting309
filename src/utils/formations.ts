@@ -8,6 +8,14 @@ const positionCoordinates: { [key: string]: { x: string; y: string } } = {
   "RCM": { x: "50%", y: "70%" }, "CM": { x: "50%", y: "50%" }, "LM": { x: "60%", y: "10%" }, "RM": { x: "60%", y: "90%" },
   "CAM": { x: "70%", y: "50%" }, "LW": { x: "80%", y: "15%" }, "RW": { x: "80%", y: "85%" }, "ST": { x: "90%", y: "50%" },
   "LS": { x: "90%", y: "35%" }, "RS": { x: "90%", y: "65%" },
+  // LWB (for 3-4-3, 3-5-2):
+  "LWB": { x: "45%", y: "10%" },
+  // RWB (for 3-4-3, 3-5-2):
+  "RWB": { x: "45%", y: "90%" },
+  // LDM (for 4-2-3-1):
+  "LDM": { x: "40%", y: "30%" },
+  // RDM (for 4-2-3-1):
+  "RDM": { x: "40%", y: "70%" },
 };
 
 export const FM_FORMATIONS: Formation[] = [
@@ -37,8 +45,8 @@ export const FM_FORMATIONS: Formation[] = [
       { name: "LCB", ...positionCoordinates["LCB"] },
       { name: "RCB", ...positionCoordinates["RCB"] },
       { name: "RB", ...positionCoordinates["RB"] },
-      { name: "LDM", x: "40%", y: "30%" }, // Custom for 4-2-3-1
-      { name: "RDM", x: "40%", y: "70%" }, // Custom for 4-2-3-1
+      { name: "LDM", ...positionCoordinates["LDM"] }, // Custom for 4-2-3-1
+      { name: "RDM", ...positionCoordinates["RDM"] }, // Custom for 4-2-3-1
       { name: "CAM", ...positionCoordinates["CAM"] },
       { name: "LW", ...positionCoordinates["LW"] },
       { name: "RW", ...positionCoordinates["RW"] },
@@ -70,8 +78,8 @@ export const FM_FORMATIONS: Formation[] = [
       { name: "LCB", x: "22%", y: "30%" },
       { name: "CB", x: "22%", y: "50%" },
       { name: "RCB", x: "22%", y: "70%" },
-      { name: "LWB", x: "45%", y: "10%" }, // Custom for 3-4-3
-      { name: "RWB", x: "45%", y: "90%" }, // Custom for 3-4-3
+      { name: "LWB", ...positionCoordinates["LWB"] }, // Custom for 3-4-3
+      { name: "RWB", ...positionCoordinates["RWB"] }, // Custom for 3-4-3
       { name: "LCM", x: "55%", y: "30%" },
       { name: "RCM", x: "55%", y: "70%" },
       { name: "LW", ...positionCoordinates["LW"] },
@@ -87,8 +95,8 @@ export const FM_FORMATIONS: Formation[] = [
       { name: "LCB", x: "22%", y: "30%" },
       { name: "CB", x: "22%", y: "50%" },
       { name: "RCB", x: "22%", y: "70%" },
-      { name: "LWB", x: "45%", y: "10%" },
-      { name: "RWB", x: "45%", y: "90%" },
+      { name: "LWB", ...positionCoordinates["LWB"] },
+      { name: "RWB", ...positionCoordinates["RWB"] },
       { name: "CDM", ...positionCoordinates["CDM"] },
       { name: "LCM", x: "60%", y: "30%" },
       { name: "RCM", x: "60%", y: "70%" },
@@ -137,4 +145,25 @@ export const calculateFormationFit = (player: Player, formation: Formation): Pla
   });
 
   return playerFitPositions;
+};
+
+// New function to calculate overall formation fit for a player
+export const calculateFormationOverallFit = (player: Player, formation: Formation): number => {
+  const playerFitPositions = calculateFormationFit(player, formation);
+  let totalRating = 0;
+  let totalPossibleRating = 0;
+
+  playerFitPositions.forEach(pos => {
+    // Give more weight to natural and alternative positions
+    let weight = 1;
+    if (pos.type === "natural") weight = 3;
+    else if (pos.type === "alternative") weight = 2;
+    // Tertiary and unsuited positions get less or no weight for overall score
+
+    totalRating += pos.rating * weight;
+    totalPossibleRating += 10 * weight; // Max rating is 10 for each position
+  });
+
+  if (totalPossibleRating === 0) return 0;
+  return Math.round((totalRating / totalPossibleRating) * 100);
 };

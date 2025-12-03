@@ -60,7 +60,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { mockPlayers } from './PlayerDatabase';
 import FormationSelector from '@/components/FormationSelector'; // New import
-import { FM_FORMATIONS, calculateFormationFit } from '@/utils/formations'; // New import
+import { FM_FORMATIONS, calculateFormationFit, calculateFormationOverallFit } from '@/utils/formations'; // New import
 import { Formation, PlayerFormationFitPosition } from '@/types/formation'; // New import
 
 // Zod schema for player attributes
@@ -195,11 +195,23 @@ const PlayerProfile: React.FC = () => {
         keyStrengths: currentPlayer.keyStrengths.join('\n'),
         areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
       });
+
+      // Calculate and set the best fitting formation by default
+      let bestFormationId: string | null = null;
+      let highestFitScore = -1;
+
+      FM_FORMATIONS.forEach(formation => {
+        const fitScore = calculateFormationOverallFit(currentPlayer, formation);
+        if (fitScore > highestFitScore) {
+          highestFitScore = fitScore;
+          bestFormationId = formation.id;
+        }
+      });
+      setSelectedFormationId(bestFormationId);
     }
     setIsEditMode(false);
     setSelectedFmRole(null);
-    setSelectedFormationId(null); // Reset formation selection on player change
-    setPlayerFormationFit(null); // Reset formation fit on player change
+    // playerFormationFit will be calculated by the next useEffect
   }, [currentPlayer, form]);
 
   // Effect to calculate formation fit when selectedFormationId or player changes
