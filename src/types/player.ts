@@ -34,6 +34,9 @@ export interface Player {
     overall: number;
     potential: number;
     brightonFit: number;
+    currentAbility: number; // NEW
+    potentialAbility: number; // NEW
+    teamFit: number; // NEW
   };
   technical: PlayerAttribute[];
   tactical: PlayerAttribute[];

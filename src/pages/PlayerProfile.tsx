@@ -23,6 +23,7 @@ import {
   Briefcase,
   Target, // New icon for Set Pieces
   EyeOff, // New icon for Hidden Attributes
+  Gauge, // New icon for Overview
 } from "lucide-react";
 import { Player, PlayerAttribute } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
@@ -70,6 +71,9 @@ const initialMockPlayer: Player = {
     overall: 9,
     potential: 9,
     brightonFit: 10,
+    currentAbility: 8, // NEW
+    potentialAbility: 9, // NEW
+    teamFit: 9, // NEW
   },
   technical: [
     { name: "First Touch", rating: 9 },
@@ -479,6 +483,18 @@ const PlayerProfile: React.FC = () => {
               {player.areasForDevelopment.map((area, index) => (
                 <p key={index}>• {area}</p>
               ))}
+            </CardContent>
+          </Card>
+
+          {/* Overview Card (NEW) */}
+          <Card className="bg-gray-800 border-gray-700 text-white">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold flex items-center"><Gauge className="mr-2 h-5 w-5" /> Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AttributeRating name="Current Ability" rating={player.scoutingProfile.currentAbility} />
+              <AttributeRating name="Potential Ability" rating={player.scoutingProfile.potentialAbility} />
+              <AttributeRating name="Team Fit" rating={player.scoutingProfile.teamFit} />
             </CardContent>
           </Card>
 
