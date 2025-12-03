@@ -10,41 +10,42 @@ interface PlayerPitchProps {
 }
 
 // Simplified mapping of common football positions to relative coordinates (percentage)
-// This is a generic pitch, not specific to any formation.
+// Adjusted for a vertical pitch orientation
 const positionCoordinates: { [key: string]: { x: string; y: string } } = {
-  "GK": { x: "50%", y: "95%" }, // Goalkeeper
-  "CB": { x: "50%", y: "80%" }, // Center Back
-  "LCB": { x: "35%", y: "80%" }, // Left Center Back
-  "RCB": { x: "65%", y: "80%" }, // Right Center Back
-  "LB": { x: "15%", y: "75%" }, // Left Back
-  "RB": { x: "85%", y: "75%" }, // Right Back
-  "CDM": { x: "50%", y: "65%" }, // Defensive Midfielder
-  "LCM": { x: "35%", y: "50%" }, // Left Central Midfielder
-  "RCM": { x: "65%", y: "50%" }, // Right Central Midfielder
+  "GK": { x: "50%", y: "90%" }, // Goalkeeper (bottom)
+  "CB": { x: "50%", y: "78%" }, // Center Back
+  "LCB": { x: "30%", y: "78%" }, // Left Center Back
+  "RCB": { x: "70%", y: "78%" }, // Right Center Back
+  "LB": { x: "10%", y: "70%" }, // Left Back
+  "RB": { x: "90%", y: "70%" }, // Right Back
+  "CDM": { x: "50%", y: "60%" }, // Defensive Midfielder
+  "LCM": { x: "30%", y: "50%" }, // Left Central Midfielder
+  "RCM": { x: "70%", y: "50%" }, // Right Central Midfielder
   "CM": { x: "50%", y: "50%" }, // Central Midfielder (general)
-  "LM": { x: "15%", y: "45%" }, // Left Midfielder
-  "RM": { x: "85%", y: "45%" }, // Right Midfielder
-  "CAM": { x: "50%", y: "35%" }, // Attacking Midfielder
-  "LW": { x: "15%", y: "25%" }, // Left Winger
-  "RW": { x: "85%", y: "25%" }, // Right Winger
-  "ST": { x: "50%", y: "15%" }, // Striker
-  "LS": { x: "35%", y: "15%" }, // Left Striker
-  "RS": { x: "65%", y: "15%" }, // Right Striker
+  "LM": { x: "10%", y: "40%" }, // Left Midfielder
+  "RM": { x: "90%", y: "40%" }, // Right Midfielder
+  "CAM": { x: "50%", y: "30%" }, // Attacking Midfielder
+  "LW": { x: "15%", y: "20%" }, // Left Winger
+  "RW": { x: "85%", y: "20%" }, // Right Winger
+  "ST": { x: "50%", y: "10%" }, // Striker (top)
+  "LS": { x: "35%", y: "10%" }, // Left Striker
+  "RS": { x: "65%", y: "10%" }, // Right Striker
 };
 
 const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData }) => {
   return (
     <TooltipProvider>
-      <div className="relative w-full h-64 bg-gray-900 border-2 border-gray-700 rounded-lg overflow-hidden shadow-inner">
+      {/* Main pitch container - now with fixed vertical dimensions */}
+      <div className="relative w-64 h-96 bg-gray-900 border-2 border-gray-700 rounded-lg overflow-hidden shadow-inner">
         {/* Pitch Lines (simplified) */}
         <div className="absolute inset-0 border-gray-600 border-dashed border-opacity-50">
           {/* Halfway line */}
           <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gray-600 bg-opacity-50 transform -translate-y-1/2"></div>
           {/* Center circle */}
           <div className="absolute top-1/2 left-1/2 w-20 h-20 border-2 border-gray-600 border-opacity-50 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
-          {/* Penalty boxes (simplified) */}
-          <div className="absolute top-0 left-1/2 w-2/3 h-1/4 border-b-2 border-l-2 border-r-2 border-gray-600 border-opacity-50 transform -translate-x-1/2 rounded-t-lg"></div>
-          <div className="absolute bottom-0 left-1/2 w-2/3 h-1/4 border-t-2 border-l-2 border-r-2 border-gray-600 border-opacity-50 transform -translate-x-1/2 rounded-b-lg"></div>
+          {/* Penalty boxes (simplified) - adjusted width/height and removed individual rounded corners */}
+          <div className="absolute top-0 left-1/2 w-[80%] h-[20%] border-b-2 border-l-2 border-r-2 border-gray-600 border-opacity-50 transform -translate-x-1/2"></div>
+          <div className="absolute bottom-0 left-1/2 w-[80%] h-[20%] border-t-2 border-l-2 border-r-2 border-gray-600 border-opacity-50 transform -translate-x-1/2"></div>
         </div>
 
         {positionsData.map((pos, index) => {
