@@ -1,11 +1,11 @@
 "use client";
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useShortlists } from '@/context/ShortlistContext';
-import { PlusCircle, Trash2, ChevronLeft } from 'lucide-react'; // Added ChevronLeft icon
+import { PlusCircle, Trash2, ChevronLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   Accordion,
@@ -24,7 +24,7 @@ import {
 
 const ShortlistPage: React.FC = () => {
   const { shortlists, removePlayerFromShortlist } = useShortlists();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
@@ -91,7 +91,7 @@ const ShortlistPage: React.FC = () => {
                                 <TableCell>
                                   <div className="flex flex-wrap gap-1">
                                     {player.positions.map((pos) => (
-                                      <Badge key={pos} variant="secondary" className="bg-gray-600 text-gray-200">
+                                      <Badge key={pos} variant="secondary" className="bg-gray-600 text-gray-200 text-base"> {/* Povećana veličina teksta */}
                                         {pos}
                                       </Badge>
                                     ))}
@@ -102,9 +102,9 @@ const ShortlistPage: React.FC = () => {
                                     variant="destructive"
                                     size="sm"
                                     onClick={() => removePlayerFromShortlist(shortlist.id, player.id)}
-                                    className="bg-red-600 hover:bg-red-700 text-white"
+                                    className="bg-red-600 hover:bg-red-700 text-white p-2 h-auto" // Smanjen padding dugmeta
                                   >
-                                    <Trash2 className="h-4 w-4" />
+                                    <Trash2 className="h-4 w-4" /> {/* Ikona je već h-4 w-4, što je standardno malo */}
                                   </Button>
                                 </TableCell>
                               </TableRow>
