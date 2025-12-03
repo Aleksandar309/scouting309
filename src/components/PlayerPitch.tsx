@@ -35,16 +35,16 @@ const positionCoordinates: { [key: string]: { x: string; y: string } } = {
 const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData }) => {
   return (
     <TooltipProvider>
-      <div className="relative w-full h-64 bg-green-700 border-2 border-white rounded-lg overflow-hidden shadow-inner">
+      <div className="relative w-full h-64 bg-gray-900 border-2 border-gray-700 rounded-lg overflow-hidden shadow-inner">
         {/* Pitch Lines (simplified) */}
-        <div className="absolute inset-0 border-white border-dashed border-opacity-50">
+        <div className="absolute inset-0 border-gray-600 border-dashed border-opacity-50">
           {/* Halfway line */}
-          <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white bg-opacity-50 transform -translate-y-1/2"></div>
+          <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gray-600 bg-opacity-50 transform -translate-y-1/2"></div>
           {/* Center circle */}
-          <div className="absolute top-1/2 left-1/2 w-20 h-20 border-2 border-white border-opacity-50 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute top-1/2 left-1/2 w-20 h-20 border-2 border-gray-600 border-opacity-50 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
           {/* Penalty boxes (simplified) */}
-          <div className="absolute top-0 left-1/2 w-2/3 h-1/4 border-b-2 border-l-2 border-r-2 border-white border-opacity-50 transform -translate-x-1/2"></div>
-          <div className="absolute bottom-0 left-1/2 w-2/3 h-1/4 border-t-2 border-l-2 border-r-2 border-white border-opacity-50 transform -translate-x-1/2"></div>
+          <div className="absolute top-0 left-1/2 w-2/3 h-1/4 border-b-2 border-l-2 border-r-2 border-gray-600 border-opacity-50 transform -translate-x-1/2"></div>
+          <div className="absolute bottom-0 left-1/2 w-2/3 h-1/4 border-t-2 border-l-2 border-r-2 border-gray-600 border-opacity-50 transform -translate-x-1/2"></div>
         </div>
 
         {positionsData.map((pos, index) => {
