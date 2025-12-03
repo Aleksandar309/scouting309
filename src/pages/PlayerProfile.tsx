@@ -3,13 +3,14 @@ import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CalendarDays, Flag, Goal, MapPin, Scale, User, Wallet, Plus } from "lucide-react";
+import { ArrowRight, CalendarDays, Flag, Goal, MapPin, Scale, User, Wallet, Plus, BarChart2, Radar } from "lucide-react"; // Added BarChart2 and Radar icons
 import { Player } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
 import RadarChart from "@/components/RadarChart";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ScoutReportForm from "@/components/ScoutReportForm";
-import AddToShortlistDialog from '@/components/AddToShortlistDialog'; // Import the new component
+import AddToShortlistDialog from '@/components/AddToShortlistDialog';
+import PlayerStatistics from '@/components/PlayerStatistics'; // Import the new PlayerStatistics component
 import {
   Accordion,
   AccordionContent,
@@ -112,6 +113,7 @@ const PlayerProfile: React.FC = () => {
   const [player, setPlayer] = useState<Player>(initialMockPlayer);
   const [isReportFormOpen, setIsReportFormOpen] = useState(false);
   const [isShortlistFormOpen, setIsShortlistFormOpen] = useState(false);
+  const [showScoutingProfile, setShowScoutingProfile] = useState(true); // New state to toggle views
 
 
   if (!player) {
@@ -199,19 +201,41 @@ const PlayerProfile: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Scouting Profile Card */}
+          {/* Scouting Profile / Statistics Card */}
           <Card className="bg-gray-800 border-gray-700 text-white col-span-1 md:col-span-1 lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">Scouting Profile</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-lg font-semibold">
+                {showScoutingProfile ? "Scouting Profile" : "Player Statistics"}
+              </CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowScoutingProfile(!showScoutingProfile)}
+                className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+              >
+                {showScoutingProfile ? (
+                  <>
+                    <BarChart2 className="mr-2 h-4 w-4" /> View Statistics
+                  </>
+                ) : (
+                  <>
+                    <Radar className="mr-2 h-4 w-4" /> View Scouting Profile
+                  </>
+                )}
+              </Button>
             </CardHeader>
-            <CardContent className="flex flex-col md:flex-row items-center justify-around space-y-4 md:space-y-0 md:space-x-4">
-              <RadarChart playerAttributes={attributesForRadar} />
-              <div className="flex flex-col space-y-2 text-center md:text-left">
-                <div className="text-xl font-bold">{player.scoutingProfile.overall} <span className="text-sm font-normal text-gray-400">Overall</span></div>
-                <div className="text-xl font-bold">{player.scoutingProfile.potential} <span className="text-sm font-normal text-gray-400">Potential</span></div>
-                <div className="text-xl font-bold">{player.scoutingProfile.brightonFit} <span className="text-sm font-normal text-gray-400">Brighton Fit</span></div>
-              </div>
-            </CardContent>
+            {showScoutingProfile ? (
+              <CardContent className="flex flex-col md:flex-row items-center justify-around space-y-4 md:space-y-0 md:space-x-4">
+                <RadarChart playerAttributes={attributesForRadar} />
+                <div className="flex flex-col space-y-2 text-center md:text-left">
+                  <div className="text-xl font-bold">{player.scoutingProfile.overall} <span className="text-sm font-normal text-gray-400">Overall</span></div>
+                  <div className="text-xl font-bold">{player.scoutingProfile.potential} <span className="text-sm font-normal text-gray-400">Potential</span></div>
+                  <div className="text-xl font-bold">{player.scoutingProfile.brightonFit} <span className="text-sm font-normal text-gray-400">Brighton Fit</span></div>
+                </div>
+              </CardContent>
+            ) : (
+              <PlayerStatistics />
+            )}
           </Card>
 
           {/* Technical Attributes Card */}
