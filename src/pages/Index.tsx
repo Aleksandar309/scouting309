@@ -2,7 +2,7 @@ import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, LayoutDashboard, Search, UserRound } from "lucide-react"; // Import new icons
+import { Users, LayoutDashboard, Search, UserRound, ListChecks } from "lucide-react"; // Import new icon
 
 const Index = () => {
   return (
@@ -48,7 +48,23 @@ const Index = () => {
 
           <Card className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600 transition-colors duration-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-lg font-medium">Example Profile</CardTitle>
+              <CardTitle className="text-lg font-medium">Shortlists</CardTitle>
+              <ListChecks className="h-6 w-6 text-yellow-400" />
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-300 mb-4">Manage your curated player shortlists.</p>
+              <Link to="/shortlists">
+                <Button className="w-full bg-yellow-600 hover:bg-yellow-700 text-white">
+                  View Shortlists
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600 transition-colors duration-200 col-span-full">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-lg font-medium">Example Player Profile</CardTitle>
               <UserRound className="h-6 w-6 text-purple-400" />
             </CardHeader>
             <CardContent>
@@ -60,7 +76,6 @@ const Index = () => {
               </Link>
             </CardContent>
           </Card>
-        </div>
       </div>
       <MadeWithDyad />
     </div>

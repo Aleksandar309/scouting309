@@ -7,7 +7,9 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import PlayerProfile from "./pages/PlayerProfile";
 import PlayerDatabase from "./pages/PlayerDatabase";
-import Scouts from "./pages/Scouts"; // Import the new Scouts component
+import Scouts from "./pages/Scouts";
+import ShortlistPage from "./pages/Shortlist"; // Import the new ShortlistPage
+import { ShortlistProvider } from "./context/ShortlistContext"; // Import ShortlistProvider
 
 const queryClient = new QueryClient();
 
@@ -17,14 +19,17 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/player/:id" element={<PlayerProfile />} />
-          <Route path="/players" element={<PlayerDatabase />} />
-          <Route path="/scouts" element={<Scouts />} /> {/* Add the new scouts route */}
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <ShortlistProvider> {/* Wrap with ShortlistProvider */}
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/player/:id" element={<PlayerProfile />} />
+            <Route path="/players" element={<PlayerDatabase />} />
+            <Route path="/scouts" element={<Scouts />} />
+            <Route path="/shortlists" element={<ShortlistPage />} /> {/* Add the new shortlists route */}
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </ShortlistProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

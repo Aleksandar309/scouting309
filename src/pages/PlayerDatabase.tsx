@@ -10,7 +10,7 @@ import {
   getSortedRowModel,
   SortingState,
 } from '@tanstack/react-table';
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, Plus } from 'lucide-react';
 
 import {
   Table,
@@ -22,8 +22,10 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress"; // Import Progress component
+import { Progress } from "@/components/ui/progress";
 import { Player } from "@/types/player";
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 
 const mockPlayers: Player[] = [
   {
@@ -305,6 +307,26 @@ const columns: ColumnDef<Player>[] = [
       row.getValue("priorityTarget") ? <Badge className="bg-yellow-600 text-white">Yes</Badge> : <Badge variant="secondary" className="bg-gray-700 text-gray-200">No</Badge>
     ),
     enableSorting: true,
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => {
+      const player = row.original;
+      const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+      return (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <AddToShortlistDialog player={player} onClose={() => setIsDialogOpen(false)} />
+        </Dialog>
+      );
+    },
+    enableSorting: false,
+    enableHiding: false,
   },
 ];
 

@@ -3,18 +3,19 @@ import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CalendarDays, Flag, Goal, MapPin, Scale, User, Wallet } from "lucide-react";
+import { ArrowRight, CalendarDays, Flag, Goal, MapPin, Scale, User, Wallet, Plus } from "lucide-react";
 import { Player } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
 import RadarChart from "@/components/RadarChart";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ScoutReportForm from "@/components/ScoutReportForm";
+import AddToShortlistDialog from '@/components/AddToShortlistDialog'; // Import the new component
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"; // Import Accordion components
+} from "@/components/ui/accordion";
 
 const initialMockPlayer: Player = {
   id: "1",
@@ -85,20 +86,20 @@ const initialMockPlayer: Player = {
     "Long-range shooting needs work.",
   ],
   scoutingReports: [
-    { 
-      id: "rep1", 
-      date: "Dec 2, 2025", 
-      scout: "Mia Scout", 
-      rating: 10, 
+    {
+      id: "rep1",
+      date: "Dec 2, 2025",
+      scout: "Mia Scout",
+      rating: 10,
       title: "Initial Assessment",
       keyStrengths: "Excellent vision, strong passing, good leadership.",
       areasForDevelopment: "Needs to improve aerial duels, occasional lapses in concentration."
     },
-    { 
-      id: "rep2", 
-      date: "Nov 10, 2024", 
-      scout: "James Clark", 
-      rating: 9, 
+    {
+      id: "rep2",
+      date: "Nov 10, 2024",
+      scout: "James Clark",
+      rating: 9,
       title: "Feyenoord vs Ajax Match Report",
       keyStrengths: "Dominant in midfield, crucial interceptions, calm under pressure.",
       areasForDevelopment: "Sometimes holds onto the ball too long, needs to release quicker."
@@ -108,8 +109,10 @@ const initialMockPlayer: Player = {
 
 const PlayerProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [player, setPlayer] = useState<Player>(initialMockPlayer); // Use useState for player data
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [player, setPlayer] = useState<Player>(initialMockPlayer);
+  const [isReportFormOpen, setIsReportFormOpen] = useState(false);
+  const [isShortlistFormOpen, setIsShortlistFormOpen] = useState(false);
+
 
   if (!player) {
     return <div className="text-center text-white mt-10">Player not found.</div>;
@@ -122,7 +125,6 @@ const PlayerProfile: React.FC = () => {
     }));
   };
 
-  // Combine the first 3 attributes from each category for the radar chart
   const attributesForRadar = [
     ...player.technical.slice(0, 3),
     ...player.tactical.slice(0, 3),
@@ -153,11 +155,19 @@ const PlayerProfile: React.FC = () => {
           </div>
           <div className="flex space-x-2">
             <Button variant="outline" className="bg-gray-800 text-white border-gray-700 hover:bg-gray-700">Edit</Button>
-            <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+            <Dialog open={isShortlistFormOpen} onOpenChange={setIsShortlistFormOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-green-600 hover:bg-green-700 text-white">
+                  <Plus className="mr-2 h-4 w-4" /> Shortlist
+                </Button>
+              </DialogTrigger>
+              <AddToShortlistDialog player={player} onClose={() => setIsShortlistFormOpen(false)} />
+            </Dialog>
+            <Dialog open={isReportFormOpen} onOpenChange={setIsReportFormOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-blue-600 hover:bg-blue-700 text-white">New Report</Button>
               </DialogTrigger>
-              <ScoutReportForm player={player} onReportSubmit={handleAddReport} onClose={() => setIsFormOpen(false)} />
+              <ScoutReportForm player={player} onReportSubmit={handleAddReport} onClose={() => setIsReportFormOpen(false)} />
             </Dialog>
           </div>
         </div>
@@ -195,7 +205,7 @@ const PlayerProfile: React.FC = () => {
               <CardTitle className="text-lg font-semibold">Scouting Profile</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col md:flex-row items-center justify-around space-y-4 md:space-y-0 md:space-x-4">
-              <RadarChart playerAttributes={attributesForRadar} /> {/* Pass combined attributes */}
+              <RadarChart playerAttributes={attributesForRadar} />
               <div className="flex flex-col space-y-2 text-center md:text-left">
                 <div className="text-xl font-bold">{player.scoutingProfile.overall} <span className="text-sm font-normal text-gray-400">Overall</span></div>
                 <div className="text-xl font-bold">{player.scoutingProfile.potential} <span className="text-sm font-normal text-gray-400">Potential</span></div>
