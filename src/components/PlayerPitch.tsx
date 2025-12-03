@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 
 interface PlayerPitchProps {
   positionsData: PlayerPosition[];
+  onPositionClick: (positionType: string) => void; // New prop
 }
 
 // Simplified mapping of common football positions to relative coordinates (percentage)
@@ -51,7 +52,7 @@ const positionCoordinates: { [key: string]: { x: string; y: string } } = {
   "RS": { x: "90%", y: "65%" },
 };
 
-const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData }) => {
+const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, onPositionClick }) => {
   return (
     <TooltipProvider>
       {/* Main pitch container - now horizontal, with max height and centered */}
@@ -108,6 +109,7 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData }) => {
                     transform: "translate(-50%, -50%)",
                     opacity: opacity,
                   }}
+                  onClick={() => onPositionClick(pos.name)} // Added onClick
                 >
                   {pos.name}
                 </div>

@@ -16,20 +16,22 @@ import {
   BarChart2,
   Radar,
   ChevronLeft,
-  Maximize, // Added for Height
-  Weight, // Added for Weight
-  Trophy, // Added for League
-  DollarSign, // Added for Wage Demands
-  Briefcase, // Added for Agent
+  Maximize,
+  Weight,
+  Trophy,
+  DollarSign,
+  Briefcase,
 } from "lucide-react";
-import { Player } from "@/types/player";
+import { Player, PlayerAttribute } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
 import RadarChart from "@/components/RadarChart";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ScoutReportForm from "@/components/ScoutReportForm";
 import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import PlayerStatistics from '@/components/PlayerStatistics';
-import PlayerPitch from '@/components/PlayerPitch'; // Import the new PlayerPitch component
+import PlayerPitch from '@/components/PlayerPitch';
+import RoleDetailsDialog from '@/components/RoleDetailsDialog'; // Import new component
+import { FmRole, FmRoleAttribute, FmAttributeCategory } from '@/utils/fm-roles'; // Import FM types and utils
 import {
   Accordion,
   AccordionContent,
@@ -42,7 +44,7 @@ const initialMockPlayer: Player = {
   name: "Mats Wieffer",
   team: "Feyenoord",
   positions: ["CDM", "CM"],
-  positionsData: [ // Added detailed position data
+  positionsData: [
     { name: "CDM", type: "natural", rating: 9 },
     { name: "CM", type: "alternative", rating: 8 },
     { name: "CB", type: "tertiary", rating: 6 },
@@ -74,6 +76,10 @@ const initialMockPlayer: Player = {
     { name: "Dribbling", rating: 7 },
     { name: "Crossing", rating: 6 },
     { name: "Aerial Ability", rating: 8 },
+    { name: "Tackling", rating: 8 }, // Added for FM roles
+    { name: "Finishing", rating: 7 }, // Added for FM roles
+    { name: "Shot Stopping", rating: 0 }, // Added for FM roles (GK)
+    { name: "Handling", rating: 0 }, // Added for FM roles (GK)
   ],
   tactical: [
     { name: "Positioning", rating: 9 },
@@ -82,6 +88,8 @@ const initialMockPlayer: Player = {
     { name: "Off-Ball Movement", rating: 9 },
     { name: "Pressing", rating: 9 },
     { name: "Defensive Awareness", rating: 9 },
+    { name: "Vision", rating: 9 }, // Added for FM roles
+    { name: "Command of Area", rating: 0 }, // Added for FM roles (GK)
   ],
   physical: [
     { name: "Pace", rating: 8 },
@@ -90,6 +98,7 @@ const initialMockPlayer: Player = {
     { name: "Stamina", rating: 9 },
     { name: "Agility", rating: 8 },
     { name: "Recovery", rating: 9 },
+    { name: "Reflexes", rating: 0 }, // Added for FM roles (GK)
   ],
   mentalPsychology: [
     { name: "Composure", rating: 9 },
@@ -98,6 +107,7 @@ const initialMockPlayer: Player = {
     { name: "Concentration", rating: 9 },
     { name: "Coachability", rating: 9 },
     { name: "Resilience", rating: 9 },
+    { name: "Communication", rating: 0 }, // Added for FM roles (GK)
   ],
   keyStrengths: [
     "Exceptional reading of the game and anticipation.",
@@ -132,6 +142,26 @@ const initialMockPlayer: Player = {
   ],
 };
 
+// Helper to get highlight type for an attribute
+const getHighlightType = (
+  attributeName: string,
+  category: FmAttributeCategory,
+  selectedRole: FmRole | null
+): 'primary' | 'secondary' | 'tertiary' | null => {
+  if (!selectedRole) return null;
+
+  const roleAttr = selectedRole.attributes.find(
+    (attr) => attr.name === attributeName && attr.category === category
+  );
+
+  if (roleAttr) {
+    if (roleAttr.weight === 3) return 'primary';
+    if (roleAttr.weight === 2) return 'secondary';
+    if (roleAttr.weight === 1) return 'tertiary';
+  }
+  return null;
+};
+
 const PlayerProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -139,6 +169,11 @@ const PlayerProfile: React.FC = () => {
   const [isReportFormOpen, setIsReportFormOpen] = useState(false);
   const [isShortlistFormOpen, setIsShortlistFormOpen] = useState(false);
   const [showScoutingProfile, setShowScoutingProfile] = useState(true);
+
+  // State for role details dialog
+  const [isRoleDetailsDialogOpen, setIsRoleDetailsDialogOpen] = useState(false);
+  const [selectedPositionForRoles, setSelectedPositionForRoles] = useState<string | null>(null);
+  const [selectedFmRole, setSelectedFmRole] = useState<FmRole | null>(null);
 
   if (!player) {
     return <div className="text-center text-white mt-10">Player not found.</div>;
@@ -149,6 +184,16 @@ const PlayerProfile: React.FC = () => {
       ...prevPlayer,
       scoutingReports: [...prevPlayer.scoutingReports, newReport],
     }));
+  };
+
+  const handlePositionClick = (positionType: string) => {
+    setSelectedPositionForRoles(positionType);
+    setIsRoleDetailsDialogOpen(true);
+    setSelectedFmRole(null); // Reset selected role when opening for a new position
+  };
+
+  const handleRoleSelect = (role: FmRole | null) => {
+    setSelectedFmRole(role);
   };
 
   const attributesForRadar = [
@@ -252,18 +297,18 @@ const PlayerProfile: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Player Pitch Card (replaces Scouting Summary) */}
+          {/* Player Pitch Card */}
           <Card className="bg-gray-800 border-gray-700 text-white">
             <CardHeader>
               <CardTitle className="text-lg font-semibold">Player Positions</CardTitle>
             </CardHeader>
             <CardContent className="flex items-start justify-center h-full p-4">
-              <PlayerPitch positionsData={player.positionsData} />
+              <PlayerPitch positionsData={player.positionsData} onPositionClick={handlePositionClick} />
             </CardContent>
           </Card>
 
           {/* Scouting Profile / Statistics Card (now only Radar Chart) */}
-          <Card className="bg-gray-800 border-gray-700 text-white col-span-1 md:col-span-1 lg:col-span-1"> {/* Adjusted col-span */}
+          <Card className="bg-gray-800 border-gray-700 text-white col-span-1 md:col-span-1 lg:col-span-1">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg font-semibold">
                 {showScoutingProfile ? "Attribute Radar" : "Player Statistics"}
@@ -286,7 +331,7 @@ const PlayerProfile: React.FC = () => {
               </Button>
             </CardHeader>
             {showScoutingProfile ? (
-              <CardContent className="flex items-start justify-center h-full p-4"> {/* Changed items-center to items-start */}
+              <CardContent className="flex items-start justify-center h-full p-4">
                 <RadarChart playerAttributes={attributesForRadar} />
               </CardContent>
             ) : (
@@ -301,7 +346,12 @@ const PlayerProfile: React.FC = () => {
             </CardHeader>
             <CardContent>
               {player.technical.map((attr) => (
-                <AttributeRating key={attr.name} name={attr.name} rating={attr.rating} />
+                <AttributeRating
+                  key={attr.name}
+                  name={attr.name}
+                  rating={attr.rating}
+                  highlightType={getHighlightType(attr.name, "technical", selectedFmRole)}
+                />
               ))}
             </CardContent>
           </Card>
@@ -313,7 +363,12 @@ const PlayerProfile: React.FC = () => {
             </CardHeader>
             <CardContent>
               {player.tactical.map((attr) => (
-                <AttributeRating key={attr.name} name={attr.name} rating={attr.rating} />
+                <AttributeRating
+                  key={attr.name}
+                  name={attr.name}
+                  rating={attr.rating}
+                  highlightType={getHighlightType(attr.name, "tactical", selectedFmRole)}
+                />
               ))}
             </CardContent>
           </Card>
@@ -325,7 +380,12 @@ const PlayerProfile: React.FC = () => {
             </CardHeader>
             <CardContent>
               {player.physical.map((attr) => (
-                <AttributeRating key={attr.name} name={attr.name} rating={attr.rating} />
+                <AttributeRating
+                  key={attr.name}
+                  name={attr.name}
+                  rating={attr.rating}
+                  highlightType={getHighlightType(attr.name, "physical", selectedFmRole)}
+                />
               ))}
             </CardContent>
           </Card>
@@ -337,7 +397,12 @@ const PlayerProfile: React.FC = () => {
             </CardHeader>
             <CardContent>
               {player.mentalPsychology.map((attr) => (
-                <AttributeRating key={attr.name} name={attr.name} rating={attr.rating} />
+                <AttributeRating
+                  key={attr.name}
+                  name={attr.name}
+                  rating={attr.rating}
+                  highlightType={getHighlightType(attr.name, "mentalPsychology", selectedFmRole)}
+                />
               ))}
             </CardContent>
           </Card>
@@ -406,6 +471,23 @@ const PlayerProfile: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      {/* Role Details Dialog */}
+      <Dialog open={isRoleDetailsDialogOpen} onOpenChange={setIsRoleDetailsDialogOpen}>
+        {selectedPositionForRoles && (
+          <RoleDetailsDialog
+            player={player}
+            positionType={selectedPositionForRoles}
+            onClose={() => {
+              setIsRoleDetailsDialogOpen(false);
+              setSelectedPositionForRoles(null);
+              setSelectedFmRole(null); // Clear selected role when dialog closes
+            }}
+            onRoleSelect={handleRoleSelect}
+            selectedRole={selectedFmRole}
+          />
+        )}
+      </Dialog>
     </div>
   );
 };
