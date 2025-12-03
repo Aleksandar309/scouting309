@@ -1,9 +1,27 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CalendarDays, Flag, Goal, MapPin, Scale, User, Wallet, Plus, BarChart2, Radar, ChevronLeft } from "lucide-react"; // Added ChevronLeft icon
+import {
+  ArrowRight,
+  CalendarDays,
+  Flag,
+  Goal,
+  MapPin,
+  Scale,
+  User,
+  Wallet,
+  Plus,
+  BarChart2,
+  Radar,
+  ChevronLeft,
+  Maximize, // Added for Height
+  Weight, // Added for Weight
+  Trophy, // Added for League
+  DollarSign, // Added for Wage Demands
+  Briefcase, // Added for Agent
+} from "lucide-react";
 import { Player } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
 import RadarChart from "@/components/RadarChart";
@@ -110,12 +128,11 @@ const initialMockPlayer: Player = {
 
 const PlayerProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
   const [player, setPlayer] = useState<Player>(initialMockPlayer);
   const [isReportFormOpen, setIsReportFormOpen] = useState(false);
   const [isShortlistFormOpen, setIsShortlistFormOpen] = useState(false);
-  const [showScoutingProfile, setShowScoutingProfile] = useState(true); // New state to toggle views
-
+  const [showScoutingProfile, setShowScoutingProfile] = useState(true);
 
   if (!player) {
     return <div className="text-center text-white mt-10">Player not found.</div>;
@@ -198,16 +215,34 @@ const PlayerProfile: React.FC = () => {
             <CardHeader>
               <CardTitle className="text-lg font-semibold">Player Details</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-gray-300">
-              <div className="grid grid-cols-2 gap-y-1">
-                <span>Height: {player.details.height}</span>
-                <span>Weight: {player.details.weight}</span>
-                <span>League: {player.details.league}</span>
-                <span>Contract expiry: {player.details.contractExpiry}</span>
-                <span>Wage Demands: {player.details.wageDemands}</span>
-                <span>Agent: {player.details.agent}</span>
+            <CardContent className="space-y-3 text-gray-300"> {/* Increased space-y for better separation */}
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2"> {/* Adjusted gap */}
+                <div className="flex items-center">
+                  <Maximize className="mr-2 h-4 w-4 text-gray-500" />
+                  <span>Height: <span className="font-medium text-white">{player.details.height}</span></span>
+                </div>
+                <div className="flex items-center">
+                  <Weight className="mr-2 h-4 w-4 text-gray-500" />
+                  <span>Weight: <span className="font-medium text-white">{player.details.weight}</span></span>
+                </div>
+                <div className="flex items-center">
+                  <Trophy className="mr-2 h-4 w-4 text-gray-500" />
+                  <span>League: <span className="font-medium text-white">{player.details.league}</span></span>
+                </div>
+                <div className="flex items-center">
+                  <CalendarDays className="mr-2 h-4 w-4 text-gray-500" />
+                  <span>Contract expiry: <span className="font-medium text-white">{player.details.contractExpiry}</span></span>
+                </div>
+                <div className="flex items-center">
+                  <DollarSign className="mr-2 h-4 w-4 text-gray-500" />
+                  <span>Wage Demands: <span className="font-medium text-white">{player.details.wageDemands}</span></span>
+                </div>
+                <div className="flex items-center">
+                  <Briefcase className="mr-2 h-4 w-4 text-gray-500" />
+                  <span>Agent: <span className="font-medium text-white">{player.details.agent}</span></span>
+                </div>
               </div>
-              <p className="text-sm mt-4">{player.details.notes}</p>
+              <p className="text-sm mt-4 border-t border-gray-700 pt-3">{player.details.notes}</p> {/* Added border-top for separation */}
             </CardContent>
           </Card>
 
