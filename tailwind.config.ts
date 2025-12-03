@@ -62,6 +62,18 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // New semantic colors
+        'chart-grid': 'hsl(var(--chart-grid))',
+        'chart-axis-label': 'hsl(var(--chart-axis-label))',
+        'pitch-line': 'hsl(var(--pitch-line))',
+        'pitch-natural': 'hsl(var(--pitch-natural))',
+        'pitch-alternative': 'hsl(var(--pitch-alternative))',
+        'pitch-tertiary': 'hsl(var(--pitch-tertiary))',
+        'pitch-unsuited': 'hsl(var(--pitch-unsuited))',
+        'role-primary': 'hsl(var(--role-primary))',
+        'role-secondary': 'hsl(var(--role-secondary))',
+        'role-tertiary': 'hsl(var(--role-tertiary))',
+        'text-on-colored-background': 'hsl(var(--text-on-colored-background))',
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -54,8 +54,7 @@ const positionCoordinates: { [key: string]: { x: string; y: string } } = {
   "ST": { x: "90%", y: "50%" },
   // LS: { x: "35%", y: "10%" } -> { x: "90%", y: "35%" }
   "LS": { x: "90%", y: "35%" },
-  // RS: { x: "65%", y: "10%" } -> { x: "90%", y: "65%" }
-  "RS": { x: "90%", y: "65%" },
+  // RS: { x: "65%", y: "10%" } -> { x: "90%", y: "65%" },
   // LWB (for 3-4-3, 3-5-2):
   "LWB": { x: "45%", y: "10%" },
   // RWB (for 3-4-3, 3-5-2):
@@ -78,16 +77,16 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
       {/* Main pitch container - now horizontal, with max height and centered */}
       <div className="relative w-full aspect-[3/2] max-h-[300px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner">
         {/* Pitch Lines (simplified) */}
-        <div className="absolute inset-0 border-border border-dashed border-opacity-50">
+        <div className="absolute inset-0 border-pitch-line border-dashed border-opacity-50"> {/* Use semantic color */}
           {/* Halfway line (now vertical) */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-border bg-opacity-50 transform -translate-x-1/2"></div>
+          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-pitch-line bg-opacity-50 transform -translate-x-1/2"></div> {/* Use semantic color */}
           {/* Center circle */}
-          <div className="absolute top-1/2 left-1/2 w-20 h-20 border-2 border-border border-opacity-50 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute top-1/2 left-1/2 w-20 h-20 border-2 border-pitch-line border-opacity-50 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div> {/* Use semantic color */}
           {/* Penalty boxes (now on left/right sides) */}
           {/* Left Penalty Box */}
-          <div className="absolute left-0 top-1/2 h-[70%] w-[20%] border-r-2 border-t-2 border-b-2 border-border border-opacity-50 transform -translate-y-1/2 rounded-l-lg"></div>
+          <div className="absolute left-0 top-1/2 h-[70%] w-[20%] border-r-2 border-t-2 border-b-2 border-pitch-line border-opacity-50 transform -translate-y-1/2 rounded-l-lg"></div> {/* Use semantic color */}
           {/* Right Penalty Box */}
-          <div className="absolute right-0 top-1/2 h-[70%] w-[20%] border-l-2 border-t-2 border-b-2 border-border border-opacity-50 transform -translate-y-1/2 rounded-r-lg"></div>
+          <div className="absolute right-0 top-1/2 h-[70%] w-[20%] border-l-2 border-t-2 border-b-2 border-pitch-line border-opacity-50 transform -translate-y-1/2 rounded-r-lg"></div> {/* Use semantic color */}
         </div>
 
         {positionsToRender.map((pos, index) => {
@@ -103,16 +102,16 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
             tooltipText = `${pos.name} (Fit: ${pos.type}, Rating: ${pos.rating}/10)`;
             switch (pos.type) {
               case "natural":
-                circleClasses = "bg-blue-500 border-2 border-blue-300 w-6 h-6 text-sm font-bold";
+                circleClasses = "bg-pitch-natural border-2 border-pitch-natural w-6 h-6 text-sm font-bold";
                 break;
               case "alternative":
-                circleClasses = "bg-yellow-500 border-2 border-yellow-300 w-5 h-5 text-xs";
+                circleClasses = "bg-pitch-alternative border-2 border-pitch-alternative w-5 h-5 text-xs";
                 break;
               case "tertiary":
-                circleClasses = "bg-muted-foreground border-2 border-muted w-4 h-4 text-xs";
+                circleClasses = "bg-pitch-tertiary border-2 border-pitch-tertiary w-4 h-4 text-xs";
                 break;
               case "unsuited":
-                circleClasses = "bg-destructive border-2 border-destructive-foreground w-4 h-4 text-xs opacity-50";
+                circleClasses = "bg-pitch-unsuited border-2 border-pitch-unsuited w-4 h-4 text-xs opacity-50";
                 tooltipText = `${pos.name} (Unsuited)`;
                 break;
             }
@@ -121,13 +120,13 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
             tooltipText = `${pos.name} (${pos.rating}/10)`;
             switch (pos.type) {
               case "natural":
-                circleClasses = "bg-blue-500 border-2 border-blue-300 w-6 h-6 text-sm font-bold";
+                circleClasses = "bg-pitch-natural border-2 border-pitch-natural w-6 h-6 text-sm font-bold";
                 break;
               case "alternative":
-                circleClasses = "bg-yellow-500 border-2 border-yellow-300 w-5 h-5 text-xs";
+                circleClasses = "bg-pitch-alternative border-2 border-pitch-alternative w-5 h-5 text-xs";
                 break;
               case "tertiary":
-                circleClasses = "bg-muted-foreground border-2 border-muted w-4 h-4 text-xs";
+                circleClasses = "bg-pitch-tertiary border-2 border-pitch-tertiary w-4 h-4 text-xs";
                 break;
             }
           }
@@ -141,7 +140,7 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
               <TooltipTrigger asChild>
                 <div
                   className={cn(
-                    "absolute rounded-full flex items-center justify-center text-white cursor-pointer transition-all duration-200",
+                    "absolute rounded-full flex items-center justify-center text-text-on-colored-background cursor-pointer transition-all duration-200", // Use semantic text color
                     circleClasses
                   )}
                   style={{

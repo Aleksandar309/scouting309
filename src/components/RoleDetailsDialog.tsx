@@ -83,7 +83,7 @@ const RoleDetailsDialog: React.FC<RoleDetailsDialogProps> = ({
                     "px-3 py-1 rounded-full text-sm font-medium",
                     compatibility >= 80 ? "bg-green-600 text-white" :
                     compatibility >= 60 ? "bg-yellow-600 text-white" :
-                    "bg-red-600 text-white"
+                    "bg-destructive text-destructive-foreground" // Use destructive for low compatibility
                   )}
                 >
                   {compatibility}%
@@ -92,16 +92,16 @@ const RoleDetailsDialog: React.FC<RoleDetailsDialogProps> = ({
               <p className="text-muted-foreground mb-2">{role.description}</p>
               {isSelected && (
                 <div className="mt-3">
-                  <h4 className="font-medium text-blue-300 mb-1">Key Attributes:</h4>
+                  <h4 className="font-medium text-blue-300 mb-1">Key Attributes:</h4> {/* text-blue-300 can be kept as an accent */}
                   <div className="flex flex-wrap gap-2">
                     {role.attributes.map((attr, idx) => (
                       <span
                         key={idx}
                         className={cn(
-                          "px-2 py-1 rounded-full text-xs",
-                          attr.weight === 3 ? "bg-blue-500 text-white" : // Primary
-                          attr.weight === 2 ? "bg-purple-500 text-white" : // Secondary
-                          "bg-gray-500 text-white" // Tertiary
+                          "px-2 py-1 rounded-full text-text-on-colored-background", // Use new semantic text color
+                          attr.weight === 3 ? "bg-role-primary" : // Primary
+                          attr.weight === 2 ? "bg-role-secondary" : // Secondary
+                          "bg-role-tertiary" // Tertiary
                         )}
                       >
                         {attr.name}
