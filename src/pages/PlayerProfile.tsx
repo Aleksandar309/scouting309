@@ -29,6 +29,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ScoutReportForm from "@/components/ScoutReportForm";
 import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import PlayerStatistics from '@/components/PlayerStatistics';
+import PlayerPitch from '@/components/PlayerPitch'; // Import the new PlayerPitch component
 import {
   Accordion,
   AccordionContent,
@@ -41,6 +42,11 @@ const initialMockPlayer: Player = {
   name: "Mats Wieffer",
   team: "Feyenoord",
   positions: ["CDM", "CM"],
+  positionsData: [ // Added detailed position data
+    { name: "CDM", type: "natural", rating: 9 },
+    { name: "CM", type: "alternative", rating: 8 },
+    { name: "CB", type: "tertiary", rating: 6 },
+  ],
   priorityTarget: true,
   criticalPriority: true,
   nationality: "Netherlands",
@@ -246,24 +252,13 @@ const PlayerProfile: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* New Card for Overall, Potential, Brighton Fit */}
+          {/* Player Pitch Card (replaces Scouting Summary) */}
           <Card className="bg-gray-800 border-gray-700 text-white">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">Scouting Summary</CardTitle>
+              <CardTitle className="text-lg font-semibold">Player Positions</CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col space-y-2 text-gray-300">
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Overall:</span>
-                <span className="font-bold text-white">{player.scoutingProfile.overall}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Potential:</span>
-                <span className="font-bold text-white">{player.scoutingProfile.potential}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Brighton Fit:</span>
-                <span className="font-bold text-white">{player.scoutingProfile.brightonFit}</span>
-              </div>
+            <CardContent className="flex items-center justify-center h-full p-4">
+              <PlayerPitch positionsData={player.positionsData} />
             </CardContent>
           </Card>
 

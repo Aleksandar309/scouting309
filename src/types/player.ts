@@ -3,11 +3,18 @@ export interface PlayerAttribute {
   rating: number;
 }
 
+export interface PlayerPosition {
+  name: string; // e.g., "CDM", "CM", "RW", "ST", "CB", "LB", "RB", "GK"
+  type: "natural" | "alternative" | "tertiary";
+  rating: number; // 0-10
+}
+
 export interface Player {
   id: string;
   name: string;
   team: string;
-  positions: string[];
+  positions: string[]; // Keep this for general display
+  positionsData: PlayerPosition[]; // New field for detailed position data
   priorityTarget: boolean;
   criticalPriority: boolean;
   nationality: string;
