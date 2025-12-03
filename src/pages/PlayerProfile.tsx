@@ -27,7 +27,7 @@ import {
   Edit,
   Save,
   XCircle,
-  Camera, // Added Camera icon for upload
+  Camera,
 } from "lucide-react";
 import { Player, PlayerAttribute } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
@@ -58,7 +58,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { mockPlayers } from './PlayerDatabase'; // Import mockPlayers
+import { mockPlayers } from './PlayerDatabase';
+
+// Zod schema for player attributes
+const attributeSchema = z.array(z.object({
+  name: z.string(),
+  rating: z.coerce.number().min(1).max(10, { message: "Rating must be between 1 and 10." }),
+}));
 
 // Zod schema for editable player fields
 const formSchema = z.object({
@@ -68,7 +74,7 @@ const formSchema = z.object({
   age: z.coerce.number().min(1, { message: "Age must be at least 1." }),
   value: z.string().min(2, { message: "Value must be specified." }),
   footed: z.string().min(2, { message: "Footed must be specified." }),
-  avatarUrl: z.string().optional(), // NEW: Add avatarUrl to form schema
+  avatarUrl: z.string().optional(),
   details: z.object({
     height: z.string().min(2, { message: "Height must be specified." }),
     weight: z.string().min(2, { message: "Weight must be specified." }),
@@ -86,6 +92,12 @@ const formSchema = z.object({
     potentialAbility: z.coerce.number().min(1).max(10, { message: "Potential Ability must be between 1 and 10." }),
     teamFit: z.coerce.number().min(1).max(10, { message: "Team Fit must be between 1 and 10." }),
   }),
+  technical: attributeSchema,
+  tactical: attributeSchema,
+  physical: attributeSchema,
+  mentalPsychology: attributeSchema,
+  setPieces: attributeSchema,
+  hidden: attributeSchema,
   keyStrengths: z.string().optional(),
   areasForDevelopment: z.string().optional(),
 });
@@ -140,9 +152,15 @@ const PlayerProfile: React.FC = () => {
       age: currentPlayer.age,
       value: currentPlayer.value,
       footed: currentPlayer.footed,
-      avatarUrl: currentPlayer.avatarUrl || '', // Include avatarUrl in default values
+      avatarUrl: currentPlayer.avatarUrl || '',
       details: currentPlayer.details,
       scoutingProfile: currentPlayer.scoutingProfile,
+      technical: currentPlayer.technical,
+      tactical: currentPlayer.tactical,
+      physical: currentPlayer.physical,
+      mentalPsychology: currentPlayer.mentalPsychology,
+      setPieces: currentPlayer.setPieces,
+      hidden: currentPlayer.hidden,
       keyStrengths: currentPlayer.keyStrengths.join('\n'),
       areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
     } : undefined,
@@ -150,7 +168,7 @@ const PlayerProfile: React.FC = () => {
 
   // Effect to update player state and form defaults when the currentPlayer object changes
   React.useEffect(() => {
-    setPlayer(currentPlayer || null); // Update player state when currentPlayer changes
+    setPlayer(currentPlayer || null);
     if (currentPlayer) {
       form.reset({
         name: currentPlayer.name,
@@ -159,16 +177,22 @@ const PlayerProfile: React.FC = () => {
         age: currentPlayer.age,
         value: currentPlayer.value,
         footed: currentPlayer.footed,
-        avatarUrl: currentPlayer.avatarUrl || '', // Reset avatarUrl
+        avatarUrl: currentPlayer.avatarUrl || '',
         details: currentPlayer.details,
         scoutingProfile: currentPlayer.scoutingProfile,
+        technical: currentPlayer.technical,
+        tactical: currentPlayer.tactical,
+        physical: currentPlayer.physical,
+        mentalPsychology: currentPlayer.mentalPsychology,
+        setPieces: currentPlayer.setPieces,
+        hidden: currentPlayer.hidden,
         keyStrengths: currentPlayer.keyStrengths.join('\n'),
         areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
       });
     }
-    setIsEditMode(false); // Exit edit mode when player changes
-    setSelectedFmRole(null); // Clear selected role
-  }, [currentPlayer, form]); // Depend on currentPlayer and form
+    setIsEditMode(false);
+    setSelectedFmRole(null);
+  }, [currentPlayer, form]);
 
   if (!player) {
     return <div className="text-center text-white mt-10">Player not found.</div>;
@@ -213,7 +237,13 @@ const PlayerProfile: React.FC = () => {
         ...values,
         keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
         areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
-        avatarUrl: values.avatarUrl, // Save the new avatar URL
+        avatarUrl: values.avatarUrl,
+        technical: values.technical,
+        tactical: values.tactical,
+        physical: values.physical,
+        mentalPsychology: values.mentalPsychology,
+        setPieces: values.setPieces,
+        hidden: values.hidden,
       };
     });
     setIsEditMode(false);
@@ -324,7 +354,28 @@ const PlayerProfile: React.FC = () => {
                     </Button>
                     <Button
                       variant="outline"
-                      onClick={() => setIsEditMode(false)}
+                      onClick={() => {
+                        setIsEditMode(false);
+                        form.reset(currentPlayer ? {
+                          name: currentPlayer.name,
+                          team: currentPlayer.team,
+                          nationality: currentPlayer.nationality,
+                          age: currentPlayer.age,
+                          value: currentPlayer.value,
+                          footed: currentPlayer.footed,
+                          avatarUrl: currentPlayer.avatarUrl || '',
+                          details: currentPlayer.details,
+                          scoutingProfile: currentPlayer.scoutingProfile,
+                          technical: currentPlayer.technical,
+                          tactical: currentPlayer.tactical,
+                          physical: currentPlayer.physical,
+                          mentalPsychology: currentPlayer.mentalPsychology,
+                          setPieces: currentPlayer.setPieces,
+                          hidden: currentPlayer.hidden,
+                          keyStrengths: currentPlayer.keyStrengths.join('\n'),
+                          areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
+                        } : undefined);
+                      }}
                       className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
                     >
                       <XCircle className="mr-2 h-4 w-4" /> Cancel
@@ -627,14 +678,45 @@ const PlayerProfile: React.FC = () => {
                     <CardTitle className="text-lg font-semibold flex items-center"><User className="mr-2 h-5 w-5" /> Technical</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {player.technical.map((attr) => (
-                      <AttributeRating
-                        key={attr.name}
-                        name={attr.name}
-                        rating={attr.rating}
-                        highlightType={getHighlightType(attr.name, "technical", selectedFmRole)}
+                    {isEditMode ? (
+                      <FormField
+                        control={form.control}
+                        name="technical"
+                        render={() => (
+                          <FormItem>
+                            {player.technical.map((attr, index) => (
+                              <FormField
+                                key={attr.name}
+                                control={form.control}
+                                name={`technical.${index}.rating`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <AttributeRating
+                                        name={attr.name}
+                                        rating={field.value}
+                                        isEditable={true}
+                                        onRatingChange={(newRating) => field.onChange(newRating)}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            ))}
+                          </FormItem>
+                        )}
                       />
-                    ))}
+                    ) : (
+                      player.technical.map((attr) => (
+                        <AttributeRating
+                          key={attr.name}
+                          name={attr.name}
+                          rating={attr.rating}
+                          highlightType={getHighlightType(attr.name, "technical", selectedFmRole)}
+                        />
+                      ))
+                    )}
                   </CardContent>
                 </Card>
 
@@ -644,14 +726,45 @@ const PlayerProfile: React.FC = () => {
                     <CardTitle className="text-lg font-semibold flex items-center"><Target className="mr-2 h-5 w-5" /> Set Pieces</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {player.setPieces.map((attr) => (
-                      <AttributeRating
-                        key={attr.name}
-                        name={attr.name}
-                        rating={attr.rating}
-                        highlightType={getHighlightType(attr.name, "setPieces", selectedFmRole)}
+                    {isEditMode ? (
+                      <FormField
+                        control={form.control}
+                        name="setPieces"
+                        render={() => (
+                          <FormItem>
+                            {player.setPieces.map((attr, index) => (
+                              <FormField
+                                key={attr.name}
+                                control={form.control}
+                                name={`setPieces.${index}.rating`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <AttributeRating
+                                        name={attr.name}
+                                        rating={field.value}
+                                        isEditable={true}
+                                        onRatingChange={(newRating) => field.onChange(newRating)}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            ))}
+                          </FormItem>
+                        )}
                       />
-                    ))}
+                    ) : (
+                      player.setPieces.map((attr) => (
+                        <AttributeRating
+                          key={attr.name}
+                          name={attr.name}
+                          rating={attr.rating}
+                          highlightType={getHighlightType(attr.name, "setPieces", selectedFmRole)}
+                        />
+                      ))
+                    )}
                   </CardContent>
                 </Card>
 
@@ -661,14 +774,45 @@ const PlayerProfile: React.FC = () => {
                     <CardTitle className="text-lg font-semibold flex items-center"><MapPin className="mr-2 h-5 w-5" /> Tactical</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {player.tactical.map((attr) => (
-                      <AttributeRating
-                        key={attr.name}
-                        name={attr.name}
-                        rating={attr.rating}
-                        highlightType={getHighlightType(attr.name, "tactical", selectedFmRole)}
+                    {isEditMode ? (
+                      <FormField
+                        control={form.control}
+                        name="tactical"
+                        render={() => (
+                          <FormItem>
+                            {player.tactical.map((attr, index) => (
+                              <FormField
+                                key={attr.name}
+                                control={form.control}
+                                name={`tactical.${index}.rating`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <AttributeRating
+                                        name={attr.name}
+                                        rating={field.value}
+                                        isEditable={true}
+                                        onRatingChange={(newRating) => field.onChange(newRating)}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            ))}
+                          </FormItem>
+                        )}
                       />
-                    ))}
+                    ) : (
+                      player.tactical.map((attr) => (
+                        <AttributeRating
+                          key={attr.name}
+                          name={attr.name}
+                          rating={attr.rating}
+                          highlightType={getHighlightType(attr.name, "tactical", selectedFmRole)}
+                        />
+                      ))
+                    )}
                   </CardContent>
                 </Card>
 
@@ -678,14 +822,45 @@ const PlayerProfile: React.FC = () => {
                     <CardTitle className="text-lg font-semibold flex items-center"><Scale className="mr-2 h-5 w-5" /> Physical</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {player.physical.map((attr) => (
-                      <AttributeRating
-                        key={attr.name}
-                        name={attr.name}
-                        rating={attr.rating}
-                        highlightType={getHighlightType(attr.name, "physical", selectedFmRole)}
+                    {isEditMode ? (
+                      <FormField
+                        control={form.control}
+                        name="physical"
+                        render={() => (
+                          <FormItem>
+                            {player.physical.map((attr, index) => (
+                              <FormField
+                                key={attr.name}
+                                control={form.control}
+                                name={`physical.${index}.rating`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <AttributeRating
+                                        name={attr.name}
+                                        rating={field.value}
+                                        isEditable={true}
+                                        onRatingChange={(newRating) => field.onChange(newRating)}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            ))}
+                          </FormItem>
+                        )}
                       />
-                    ))}
+                    ) : (
+                      player.physical.map((attr) => (
+                        <AttributeRating
+                          key={attr.name}
+                          name={attr.name}
+                          rating={attr.rating}
+                          highlightType={getHighlightType(attr.name, "physical", selectedFmRole)}
+                        />
+                      ))
+                    )}
                   </CardContent>
                 </Card>
 
@@ -695,14 +870,45 @@ const PlayerProfile: React.FC = () => {
                     <CardTitle className="text-lg font-semibold flex items-center"><User className="mr-2 h-5 w-5" /> Mental & Psychology</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {player.mentalPsychology.map((attr) => (
-                      <AttributeRating
-                        key={attr.name}
-                        name={attr.name}
-                        rating={attr.rating}
-                        highlightType={getHighlightType(attr.name, "mentalPsychology", selectedFmRole)}
+                    {isEditMode ? (
+                      <FormField
+                        control={form.control}
+                        name="mentalPsychology"
+                        render={() => (
+                          <FormItem>
+                            {player.mentalPsychology.map((attr, index) => (
+                              <FormField
+                                key={attr.name}
+                                control={form.control}
+                                name={`mentalPsychology.${index}.rating`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <AttributeRating
+                                        name={attr.name}
+                                        rating={field.value}
+                                        isEditable={true}
+                                        onRatingChange={(newRating) => field.onChange(newRating)}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            ))}
+                          </FormItem>
+                        )}
                       />
-                    ))}
+                    ) : (
+                      player.mentalPsychology.map((attr) => (
+                        <AttributeRating
+                          key={attr.name}
+                          name={attr.name}
+                          rating={attr.rating}
+                          highlightType={getHighlightType(attr.name, "mentalPsychology", selectedFmRole)}
+                        />
+                      ))
+                    )}
                   </CardContent>
                 </Card>
 
@@ -712,14 +918,45 @@ const PlayerProfile: React.FC = () => {
                     <CardTitle className="text-lg font-semibold flex items-center"><EyeOff className="mr-2 h-5 w-5" /> Hidden Attributes</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {player.hidden.map((attr) => (
-                      <AttributeRating
-                        key={attr.name}
-                        name={attr.name}
-                        rating={attr.rating}
-                        highlightType={getHighlightType(attr.name, "hidden", selectedFmRole)}
+                    {isEditMode ? (
+                      <FormField
+                        control={form.control}
+                        name="hidden"
+                        render={() => (
+                          <FormItem>
+                            {player.hidden.map((attr, index) => (
+                              <FormField
+                                key={attr.name}
+                                control={form.control}
+                                name={`hidden.${index}.rating`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <AttributeRating
+                                        name={attr.name}
+                                        rating={field.value}
+                                        isEditable={true}
+                                        onRatingChange={(newRating) => field.onChange(newRating)}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            ))}
+                          </FormItem>
+                        )}
                       />
-                    ))}
+                    ) : (
+                      player.hidden.map((attr) => (
+                        <AttributeRating
+                          key={attr.name}
+                          name={attr.name}
+                          rating={attr.rating}
+                          highlightType={getHighlightType(attr.name, "hidden", selectedFmRole)}
+                        />
+                      ))
+                    )}
                   </CardContent>
                 </Card>
 
