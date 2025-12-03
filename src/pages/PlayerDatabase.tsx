@@ -585,6 +585,67 @@ export const mockPlayers: Player[] = [
   },
 ];
 
+// Helper function to find an attribute's rating across all categories
+const getAttributeRating = (player: Player, attributeName: string): number => {
+  const categories = [
+    player.technical,
+    player.tactical,
+    player.physical,
+    player.mentalPsychology,
+    player.setPieces,
+    player.hidden,
+  ];
+
+  for (const category of categories) {
+    const attribute = category.find(attr => attr.name === attributeName);
+    if (attribute) {
+      return attribute.rating;
+    }
+  }
+  return 0; // Default to 0 if not found
+};
+
+// List of all unique attributes to create columns for
+const allAttributes = [
+  // Technical
+  "First Touch", "Passing Range", "Ball Striking", "Dribbling", "Crossing",
+  "Aerial Ability", "Tackling", "Finishing",
+  // Tactical
+  "Positioning", "Decision Making", "Game Intelligence", "Off-Ball Movement",
+  "Pressing", "Defensive Awareness", "Vision",
+  // Physical
+  "Pace", "Acceleration", "Strength", "Stamina", "Agility", "Recovery",
+  // Mental & Psychology
+  "Composure", "Leadership", "Work Rate", "Concentration", "Coachability",
+  "Resilience",
+  // Set Pieces
+  "Corners", "Free Kicks", "Penalties", "Long Throws", "Defending corners",
+  // Hidden (Note: Hidden attributes usually have a different scale, but we'll display them as is)
+  "Consistency", "Important Matches", "Versatility", "Dirtiness", "Injury Proneness",
+  "Adaptability", "Ambition", "Loyalty",
+];
+
+const attributeColumns: ColumnDef<Player>[] = allAttributes.map(attrName => ({
+  accessorFn: (row) => getAttributeRating(row, attrName),
+  id: attrName.replace(/\s/g, ''), // Create a unique ID for the column
+  header: ({ column }) => (
+    <Button
+      variant="ghost"
+      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      className="text-white hover:bg-gray-700"
+    >
+      {attrName}
+      <ArrowUpDown className="ml-2 h-4 w-4" />
+    </Button>
+  ),
+  cell: ({ row }) => {
+    const rating = getAttributeRating(row.original, attrName);
+    return <span className="text-gray-200">{rating}</span>;
+  },
+  enableSorting: true,
+}));
+
+
 const columns: ColumnDef<Player>[] = [
   {
     accessorKey: "name",
@@ -672,103 +733,6 @@ const columns: ColumnDef<Player>[] = [
       </Button>
     ),
   },
-  // NEW ATTRIBUTE COLUMNS START HERE
-  {
-    accessorFn: (row) => row.technical.find(attr => attr.name === "Passing Range")?.rating || 0,
-    id: "passingRange",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-white hover:bg-gray-700"
-      >
-        Passing
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const rating = row.original.technical.find(attr => attr.name === "Passing Range")?.rating || 0;
-      return <span className="text-gray-200">{rating}</span>;
-    },
-    enableSorting: true,
-  },
-  {
-    accessorFn: (row) => row.technical.find(attr => attr.name === "Tackling")?.rating || 0,
-    id: "tackling",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-white hover:bg-gray-700"
-      >
-        Tackling
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const rating = row.original.technical.find(attr => attr.name === "Tackling")?.rating || 0;
-      return <span className="text-gray-200">{rating}</span>;
-    },
-    enableSorting: true,
-  },
-  {
-    accessorFn: (row) => row.physical.find(attr => attr.name === "Pace")?.rating || 0,
-    id: "pace",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-white hover:bg-gray-700"
-      >
-        Pace
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const rating = row.original.physical.find(attr => attr.name === "Pace")?.rating || 0;
-      return <span className="text-gray-200">{rating}</span>;
-    },
-    enableSorting: true,
-  },
-  {
-    accessorFn: (row) => row.tactical.find(attr => attr.name === "Vision")?.rating || 0,
-    id: "vision",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-white hover:bg-gray-700"
-      >
-        Vision
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const rating = row.original.tactical.find(attr => attr.name === "Vision")?.rating || 0;
-      return <span className="text-gray-200">{rating}</span>;
-    },
-    enableSorting: true,
-  },
-  {
-    accessorFn: (row) => row.mentalPsychology.find(attr => attr.name === "Composure")?.rating || 0,
-    id: "composure",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-white hover:bg-gray-700"
-      >
-        Composure
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const rating = row.original.mentalPsychology.find(attr => attr.name === "Composure")?.rating || 0;
-      return <span className="text-gray-200">{rating}</span>;
-    },
-    enableSorting: true,
-  },
-  // END NEW ATTRIBUTE COLUMNS
   {
     accessorKey: "scoutingProfile.overall",
     header: ({ column }) => (
@@ -825,6 +789,7 @@ const columns: ColumnDef<Player>[] = [
     ),
     enableSorting: true,
   },
+  ...attributeColumns, // Add all dynamically generated attribute columns here
   {
     id: "actions",
     header: "Actions",
