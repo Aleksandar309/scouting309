@@ -31,6 +31,7 @@ import PlayerCard from '@/components/PlayerCard';
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AddPlayerForm from '@/components/AddPlayerForm';
 import { ALL_ATTRIBUTE_NAMES } from '@/utils/player-attributes';
+import { cn } from '@/lib/utils'; // Import cn for conditional class joining
 
 interface PlayerDatabaseProps {
   players: Player[];
@@ -57,6 +58,26 @@ const getAttributeRating = (player: Player, attributeName: string): number => {
   return 0; // Default to 0 if not found
 };
 
+// Helper function to get color class for a rating (1-10)
+const getRatingColorClass = (rating: number): string => {
+  if (rating >= 1 && rating <= 3) {
+    return "bg-red-500";
+  } else if (rating >= 4 && rating <= 5) {
+    return "bg-orange-500";
+  } else if (rating === 6) {
+    return "bg-yellow-500";
+  } else if (rating === 7) {
+    return "bg-lime-500"; // Yellow-Green
+  } else if (rating === 8) {
+    return "bg-green-500";
+  } else if (rating === 9) {
+    return "bg-emerald-600"; // Dark Green
+  } else if (rating === 10) {
+    return "bg-blue-500";
+  }
+  return "bg-gray-400"; // Default color for ratings outside 1-10 or 0
+};
+
 // List of all unique attributes to create columns for
 const attributeColumns: ColumnDef<Player>[] = ALL_ATTRIBUTE_NAMES.map(attrName => ({
   accessorFn: (row) => getAttributeRating(row, attrName),
@@ -73,7 +94,18 @@ const attributeColumns: ColumnDef<Player>[] = ALL_ATTRIBUTE_NAMES.map(attrName =
   ),
   cell: ({ row }) => {
     const rating = getAttributeRating(row.original, attrName);
-    return <span className="text-gray-200">{rating}</span>;
+    const isHiddenAttribute = CATEGORIZED_ATTRIBUTES.hidden.includes(attrName);
+    const displayRating = isHiddenAttribute ? rating : rating; // Hidden attributes might have a different scale, but we display them as is for now.
+    const colorClass = getRatingColorClass(rating);
+
+    return (
+      <span className={cn(
+        "inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium text-white",
+        colorClass
+      )}>
+        {displayRating}
+      </span>
+    );
   },
   enableSorting: true,
 }));
@@ -84,7 +116,7 @@ const columns: ColumnDef<Player>[] = [
     accessorKey: "name",
     header: ({ column }) => {
       return (
-        <TableHead className="sticky left-0 z-10 bg-gray-800 text-gray-300"> {/* Added sticky classes */}
+        <TableHead className="sticky left-0 z-10 bg-gray-800 text-gray-300">
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
@@ -97,7 +129,7 @@ const columns: ColumnDef<Player>[] = [
       );
     },
     cell: ({ row }) => (
-      <TableCell className="sticky left-0 z-10 bg-gray-800 text-gray-200"> {/* Added sticky classes */}
+      <TableCell className="sticky left-0 z-10 bg-gray-800 text-gray-200">
         <Link to={`/player/${row.original.id}`} className="text-blue-400 hover:underline">
           {row.getValue("name")}
         </Link>
@@ -186,10 +218,11 @@ const columns: ColumnDef<Player>[] = [
     cell: ({ row }) => {
       const rating = row.original.scoutingProfile.currentAbility;
       const progressValue = Math.min(Math.max(rating * 10, 0), 100);
+      const colorClass = getRatingColorClass(rating);
       return (
         <div className="flex items-center w-full">
-          <Progress value={progressValue} className="h-2 w-full bg-gray-700" indicatorClassName="bg-blue-500" />
-          <span className="ml-2 text-sm text-gray-200">{rating}</span>
+          <Progress value={progressValue} className="h-2 w-full bg-gray-700" indicatorClassName={colorClass} />
+          <span className={cn("ml-2 text-sm font-medium text-white", colorClass, "px-2 py-1 rounded-full")}>{rating}</span>
         </div>
       );
     },
@@ -210,10 +243,11 @@ const columns: ColumnDef<Player>[] = [
     cell: ({ row }) => {
       const rating = row.original.scoutingProfile.potentialAbility;
       const progressValue = Math.min(Math.max(rating * 10, 0), 100);
+      const colorClass = getRatingColorClass(rating);
       return (
         <div className="flex items-center w-full">
-          <Progress value={progressValue} className="h-2 w-full bg-gray-700" indicatorClassName="bg-green-500" />
-          <span className="ml-2 text-sm text-gray-200">{rating}</span>
+          <Progress value={progressValue} className="h-2 w-full bg-gray-700" indicatorClassName={colorClass} />
+          <span className={cn("ml-2 text-sm font-medium text-white", colorClass, "px-2 py-1 rounded-full")}>{rating}</span>
         </div>
       );
     },
@@ -336,21 +370,14 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                   <TableRow key={headerGroup.id} className="border-gray-700">
                     {headerGroup.headers.map((header) => {
                       return (
-                        <React.Fragment key={header.id}>
-                          {header.id === 'name' ? (
-                            // Render the sticky header directly here
-                            flexRender(header.column.columnDef.header, header.getContext())
-                          ) : (
-                            <TableHead className="text-gray-300">
-                              {header.isPlaceholder
-                                ? null
-                                : flexRender(
-                                    header.column.columnDef.header,
-                                    header.getContext()
-                                  )}
-                            </TableHead>
-                          )}
-                        </React.Fragment>
+                        <TableHead key={header.id} className="text-gray-300">
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
                       );
                     })}
                   </TableRow>
@@ -365,16 +392,9 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                       className="border-gray-700 hover:bg-gray-700"
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <React.Fragment key={cell.id}>
-                          {cell.column.id === 'name' ? (
-                            // Render the sticky cell directly here
-                            flexRender(cell.column.columnDef.cell, cell.getContext())
-                          ) : (
-                            <TableCell className="text-gray-200">
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </TableCell>
-                          )}
-                        </React.Fragment>
+                        <TableCell key={cell.id} className="text-gray-200">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
                       ))}
                     </TableRow>
                   ))
