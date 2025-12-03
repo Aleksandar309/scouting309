@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import {
   ColumnDef,
   flexRender,
@@ -10,7 +10,7 @@ import {
   getSortedRowModel,
   SortingState,
 } from '@tanstack/react-table';
-import { ArrowUpDown, Plus, ChevronLeft } from 'lucide-react'; // Added ChevronLeft icon
+import { ArrowUpDown, Plus, ChevronLeft, Table2, LayoutGrid } from 'lucide-react'; // Added Table2 and LayoutGrid icons
 
 import {
   Table,
@@ -26,6 +26,8 @@ import { Progress } from "@/components/ui/progress";
 import { Player } from "@/types/player";
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import AddToShortlistDialog from '@/components/AddToShortlistDialog';
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"; // Import ToggleGroup
+import PlayerCard from '@/components/PlayerCard'; // Import PlayerCard
 
 export const mockPlayers: Player[] = [
   {
@@ -44,7 +46,7 @@ export const mockPlayers: Player[] = [
     age: 26,
     value: "€25M",
     footed: "Right Footed",
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=MW", // Added avatarUrl
+    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=MW",
     details: {
       height: "188 cm",
       weight: "78 kg",
@@ -162,7 +164,7 @@ export const mockPlayers: Player[] = [
     age: 23,
     value: "€45M",
     footed: "Left Footed",
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=MK", // Added avatarUrl
+    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=MK",
     details: {
       height: "177 cm",
       weight: "71 kg",
@@ -272,7 +274,7 @@ export const mockPlayers: Player[] = [
     age: 21,
     value: "€100M",
     footed: "Right Footed",
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=FW", // Added avatarUrl
+    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=FW",
     details: {
       height: "177 cm",
       weight: "70 kg",
@@ -380,7 +382,7 @@ export const mockPlayers: Player[] = [
     age: 21,
     value: "€50M",
     footed: "Left Footed",
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=LC", // Added avatarUrl
+    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=LC",
     details: {
       height: "187 cm",
       weight: "80 kg",
@@ -488,7 +490,7 @@ export const mockPlayers: Player[] = [
     age: 19,
     value: "€60M",
     footed: "Right Footed",
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=EF", // Added avatarUrl
+    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=EF",
     details: {
       height: "188 cm",
       weight: "80 kg",
@@ -750,7 +752,21 @@ const columns: ColumnDef<Player>[] = [
 
 const PlayerDatabase: React.FC = () => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+  const [viewMode, setViewMode] = React.useState<'table' | 'card'>(() => {
+    // Load from localStorage or default to 'table'
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('playerDatabaseViewMode') as 'table' | 'card') || 'table';
+    }
+    return 'table';
+  });
+
+  React.useEffect(() => {
+    // Save to localStorage whenever viewMode changes
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('playerDatabaseViewMode', viewMode);
+    }
+  }, [viewMode]);
 
   const table = useReactTable({
     data: mockPlayers,
@@ -775,53 +791,78 @@ const PlayerDatabase: React.FC = () => {
           <ChevronLeft className="h-5 w-5 mr-1" /> Back
         </Button>
 
-        <h1 className="text-3xl font-bold mb-6">Player Database</h1>
-
-        <div className="rounded-md border border-gray-700 bg-gray-800">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="border-gray-700">
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id} className="text-gray-300">
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                    className="border-gray-700 hover:bg-gray-700"
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="text-gray-200">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center">
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Player Database</h1>
+          <ToggleGroup
+            type="single"
+            value={viewMode}
+            onValueChange={(value: 'table' | 'card') => {
+              if (value) setViewMode(value);
+            }}
+            className="bg-gray-800 rounded-md p-1 border border-gray-700"
+          >
+            <ToggleGroupItem value="table" aria-label="Toggle table view" className="data-[state=on]:bg-blue-600 data-[state=on]:text-white text-gray-300 hover:bg-gray-700">
+              <Table2 className="h-4 w-4 mr-2" /> Table View
+            </ToggleGroupItem>
+            <ToggleGroupItem value="card" aria-label="Toggle card view" className="data-[state=on]:bg-blue-600 data-[state=on]:text-white text-gray-300 hover:bg-gray-700">
+              <LayoutGrid className="h-4 w-4 mr-2" /> Card View
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
+
+        {viewMode === 'table' ? (
+          <div className="rounded-md border border-gray-700 bg-gray-800">
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id} className="border-gray-700">
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead key={header.id} className="text-gray-300">
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                      className="border-gray-700 hover:bg-gray-700"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id} className="text-gray-200">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                      No results.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {mockPlayers.map((player) => (
+              <PlayerCard key={player.id} player={player} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
