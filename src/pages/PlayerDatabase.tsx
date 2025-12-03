@@ -10,7 +10,7 @@ import {
   getSortedRowModel,
   SortingState,
 } from '@tanstack/react-table';
-import { ArrowUpDown, Plus, ChevronLeft, Table2, LayoutGrid } from 'lucide-react'; // Added Table2 and LayoutGrid icons
+import { ArrowUpDown, Plus, ChevronLeft, Table2, LayoutGrid } from 'lucide-react';
 
 import {
   Table,
@@ -26,8 +26,8 @@ import { Progress } from "@/components/ui/progress";
 import { Player } from "@/types/player";
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import AddToShortlistDialog from '@/components/AddToShortlistDialog';
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"; // Import ToggleGroup
-import PlayerCard from '@/components/PlayerCard'; // Import PlayerCard
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import PlayerCard from '@/components/PlayerCard';
 
 export const mockPlayers: Player[] = [
   {
@@ -672,6 +672,103 @@ const columns: ColumnDef<Player>[] = [
       </Button>
     ),
   },
+  // NEW ATTRIBUTE COLUMNS START HERE
+  {
+    accessorFn: (row) => row.technical.find(attr => attr.name === "Passing Range")?.rating || 0,
+    id: "passingRange",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="text-white hover:bg-gray-700"
+      >
+        Passing
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const rating = row.original.technical.find(attr => attr.name === "Passing Range")?.rating || 0;
+      return <span className="text-gray-200">{rating}</span>;
+    },
+    enableSorting: true,
+  },
+  {
+    accessorFn: (row) => row.technical.find(attr => attr.name === "Tackling")?.rating || 0,
+    id: "tackling",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="text-white hover:bg-gray-700"
+      >
+        Tackling
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const rating = row.original.technical.find(attr => attr.name === "Tackling")?.rating || 0;
+      return <span className="text-gray-200">{rating}</span>;
+    },
+    enableSorting: true,
+  },
+  {
+    accessorFn: (row) => row.physical.find(attr => attr.name === "Pace")?.rating || 0,
+    id: "pace",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="text-white hover:bg-gray-700"
+      >
+        Pace
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const rating = row.original.physical.find(attr => attr.name === "Pace")?.rating || 0;
+      return <span className="text-gray-200">{rating}</span>;
+    },
+    enableSorting: true,
+  },
+  {
+    accessorFn: (row) => row.tactical.find(attr => attr.name === "Vision")?.rating || 0,
+    id: "vision",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="text-white hover:bg-gray-700"
+      >
+        Vision
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const rating = row.original.tactical.find(attr => attr.name === "Vision")?.rating || 0;
+      return <span className="text-gray-200">{rating}</span>;
+    },
+    enableSorting: true,
+  },
+  {
+    accessorFn: (row) => row.mentalPsychology.find(attr => attr.name === "Composure")?.rating || 0,
+    id: "composure",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="text-white hover:bg-gray-700"
+      >
+        Composure
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const rating = row.original.mentalPsychology.find(attr => attr.name === "Composure")?.rating || 0;
+      return <span className="text-gray-200">{rating}</span>;
+    },
+    enableSorting: true,
+  },
+  // END NEW ATTRIBUTE COLUMNS
   {
     accessorKey: "scoutingProfile.overall",
     header: ({ column }) => (
@@ -811,7 +908,7 @@ const PlayerDatabase: React.FC = () => {
         </div>
 
         {viewMode === 'table' ? (
-          <div className="rounded-md border border-gray-700 bg-gray-800">
+          <div className="rounded-md border border-gray-700 bg-gray-800 overflow-x-auto"> {/* Added overflow-x-auto */}
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
