@@ -4,6 +4,7 @@ import React from 'react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input"; // Import Input component
+import { FmAttributeCategory } from '@/utils/fm-roles'; // Import FmAttributeCategory
 
 interface AttributeRatingProps {
   name: string;
@@ -12,6 +13,8 @@ interface AttributeRatingProps {
   highlightType?: 'primary' | 'secondary' | 'tertiary' | null;
   isEditable?: boolean; // New prop
   onRatingChange?: (newRating: number) => void; // New prop
+  onViewHistory?: (attributeName: string, category: FmAttributeCategory) => void; // New prop for viewing history
+  attributeCategory?: FmAttributeCategory; // New prop to pass category for history
 }
 
 const getRatingColorClass = (rating: number): string => {
@@ -33,7 +36,16 @@ const getRatingColorClass = (rating: number): string => {
   return "!bg-muted-foreground"; // Default color for ratings outside 1-10 or 0
 };
 
-const AttributeRating: React.FC<AttributeRatingProps> = ({ name, rating, className, highlightType, isEditable = false, onRatingChange }) => {
+const AttributeRating: React.FC<AttributeRatingProps> = ({
+  name,
+  rating,
+  className,
+  highlightType,
+  isEditable = false,
+  onRatingChange,
+  onViewHistory,
+  attributeCategory,
+}) => {
   const progressValue = Math.min(Math.max(rating * 10, 0), 100);
   const indicatorColorClass = getRatingColorClass(rating);
 
@@ -54,12 +66,22 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({ name, rating, classNa
     }
   };
 
+  const handleClick = () => {
+    if (!isEditable && onViewHistory && attributeCategory) {
+      onViewHistory(name, attributeCategory);
+    }
+  };
+
   return (
-    <div className={cn(
-      "flex items-center justify-between py-1 px-2 rounded-md transition-all duration-200",
-      highlightType ? highlightClasses[highlightType] : "",
-      className
-    )}>
+    <div
+      className={cn(
+        "flex items-center justify-between py-1 px-2 rounded-md transition-all duration-200",
+        highlightType ? highlightClasses[highlightType] : "",
+        !isEditable && onViewHistory && attributeCategory ? "cursor-pointer hover:bg-accent/50" : "", // Make clickable if history view is enabled
+        className
+      )}
+      onClick={handleClick}
+    >
       <span className={cn("text-sm w-1/2", highlightType ? "text-text-on-colored-background" : "text-muted-foreground")}>{name}</span> {/* Use semantic text color */}
       <div className="flex items-center w-1/2">
         {isEditable ? (
@@ -73,8 +95,8 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({ name, rating, classNa
           />
         ) : (
           <>
-            <Progress 
-              value={progressValue} 
+            <Progress
+              value={progressValue}
               className="h-2 w-full bg-muted"
               indicatorClassName={indicatorColorClass}
             />

@@ -1,6 +1,14 @@
+export interface AttributeHistoryEntry {
+  date: string; // ISO string or 'YYYY-MM-DD'
+  rating: number;
+  changedBy: string; // e.g., Scout's name
+  comment?: string;
+}
+
 export interface PlayerAttribute {
   name: string;
   rating: number;
+  history?: AttributeHistoryEntry[]; // Optional history of changes
 }
 
 export interface PlayerPosition {

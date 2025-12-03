@@ -30,7 +30,7 @@ import {
   Camera,
   History,
 } from "lucide-react";
-import { Player, PlayerAttribute } from "@/types/player";
+import { Player, PlayerAttribute, AttributeHistoryEntry } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
 import RadarChart from "@/components/RadarChart";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -39,7 +39,8 @@ import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import PlayerStatistics from '@/components/PlayerStatistics';
 import PlayerPitch from '@/components/PlayerPitch';
 import RoleDetailsDialog from '@/components/RoleDetailsDialog';
-import { FmRole, FmRoleAttribute, FmAttributeCategory } from '@/utils/fm-roles';
+import AttributeHistoryDialog from '@/components/AttributeHistoryDialog'; // Import new component
+import { FmRole, FmRoleAttribute, FmAttributeCategory, getAttributesByCategory } from '@/utils/fm-roles';
 import {
   Accordion,
   AccordionContent,
@@ -63,11 +64,18 @@ import FormationSelector from '@/components/FormationSelector';
 import { FM_FORMATIONS, calculateFormationFit, calculateFormationOverallFit, getStarRating } from '@/utils/formations';
 import { Formation, PlayerFormationFitPosition } from '@/types/formation';
 import { ALL_ATTRIBUTE_NAMES, CATEGORIZED_ATTRIBUTES } from '@/utils/player-attributes';
+import { toast } from 'sonner'; // Import toast for notifications
 
 // Zod schema for player attributes
 const attributeSchema = z.array(z.object({
   name: z.string(),
   rating: z.coerce.number().min(1).max(10, { message: "Rating must be between 1 and 10." }),
+  history: z.array(z.object({
+    date: z.string(),
+    rating: z.number(),
+    changedBy: z.string(),
+    comment: z.string().optional(),
+  })).optional(),
 }));
 
 // Zod schema for editable player fields
@@ -147,6 +155,9 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
   const [isRoleDetailsDialogOpen, setIsRoleDetailsDialogOpen] = useState(false);
   const [selectedPositionForRoles, setSelectedPositionForRoles] = useState<string | null>(null);
   const [selectedFmRole, setSelectedFmRole] = useState<FmRole | null>(null);
+
+  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false); // State for history dialog
+  const [selectedHistoryAttribute, setSelectedHistoryAttribute] = useState<{ name: string; category: FmAttributeCategory } | null>(null); // State for selected attribute history
 
   const [selectedFormationId, setSelectedFormationId] = useState<string | null>(null);
   const [playerFormationFit, setPlayerFormationFit] = useState<PlayerFormationFitPosition[] | null>(null);
@@ -266,6 +277,11 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
     setSelectedFmRole(role);
   };
 
+  const handleAttributeHistoryClick = (attributeName: string, category: FmAttributeCategory) => {
+    setSelectedHistoryAttribute({ name: attributeName, category });
+    setIsHistoryDialogOpen(true);
+  };
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -278,26 +294,55 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
   };
 
   const onSubmit = (values: PlayerFormValues) => {
+    if (!currentPlayer) return;
+
     const updatedPlayer: Player = {
       ...player, // Keep existing properties like positionsData, scoutingReports etc.
       ...values,
       keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
       areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
       avatarUrl: values.avatarUrl,
-      technical: values.technical,
-      tactical: values.tactical,
-      physical: values.physical,
-      mentalPsychology: values.mentalPsychology,
-      setPieces: values.setPieces,
-      hidden: values.hidden,
       lastEdited: new Date().toISOString(), // Update lastEdited on save
     };
+
+    // Function to compare and update attribute history
+    const updateAttributeHistory = (
+      currentAttrs: PlayerAttribute[],
+      newAttrs: PlayerAttribute[],
+      category: FmAttributeCategory
+    ): PlayerAttribute[] => {
+      return newAttrs.map(newAttr => {
+        const currentAttr = currentAttrs.find(attr => attr.name === newAttr.name);
+        if (currentAttr && currentAttr.rating !== newAttr.rating) {
+          const newHistoryEntry: AttributeHistoryEntry = {
+            date: new Date().toISOString(),
+            rating: newAttr.rating,
+            changedBy: "User Edit", // Placeholder for now, could be dynamic
+            comment: `Rating changed from ${currentAttr.rating} to ${newAttr.rating}.`,
+          };
+          return {
+            ...newAttr,
+            history: [...(currentAttr.history || []), newHistoryEntry],
+          };
+        }
+        return { ...newAttr, history: currentAttr?.history || [] }; // Keep existing history if no change
+      });
+    };
+
+    updatedPlayer.technical = updateAttributeHistory(currentPlayer.technical, values.technical, "technical");
+    updatedPlayer.tactical = updateAttributeHistory(currentPlayer.tactical, values.tactical, "tactical");
+    updatedPlayer.physical = updateAttributeHistory(currentPlayer.physical, values.physical, "physical");
+    updatedPlayer.mentalPsychology = updateAttributeHistory(currentPlayer.mentalPsychology, values.mentalPsychology, "mentalPsychology");
+    updatedPlayer.setPieces = updateAttributeHistory(currentPlayer.setPieces, values.setPieces, "setPieces");
+    updatedPlayer.hidden = updateAttributeHistory(currentPlayer.hidden, values.hidden, "hidden");
+
 
     setPlayers((prevPlayers) =>
       prevPlayers.map((p) => (p.id === updatedPlayer.id ? updatedPlayer : p))
     );
     setPlayer(updatedPlayer); // Update local state as well
     setIsEditMode(false);
+    toast.success("Player profile updated successfully!");
   };
 
   const attributesForRadar = [
@@ -308,37 +353,48 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
   ];
 
   const renderAttributeSection = (
-    categoryName: keyof typeof CATEGORIZED_ATTRIBUTES,
+    categoryName: FmAttributeCategory, // Changed to FmAttributeCategory
     label: string,
     fieldArrayName: "technical" | "tactical" | "physical" | "mentalPsychology" | "setPieces" | "hidden"
   ) => (
     <div className="space-y-2">
       <h3 className="text-lg font-semibold text-foreground">{label}</h3>
       {form.watch(fieldArrayName).map((attr, index) => (
-        <FormField
-          key={attr.name}
-          control={form.control}
-          name={`${fieldArrayName}.${index}.rating`}
-          render={({ field }) => (
-            <FormItem className="flex items-center justify-between">
-              <FormLabel className="text-muted-foreground w-1/2">{attr.name}</FormLabel>
-              <FormControl className="w-1/2">
-                <Input
-                  type="number"
-                  min="1"
-                  max="10"
-                  className="bg-input border-border text-foreground text-sm text-center h-8"
-                  {...field}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value, 10);
-                    field.onChange(isNaN(value) ? 0 : value);
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+        <div key={attr.name}>
+          {isEditMode ? (
+            <FormField
+              control={form.control}
+              name={`${fieldArrayName}.${index}.rating`}
+              render={({ field }) => (
+                <FormItem className="flex items-center justify-between">
+                  <FormLabel className="text-muted-foreground w-1/2">{attr.name}</FormLabel>
+                  <FormControl className="w-1/2">
+                    <Input
+                      type="number"
+                      min="1"
+                      max="10"
+                      className="bg-input border-border text-foreground text-sm text-center h-8"
+                      {...field}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value, 10);
+                        field.onChange(isNaN(value) ? 0 : value);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : (
+            <AttributeRating
+              name={attr.name}
+              rating={attr.rating}
+              highlightType={getHighlightType(attr.name, categoryName, selectedFmRole)}
+              onViewHistory={handleAttributeHistoryClick} // Pass the handler
+              attributeCategory={categoryName} // Pass the category
+            />
           )}
-        />
+        </div>
       ))}
     </div>
   );
@@ -782,18 +838,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                     <CardTitle className="text-lg font-semibold flex items-center"><User className="mr-2 h-5 w-5" /> Technical</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {isEditMode ? (
-                      renderAttributeSection("technical", "Technical", "technical")
-                    ) : (
-                      player.technical.map((attr) => (
-                        <AttributeRating
-                          key={attr.name}
-                          name={attr.name}
-                          rating={attr.rating}
-                          highlightType={getHighlightType(attr.name, "technical", selectedFmRole)}
-                        />
-                      ))
-                    )}
+                    {renderAttributeSection("technical", "Technical", "technical")}
                   </CardContent>
                 </Card>
 
@@ -803,18 +848,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                     <CardTitle className="text-lg font-semibold flex items-center"><Target className="mr-2 h-5 w-5" /> Set Pieces</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {isEditMode ? (
-                      renderAttributeSection("setPieces", "Set Pieces", "setPieces")
-                    ) : (
-                      player.setPieces.map((attr) => (
-                        <AttributeRating
-                          key={attr.name}
-                          name={attr.name}
-                          rating={attr.rating}
-                          highlightType={getHighlightType(attr.name, "setPieces", selectedFmRole)}
-                        />
-                      ))
-                    )}
+                    {renderAttributeSection("setPieces", "Set Pieces", "setPieces")}
                   </CardContent>
                 </Card>
 
@@ -824,18 +858,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                     <CardTitle className="text-lg font-semibold flex items-center"><MapPin className="mr-2 h-5 w-5" /> Tactical</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {isEditMode ? (
-                      renderAttributeSection("tactical", "Tactical", "tactical")
-                    ) : (
-                      player.tactical.map((attr) => (
-                        <AttributeRating
-                          key={attr.name}
-                          name={attr.name}
-                          rating={attr.rating}
-                          highlightType={getHighlightType(attr.name, "tactical", selectedFmRole)}
-                        />
-                      ))
-                    )}
+                    {renderAttributeSection("tactical", "Tactical", "tactical")}
                   </CardContent>
                 </Card>
 
@@ -845,18 +868,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                     <CardTitle className="text-lg font-semibold flex items-center"><Scale className="mr-2 h-5 w-5" /> Physical</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {isEditMode ? (
-                      renderAttributeSection("physical", "Physical", "physical")
-                    ) : (
-                      player.physical.map((attr) => (
-                        <AttributeRating
-                          key={attr.name}
-                          name={attr.name}
-                          rating={attr.rating}
-                          highlightType={getHighlightType(attr.name, "physical", selectedFmRole)}
-                        />
-                      ))
-                    )}
+                    {renderAttributeSection("physical", "Physical", "physical")}
                   </CardContent>
                 </Card>
 
@@ -866,18 +878,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                     <CardTitle className="text-lg font-semibold flex items-center"><User className="mr-2 h-5 w-5" /> Mental & Psychology</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {isEditMode ? (
-                      renderAttributeSection("mentalPsychology", "Mental & Psychology", "mentalPsychology")
-                    ) : (
-                      player.mentalPsychology.map((attr) => (
-                        <AttributeRating
-                          key={attr.name}
-                          name={attr.name}
-                          rating={attr.rating}
-                          highlightType={getHighlightType(attr.name, "mentalPsychology", selectedFmRole)}
-                        />
-                      ))
-                    )}
+                    {renderAttributeSection("mentalPsychology", "Mental & Psychology", "mentalPsychology")}
                   </CardContent>
                 </Card>
 
@@ -887,18 +888,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                     <CardTitle className="text-lg font-semibold flex items-center"><EyeOff className="mr-2 h-5 w-5" /> Hidden Attributes</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {isEditMode ? (
-                      renderAttributeSection("hidden", "Hidden (1-20)", "hidden")
-                    ) : (
-                      player.hidden.map((attr) => (
-                        <AttributeRating
-                          key={attr.name}
-                          name={attr.name}
-                          rating={attr.rating}
-                          highlightType={getHighlightType(attr.name, "hidden", selectedFmRole)}
-                        />
-                      ))
-                    )}
+                    {renderAttributeSection("hidden", "Hidden (1-20)", "hidden")}
                   </CardContent>
                 </Card>
 
@@ -1070,6 +1060,21 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
               }}
               onRoleSelect={handleRoleSelect}
               selectedRole={selectedFmRole}
+            />
+          )}
+        </Dialog>
+
+        {/* Attribute History Dialog */}
+        <Dialog open={isHistoryDialogOpen} onOpenChange={setIsHistoryDialogOpen}>
+          {selectedHistoryAttribute && player && (
+            <AttributeHistoryDialog
+              player={player}
+              attributeName={selectedHistoryAttribute.name}
+              attributeCategory={selectedHistoryAttribute.category}
+              onClose={() => {
+                setIsHistoryDialogOpen(false);
+                setSelectedHistoryAttribute(null);
+              }}
             />
           )}
         </Dialog>

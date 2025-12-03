@@ -34,13 +34,23 @@ export const initialMockPlayers: Player[] = [
       teamFit: 9,
     },
     technical: [
-      { name: "First Touch", rating: 9 },
-      { name: "Passing Range", rating: 9 },
+      { name: "First Touch", rating: 9, history: [
+        { date: "2023-01-15", rating: 7, changedBy: "James Clark", comment: "Initial assessment, good control." },
+        { date: "2023-07-20", rating: 8, changedBy: "Mia Scout", comment: "Improved under pressure." },
+        { date: "2024-01-25", rating: 9, changedBy: "James Clark", comment: "Exceptional first touch, rarely loses possession." },
+      ]},
+      { name: "Passing Range", rating: 9, history: [
+        { date: "2023-01-15", rating: 8, changedBy: "James Clark", comment: "Solid passing, needs more variety." },
+        { date: "2024-01-25", rating: 9, changedBy: "James Clark", comment: "Excellent range, can switch play effectively." },
+      ]},
       { name: "Ball Striking", rating: 8 },
       { name: "Dribbling", rating: 7 },
       { name: "Crossing", rating: 6 },
       { name: "Aerial Ability", rating: 8 },
-      { name: "Tackling", rating: 8 },
+      { name: "Tackling", rating: 8, history: [
+        { date: "2023-01-15", rating: 7, changedBy: "James Clark", comment: "Strong in tackles, sometimes mistimes." },
+        { date: "2023-09-01", rating: 8, changedBy: "David Lee", comment: "More disciplined in challenges." },
+      ]},
       { name: "Finishing", rating: 7 },
       { name: "Technique", rating: 8 },
     ],
