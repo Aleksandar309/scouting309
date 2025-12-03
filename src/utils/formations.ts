@@ -106,33 +106,42 @@ export const FM_FORMATIONS: Formation[] = [
   },
 ];
 
+// Helper to find the best player position data for a given formation position name
+const getPlayerPositionDataForFormationPosition = (playerPositions: PlayerPosition[], formationPositionName: string): PlayerPosition | undefined => {
+  // 1. Try direct match
+  let playerPos = playerPositions.find(p => p.name === formationPositionName);
+  if (playerPos) return playerPos;
+
+  // 2. Try mapping specific formation positions to general player positions
+  const specificToGeneralMap: { [key: string]: string } = {
+    "LCB": "CB", "RCB": "CB",
+    "LDM": "CDM", "RDM": "CDM",
+    "LCM": "CM", "RCM": "CM",
+    "LS": "ST", "RS": "ST",
+    "LWB": "LB", "RWB": "RB",
+  };
+
+  const generalPositionName = specificToGeneralMap[formationPositionName];
+  if (generalPositionName) {
+    playerPos = playerPositions.find(p => p.name === generalPositionName);
+    if (playerPos) return playerPos;
+  }
+
+  return undefined;
+};
+
 export const calculateFormationFit = (player: Player, formation: Formation): PlayerFormationFitPosition[] => {
   const playerFitPositions: PlayerFormationFitPosition[] = [];
 
   formation.positions.forEach(formPos => {
-    let bestFit: PlayerPosition | undefined;
+    const playerPositionData = getPlayerPositionDataForFormationPosition(player.positionsData, formPos.name);
+
     let fitType: "natural" | "alternative" | "tertiary" | "unsuited" = "unsuited";
     let fitRating = 0;
 
-    // Check for natural fit
-    bestFit = player.positionsData.find(p => p.name === formPos.name && p.type === "natural");
-    if (bestFit) {
-      fitType = "natural";
-      fitRating = bestFit.rating;
-    } else {
-      // Check for alternative fit
-      bestFit = player.positionsData.find(p => p.name === formPos.name && p.type === "alternative");
-      if (bestFit) {
-        fitType = "alternative";
-        fitRating = bestFit.rating;
-      } else {
-        // Check for tertiary fit
-        bestFit = player.positionsData.find(p => p.name === formPos.name && p.type === "tertiary");
-        if (bestFit) {
-          fitType = "tertiary";
-          fitRating = bestFit.rating;
-        }
-      }
+    if (playerPositionData) {
+      fitType = playerPositionData.type;
+      fitRating = playerPositionData.rating;
     }
 
     playerFitPositions.push({
@@ -149,29 +158,18 @@ export const calculateFormationFit = (player: Player, formation: Formation): Pla
 
 // Function to calculate overall formation fit for a player
 export const calculateFormationOverallFit = (player: Player, formation: Formation): number => {
+  const playerFitPositions = calculateFormationFit(player, formation); // Use the enhanced fit calculation
   let totalRating = 0;
   let totalPossibleRating = 0;
 
-  // Iterate through each position in the formation
-  formation.positions.forEach(formPos => {
-    let positionRating = 0;
-    let positionType: "natural" | "alternative" | "tertiary" | "unsuited" = "unsuited";
-
-    // Find the player's best rating for this specific formation position
-    const playerPosition = player.positionsData.find(p => p.name === formPos.name);
-
-    if (playerPosition) {
-      positionRating = playerPosition.rating;
-      positionType = playerPosition.type;
-    }
-
+  playerFitPositions.forEach(pos => {
     // Give more weight to natural and alternative positions
     let weight = 1;
-    if (positionType === "natural") weight = 3;
-    else if (positionType === "alternative") weight = 2;
+    if (pos.type === "natural") weight = 3;
+    else if (pos.type === "alternative") weight = 2;
     // Tertiary and unsuited positions get less or no weight for overall score
 
-    totalRating += positionRating * weight;
+    totalRating += pos.rating * weight;
     totalPossibleRating += 10 * weight; // Max rating is 10 for each position
   });
 

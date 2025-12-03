@@ -197,19 +197,20 @@ const PlayerProfile: React.FC = () => {
         areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
       });
 
-      let bestFormationId: string | null = null;
-      let highestFitScore = -1;
+      // Calculate and sort formations by overall fit
       const calculatedFormationsWithFit = FM_FORMATIONS.map(formation => {
         const fitScore = calculateFormationOverallFit(currentPlayer, formation);
-        if (fitScore > highestFitScore) {
-          highestFitScore = fitScore;
-          bestFormationId = formation.id;
-        }
         return { ...formation, overallFit: fitScore };
-      });
+      }).sort((a, b) => b.overallFit - a.overallFit); // Sort descending
 
       setFormationsWithFit(calculatedFormationsWithFit);
-      setSelectedFormationId(bestFormationId);
+
+      // Set the selected formation to the best fitting one by default
+      if (calculatedFormationsWithFit.length > 0) {
+        setSelectedFormationId(calculatedFormationsWithFit[0].id);
+      } else {
+        setSelectedFormationId(null);
+      }
     }
     setIsEditMode(false);
     setSelectedFmRole(null);
