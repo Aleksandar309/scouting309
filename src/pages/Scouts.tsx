@@ -7,39 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Mail, Phone, User, ChevronLeft } from 'lucide-react'; // Added ChevronLeft icon
 import { Scout } from '@/types/scout';
-
-const mockScouts: Scout[] = [
-  {
-    id: "1",
-    name: "James Clark",
-    role: "Head Scout",
-    email: "james.clark@brighton.com",
-    phone: "+44 7123 456789",
-    activePlayers: 5,
-    lastReportDate: "2024-07-20",
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=JC",
-  },
-  {
-    id: "2",
-    name: "Mia Scout",
-    role: "European Scout",
-    email: "mia.scout@brighton.com",
-    phone: "+44 7987 654321",
-    activePlayers: 8,
-    lastReportDate: "2024-07-22",
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=MS",
-  },
-  {
-    id: "3",
-    name: "David Lee",
-    role: "Youth Scout",
-    email: "david.lee@brighton.com",
-    phone: "+44 7555 123456",
-    activePlayers: 3,
-    lastReportDate: "2024-07-18",
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=DL",
-  },
-];
+import { mockScouts } from '@/data/mockScouts'; // Import mockScouts from new file
 
 const Scouts: React.FC = () => {
   const navigate = useNavigate(); // Initialize useNavigate
@@ -81,10 +49,9 @@ const Scouts: React.FC = () => {
                   <User className="mr-2 h-4 w-4 text-muted-foreground" /> Active Players: {scout.activePlayers}
                 </div>
                 <div className="text-xs text-muted-foreground">Last Report: {scout.lastReportDate}</div>
-                {/* You could add a link to a detailed scout profile here if needed */}
-                {/* <Link to={`/scouts/${scout.id}`}>
+                <Link to={`/scouts/${scout.id}`}>
                   <Button variant="outline" className="mt-4 w-full bg-muted border-border text-muted-foreground hover:bg-accent">View Profile</Button>
-                </Link> */}
+                </Link>
               </CardContent>
             </Card>
           ))}

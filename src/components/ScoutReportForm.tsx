@@ -3,7 +3,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod"; // Ispravljeno: Dodato 'as'
+import * as z from "zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
@@ -29,13 +29,21 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { Player } from "@/types/player";
+import { Scout } from "@/types/scout"; // Import Scout type
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"; // Import Select components
 
 const formSchema = z.object({
   title: z.string().min(2, {
     message: "Title must be at least 2 characters.",
   }),
-  scout: z.string().min(2, {
-    message: "Scout name must be at least 2 characters.",
+  scout: z.string().min(1, { // Changed to min(1) as it's a required selection
+    message: "Scout name is required.",
   }),
   date: z.date({
     required_error: "A date is required.",
@@ -60,19 +68,20 @@ interface ScoutReportFormProps {
   player: Player;
   onReportSubmit: (report: Player["scoutingReports"][0]) => void;
   onClose: () => void;
+  scouts: Scout[]; // Pass scouts to the form
 }
 
-const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmit, onClose }) => {
+const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmit, onClose, scouts }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      scout: "",
+      scout: "", // Default to empty string, requiring selection
       date: new Date(),
       rating: 7,
-      currentAbility: player.scoutingProfile.currentAbility, // Default from player's current profile
-      potentialAbility: player.scoutingProfile.potentialAbility, // Default from player's current profile
-      teamFit: player.scoutingProfile.teamFit, // Default from player's current profile
+      currentAbility: player.scoutingProfile.currentAbility,
+      potentialAbility: player.scoutingProfile.potentialAbility,
+      teamFit: player.scoutingProfile.teamFit,
       keyStrengths: "",
       areasForDevelopment: "",
     },
@@ -80,7 +89,7 @@ const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmi
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     const newReport = {
-      id: `rep${player.scoutingReports.length + 1}`, // Simple ID generation
+      id: `rep${player.scoutingReports.length + 1}`,
       date: format(values.date, "MMM d, yyyy"),
       scout: values.scout,
       rating: values.rating,
@@ -124,9 +133,20 @@ const ScoutReportForm: React.FC<ScoutReportFormProps> = ({ player, onReportSubmi
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-muted-foreground">Scout Name</FormLabel>
-                <FormControl>
-                  <Input className="bg-input border-border text-foreground" {...field} />
-                </FormControl>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="bg-input border-border text-foreground">
+                      <SelectValue placeholder="Select a scout" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="bg-popover border-border text-popover-foreground">
+                    {scouts.map((scout) => (
+                      <SelectItem key={scout.id} value={scout.name}>
+                        {scout.name} ({scout.role})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

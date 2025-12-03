@@ -28,12 +28,15 @@ import {
 } from 'recharts';
 import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { Scout } from '@/types/scout'; // Import Scout type
+import { Link } from 'react-router-dom'; // Import Link for navigation
 
 interface AttributeHistoryDialogProps {
   player: Player;
   attributeName: string;
   attributeCategory: FmAttributeCategory;
   onClose: () => void;
+  scouts: Scout[]; // Receive scouts as prop
 }
 
 const AttributeHistoryDialog: React.FC<AttributeHistoryDialogProps> = ({
@@ -41,6 +44,7 @@ const AttributeHistoryDialog: React.FC<AttributeHistoryDialogProps> = ({
   attributeName,
   attributeCategory,
   onClose,
+  scouts,
 }) => {
   const allAttributes = getAttributesByCategory(player, attributeCategory);
   const attribute = allAttributes.find(attr => attr.name === attributeName);
@@ -134,30 +138,40 @@ const AttributeHistoryDialog: React.FC<AttributeHistoryDialogProps> = ({
         <h3 className="text-lg font-semibold mt-6 mb-2 text-foreground">Change Log</h3>
         {historyData.length > 0 ? (
           <Accordion type="single" collapsible className="w-full">
-            {historyData.map((entry, index) => (
-              <AccordionItem key={index} value={`item-${index}`} className="border-border">
-                <AccordionTrigger className="flex items-center justify-between p-3 bg-muted rounded-md hover:bg-accent transition-colors">
-                  <div className="flex flex-col items-start">
-                    <p className="font-medium text-foreground">
-                      {format(entry.date, 'MMM dd, yyyy')}: Rating changed to {entry.rating}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Changed by: {entry.changedBy || "N/A"}
-                    </p>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="p-4 bg-muted rounded-b-md text-muted-foreground space-y-2">
-                  {entry.comment ? (
-                    <div>
-                      <h4 className="font-semibold text-foreground mb-1">Comment:</h4>
-                      <p className="text-sm">{entry.comment}</p>
+            {historyData.map((entry, index) => {
+              const scout = scouts.find(s => s.name === entry.changedBy);
+              return (
+                <AccordionItem key={index} value={`item-${index}`} className="border-border">
+                  <AccordionTrigger className="flex items-center justify-between p-3 bg-muted rounded-md hover:bg-accent transition-colors">
+                    <div className="flex flex-col items-start">
+                      <p className="font-medium text-foreground">
+                        {format(entry.date, 'MMM dd, yyyy')}: Rating changed to {entry.rating}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Changed by:{" "}
+                        {scout ? (
+                          <Link to={`/scouts/${scout.id}`} className="text-blue-400 hover:underline" onClick={onClose}>
+                            {entry.changedBy}
+                          </Link>
+                        ) : (
+                          entry.changedBy || "N/A"
+                        )}
+                      </p>
                     </div>
-                  ) : (
-                    <p className="text-sm italic">No specific comment for this change.</p>
-                  )}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
+                  </AccordionTrigger>
+                  <AccordionContent className="p-4 bg-muted rounded-b-md text-muted-foreground space-y-2">
+                    {entry.comment ? (
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-1">Comment:</h4>
+                        <p className="text-sm">{entry.comment}</p>
+                      </div>
+                    ) : (
+                      <p className="text-sm italic">No specific comment for this change.</p>
+                    )}
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
           </Accordion>
         ) : (
           <p className="text-muted-foreground text-center py-4">No historical changes recorded for this attribute.</p>

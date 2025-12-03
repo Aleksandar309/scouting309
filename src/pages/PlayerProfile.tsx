@@ -39,7 +39,7 @@ import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import PlayerStatistics from '@/components/PlayerStatistics';
 import PlayerPitch from '@/components/PlayerPitch';
 import RoleDetailsDialog from '@/components/RoleDetailsDialog';
-import AttributeHistoryDialog from '@/components/AttributeHistoryDialog'; // Import new component
+import AttributeHistoryDialog from '@/components/AttributeHistoryDialog';
 import { FmRole, FmRoleAttribute, FmAttributeCategory, getAttributesByCategory } from '@/utils/fm-roles';
 import {
   Accordion,
@@ -64,7 +64,15 @@ import FormationSelector from '@/components/FormationSelector';
 import { FM_FORMATIONS, calculateFormationFit, calculateFormationOverallFit, getStarRating } from '@/utils/formations';
 import { Formation, PlayerFormationFitPosition } from '@/types/formation';
 import { ALL_ATTRIBUTE_NAMES, CATEGORIZED_ATTRIBUTES } from '@/utils/player-attributes';
-import { toast } from 'sonner'; // Import toast for notifications
+import { toast } from 'sonner';
+import { Scout } from '@/types/scout'; // Import Scout type
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"; // Import Select components
 
 // Zod schema for player attributes
 const attributeSchema = z.array(z.object({
@@ -110,6 +118,7 @@ const formSchema = z.object({
   hidden: attributeSchema,
   keyStrengths: z.string().optional(),
   areasForDevelopment: z.string().optional(),
+  changedByScout: z.string().optional(), // New field for selecting scout in edit mode
 });
 
 type PlayerFormValues = z.infer<typeof formSchema>;
@@ -117,6 +126,7 @@ type PlayerFormValues = z.infer<typeof formSchema>;
 interface PlayerProfileProps {
   players: Player[];
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
+  scouts: Scout[]; // Receive scouts as prop
 }
 
 // Helper to get highlight type for an attribute
@@ -158,7 +168,7 @@ const getDisplayedAttributeRating = (attribute: PlayerAttribute, isEditMode: boo
   return Math.round(sum / allRatings.length);
 };
 
-const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) => {
+const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scouts }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -205,6 +215,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
       hidden: currentPlayer.hidden,
       keyStrengths: currentPlayer.keyStrengths.join('\n'),
       areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
+      changedByScout: "", // Default empty
     } : undefined,
   });
 
@@ -231,6 +242,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
         hidden: currentPlayer.hidden,
         keyStrengths: currentPlayer.keyStrengths.join('\n'),
         areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
+        changedByScout: "", // Reset scout selection
       });
 
       // Calculate and sort formations by overall fit
@@ -315,6 +327,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
   const onSubmit = (values: PlayerFormValues) => {
     if (!currentPlayer) return;
 
+    const changedByScoutName = values.changedByScout || "User Edit"; // Use selected scout or default
+
     const updatedPlayer: Player = {
       ...player, // Keep existing properties like positionsData, scoutingReports etc.
       ...values,
@@ -336,7 +350,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
           const newHistoryEntry: AttributeHistoryEntry = {
             date: new Date().toISOString(),
             rating: newAttr.rating,
-            changedBy: "User Edit", // Placeholder for now, could be dynamic
+            changedBy: changedByScoutName, // Use selected scout name
             comment: `Rating changed from ${currentAttr.rating} to ${newAttr.rating}.`,
           };
           return {
@@ -540,6 +554,30 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
               <div className="flex space-x-2">
                 {isEditMode ? (
                   <>
+                    <FormField
+                      control={form.control}
+                      name="changedByScout"
+                      render={({ field }) => (
+                        <FormItem className="w-[150px]">
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="bg-input border-border text-foreground">
+                                <SelectValue placeholder="Changed by..." />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="bg-popover border-border text-popover-foreground">
+                              {scouts.map((scout) => (
+                                <SelectItem key={scout.id} value={scout.name}>
+                                  {scout.name}
+                                </SelectItem>
+                              ))}
+                              <SelectItem value="User Edit">User Edit</SelectItem> {/* Option for manual user edit */}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white">
                       <Save className="mr-2 h-4 w-4" /> Save
                     </Button>
@@ -566,6 +604,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                           hidden: currentPlayer.hidden,
                           keyStrengths: currentPlayer.keyStrengths.join('\n'),
                           areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
+                          changedByScout: "",
                         } : undefined);
                       }}
                       className="bg-card border-border text-foreground hover:bg-accent"
@@ -594,7 +633,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                   <DialogTrigger asChild>
                     <Button className="bg-blue-600 hover:bg-blue-700 text-white">New Report</Button>
                   </DialogTrigger>
-                  <ScoutReportForm player={player} onReportSubmit={handleAddReport} onClose={() => setIsReportFormOpen(false)} />
+                  <ScoutReportForm player={player} onReportSubmit={handleAddReport} onClose={() => setIsReportFormOpen(false)} scouts={scouts} /> {/* Pass scouts */}
                 </Dialog>
               </div>
             </div>
@@ -1137,6 +1176,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers }) =>
                 setIsHistoryDialogOpen(false);
                 setSelectedHistoryAttribute(null);
               }}
+              scouts={scouts} // Pass scouts to the history dialog
             />
           )}
         </Dialog>
