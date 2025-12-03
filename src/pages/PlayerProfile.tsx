@@ -65,14 +65,14 @@ import { FM_FORMATIONS, calculateFormationFit, calculateFormationOverallFit, get
 import { Formation, PlayerFormationFitPosition } from '@/types/formation';
 import { ALL_ATTRIBUTE_NAMES, CATEGORIZED_ATTRIBUTES } from '@/utils/player-attributes';
 import { toast } from 'sonner';
-import { Scout } from '@/types/scout'; // Import Scout type
+import { Scout } from '@/types/scout';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"; // Import Select components
+} from "@/components/ui/select";
 
 // Zod schema for player attributes
 const attributeSchema = z.array(z.object({
@@ -929,23 +929,23 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Set Pieces Attributes Card */}
-                <Card className="bg-card border-border text-card-foreground">
-                  <CardHeader>
-                    <CardTitle className="text-lg font-semibold flex items-center"><Target className="mr-2 h-5 w-5" /> Set Pieces</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {renderAttributeSection("setPieces", "Set Pieces", "setPieces")}
-                  </CardContent>
-                </Card>
-
-                {/* Tactical Attributes Card */}
+                {/* Tactical Attributes Card (now before Set Pieces) */}
                 <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><MapPin className="mr-2 h-5 w-5" /> Tactical</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {renderAttributeSection("tactical", "Tactical", "tactical")}
+                  </CardContent>
+                </Card>
+
+                {/* Set Pieces Attributes Card (now after Tactical) */}
+                <Card className="bg-card border-border text-card-foreground">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold flex items-center"><Target className="mr-2 h-5 w-5" /> Set Pieces</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {renderAttributeSection("setPieces", "Set Pieces", "setPieces")}
                   </CardContent>
                 </Card>
 
@@ -1176,7 +1176,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                 setIsHistoryDialogOpen(false);
                 setSelectedHistoryAttribute(null);
               }}
-              scouts={scouts} // Pass scouts to the history dialog
+              scouts={scouts}
             />
           )}
         </Dialog>
