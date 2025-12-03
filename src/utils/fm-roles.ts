@@ -1,4 +1,4 @@
-export type FmAttributeCategory = "technical" | "tactical" | "physical" | "mentalPsychology";
+export type FmAttributeCategory = "technical" | "tactical" | "physical" | "mentalPsychology" | "setPieces" | "hidden";
 
 export interface FmRoleAttribute {
   name: string; // e.g., "Passing Range", "Composure"
@@ -236,6 +236,8 @@ export const getAttributesByCategory = (player: Player, category: FmAttributeCat
     case "tactical": return player.tactical;
     case "physical": return player.physical;
     case "mentalPsychology": return player.mentalPsychology;
+    case "setPieces": return player.setPieces; // NEW
+    case "hidden": return player.hidden; // NEW
     default: return [];
   }
 };

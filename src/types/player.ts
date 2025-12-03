@@ -39,6 +39,8 @@ export interface Player {
   tactical: PlayerAttribute[];
   physical: PlayerAttribute[];
   mentalPsychology: PlayerAttribute[];
+  setPieces: PlayerAttribute[]; // NEW: Set Pieces attributes
+  hidden: PlayerAttribute[]; // NEW: Hidden attributes
   keyStrengths: string[];
   areasForDevelopment: string[];
   scoutingReports: {

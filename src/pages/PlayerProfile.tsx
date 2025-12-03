@@ -21,6 +21,8 @@ import {
   Trophy,
   DollarSign,
   Briefcase,
+  Target, // New icon for Set Pieces
+  EyeOff, // New icon for Hidden Attributes
 } from "lucide-react";
 import { Player, PlayerAttribute } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
@@ -76,10 +78,8 @@ const initialMockPlayer: Player = {
     { name: "Dribbling", rating: 7 },
     { name: "Crossing", rating: 6 },
     { name: "Aerial Ability", rating: 8 },
-    { name: "Tackling", rating: 8 }, // Added for FM roles
-    { name: "Finishing", rating: 7 }, // Added for FM roles
-    { name: "Shot Stopping", rating: 0 }, // Added for FM roles (GK)
-    { name: "Handling", rating: 0 }, // Added for FM roles (GK)
+    { name: "Tackling", rating: 8 },
+    { name: "Finishing", rating: 7 },
   ],
   tactical: [
     { name: "Positioning", rating: 9 },
@@ -88,8 +88,7 @@ const initialMockPlayer: Player = {
     { name: "Off-Ball Movement", rating: 9 },
     { name: "Pressing", rating: 9 },
     { name: "Defensive Awareness", rating: 9 },
-    { name: "Vision", rating: 9 }, // Added for FM roles
-    { name: "Command of Area", rating: 0 }, // Added for FM roles (GK)
+    { name: "Vision", rating: 9 },
   ],
   physical: [
     { name: "Pace", rating: 8 },
@@ -98,7 +97,6 @@ const initialMockPlayer: Player = {
     { name: "Stamina", rating: 9 },
     { name: "Agility", rating: 8 },
     { name: "Recovery", rating: 9 },
-    { name: "Reflexes", rating: 0 }, // Added for FM roles (GK)
   ],
   mentalPsychology: [
     { name: "Composure", rating: 9 },
@@ -107,7 +105,26 @@ const initialMockPlayer: Player = {
     { name: "Concentration", rating: 9 },
     { name: "Coachability", rating: 9 },
     { name: "Resilience", rating: 9 },
-    { name: "Communication", rating: 0 }, // Added for FM roles (GK)
+  ],
+  setPieces: [ // NEW: Set Pieces attributes
+    { name: "Corners", rating: 7 },
+    { name: "Free Kicks", rating: 8 },
+    { name: "Penalties", rating: 9 },
+    { name: "Long Throws", rating: 6 },
+    { name: "Technique", rating: 8 },
+    { name: "Flair", rating: 7 },
+    { name: "Anticipation", rating: 8 },
+    { name: "Balance", rating: 7 },
+  ],
+  hidden: [ // NEW: Hidden attributes
+    { name: "Consistency", rating: 15 }, // FM ratings are 1-20 for hidden
+    { name: "Important Matches", rating: 16 },
+    { name: "Versatility", rating: 14 },
+    { name: "Dirtiness", rating: 8 },
+    { name: "Injury Proneness", rating: 5 },
+    { name: "Adaptability", rating: 17 },
+    { name: "Ambition", rating: 18 },
+    { name: "Loyalty", rating: 15 },
   ],
   keyStrengths: [
     "Exceptional reading of the game and anticipation.",
@@ -356,6 +373,23 @@ const PlayerProfile: React.FC = () => {
             </CardContent>
           </Card>
 
+          {/* Set Pieces Attributes Card (NEW) */}
+          <Card className="bg-gray-800 border-gray-700 text-white">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold flex items-center"><Target className="mr-2 h-5 w-5" /> Set Pieces</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {player.setPieces.map((attr) => (
+                <AttributeRating
+                  key={attr.name}
+                  name={attr.name}
+                  rating={attr.rating}
+                  highlightType={getHighlightType(attr.name, "setPieces", selectedFmRole)}
+                />
+              ))}
+            </CardContent>
+          </Card>
+
           {/* Tactical Attributes Card */}
           <Card className="bg-gray-800 border-gray-700 text-white">
             <CardHeader>
@@ -402,6 +436,23 @@ const PlayerProfile: React.FC = () => {
                   name={attr.name}
                   rating={attr.rating}
                   highlightType={getHighlightType(attr.name, "mentalPsychology", selectedFmRole)}
+                />
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Hidden Attributes Card (NEW) */}
+          <Card className="bg-gray-800 border-gray-700 text-white">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold flex items-center"><EyeOff className="mr-2 h-5 w-5" /> Hidden Attributes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {player.hidden.map((attr) => (
+                <AttributeRating
+                  key={attr.name}
+                  name={attr.name}
+                  rating={attr.rating}
+                  highlightType={getHighlightType(attr.name, "hidden", selectedFmRole)}
                 />
               ))}
             </CardContent>
