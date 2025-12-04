@@ -100,14 +100,14 @@ export const initialMockPlayers: Player[] = [
       { name: "Handling", rating: 5 },
     ],
     hidden: [
-      { name: "Consistency", rating: 15 },
-      { name: "Important Matches", rating: 16 },
-      { name: "Versatility", rating: 14 },
+      { name: "Consistency", rating: 10 }, // Capped from 15
+      { name: "Important Matches", rating: 10 }, // Capped from 16
+      { name: "Versatility", rating: 10 }, // Capped from 14
       { name: "Dirtiness", rating: 8 },
       { name: "Injury Proneness", rating: 5 },
-      { name: "Adaptability", rating: 17 },
-      { name: "Ambition", rating: 18 },
-      { name: "Loyalty", rating: 15 },
+      { name: "Adaptability", rating: 10 }, // Capped from 17
+      { name: "Ambition", rating: 10 }, // Capped from 18
+      { name: "Loyalty", rating: 10 }, // Capped from 15
     ],
     keyStrengths: [
       "Exceptional reading of the game and anticipation.",
@@ -236,14 +236,14 @@ export const initialMockPlayers: Player[] = [
       { name: "Handling", rating: 5 },
     ],
     hidden: [
-      { name: "Consistency", rating: 14 },
-      { name: "Important Matches", rating: 15 },
-      { name: "Versatility", rating: 16 },
+      { name: "Consistency", rating: 10 }, // Capped from 14
+      { name: "Important Matches", rating: 10 }, // Capped from 15
+      { name: "Versatility", rating: 10 }, // Capped from 16
       { name: "Dirtiness", rating: 7 },
       { name: "Injury Proneness", rating: 6 },
-      { name: "Adaptability", rating: 15 },
-      { name: "Ambition", rating: 17 },
-      { name: "Loyalty", rating: 12 },
+      { name: "Adaptability", rating: 10 }, // Capped from 15
+      { name: "Ambition", rating: 10 }, // Capped from 17
+      { name: "Loyalty", rating: 10 }, // Capped from 12
     ],
     keyStrengths: [
       "Explosive dribbling and close control.",
@@ -361,14 +361,14 @@ export const initialMockPlayers: Player[] = [
       { name: "Handling", rating: 5 },
     ],
     hidden: [
-      { name: "Consistency", rating: 18 },
-      { name: "Important Matches", rating: 19 },
-      { name: "Versatility", rating: 17 },
+      { name: "Consistency", rating: 10 }, // Capped from 18
+      { name: "Important Matches", rating: 10 }, // Capped from 19
+      { name: "Versatility", rating: 10 }, // Capped from 17
       { name: "Dirtiness", rating: 6 },
       { name: "Injury Proneness", rating: 4 },
-      { name: "Adaptability", rating: 18 },
-      { name: "Ambition", rating: 20 },
-      { name: "Loyalty", rating: 14 },
+      { name: "Adaptability", rating: 10 }, // Capped from 18
+      { name: "Ambition", rating: 10 }, // Capped from 20
+      { name: "Loyalty", rating: 10 }, // Capped from 14
     ],
     keyStrengths: [
       "Exceptional vision and passing range.",
@@ -484,14 +484,14 @@ export const initialMockPlayers: Player[] = [
       { name: "Handling", rating: 5 },
     ],
     hidden: [
-      { name: "Consistency", rating: 15 },
-      { name: "Important Matches", rating: 14 },
-      { name: "Versatility", rating: 16 },
+      { name: "Consistency", rating: 10 }, // Capped from 15
+      { name: "Important Matches", rating: 10 }, // Capped from 14
+      { name: "Versatility", rating: 10 }, // Capped from 16
       { name: "Dirtiness", rating: 7 },
       { name: "Injury Proneness", rating: 6 },
-      { name: "Adaptability", rating: 16 },
-      { name: "Ambition", rating: 16 },
-      { name: "Loyalty", rating: 15 },
+      { name: "Adaptability", rating: 10 }, // Capped from 16
+      { name: "Ambition", rating: 10 }, // Capped from 16
+      { name: "Loyalty", rating: 10 }, // Capped from 15
     ],
     keyStrengths: [
       "Strong in aerial duels and ground tackles.",
@@ -607,14 +607,14 @@ export const initialMockPlayers: Player[] = [
       { name: "Handling", rating: 5 },
     ],
     hidden: [
-      { name: "Consistency", rating: 16 },
-      { name: "Important Matches", rating: 17 },
-      { name: "Versatility", rating: 14 },
+      { name: "Consistency", rating: 10 }, // Capped from 16
+      { name: "Important Matches", rating: 10 }, // Capped from 17
+      { name: "Versatility", rating: 10 }, // Capped from 14
       { name: "Dirtiness", rating: 6 },
       { name: "Injury Proneness", rating: 5 },
-      { name: "Adaptability", rating: 17 },
-      { name: "Ambition", rating: 19 },
-      { name: "Loyalty", rating: 16 },
+      { name: "Adaptability", rating: 10 }, // Capped from 17
+      { name: "Ambition", rating: 10 }, // Capped from 19
+      { name: "Loyalty", rating: 10 }, // Capped from 16
     ],
     keyStrengths: [
       "Exceptional finishing ability.",

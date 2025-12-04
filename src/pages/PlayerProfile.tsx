@@ -124,7 +124,7 @@ const formSchema = z.object({
   physical: attributeSchema,
   mentalPsychology: attributeSchema,
   setPieces: attributeSchema,
-  hidden: attributeSchema,
+  hidden: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })), // Changed max to 10
   keyStrengths: z.string().optional(),
   areasForDevelopment: z.string().optional(),
   changedByScout: z.string().optional(), // New field for selecting scout in edit mode
@@ -451,7 +451,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     <Input
                       type="number"
                       min="1"
-                      max="10"
+                      max={fieldArrayName === "hidden" ? "10" : "10"} // Max 10 for hidden
                       className="bg-input border-border text-foreground text-sm text-center h-8"
                       {...field}
                       onChange={(e) => {
@@ -1078,7 +1078,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     <CardTitle className="text-lg font-semibold flex items-center"><EyeOff className="mr-2 h-5 w-5" /> Hidden Attributes</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {renderAttributeSection("hidden", "Hidden (1-20)", "hidden")}
+                    {renderAttributeSection("hidden", "Hidden (1-10)", "hidden")}
                   </CardContent>
                 </Card>
 

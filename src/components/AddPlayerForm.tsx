@@ -67,7 +67,7 @@ const formSchema = z.object({
   physical: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
   mentalPsychology: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
   setPieces: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
-  hidden: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(20) })), // Hidden attributes often have higher scale
+  hidden: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })), // Changed max to 10
   keyStrengths: z.string().optional(),
   areasForDevelopment: z.string().optional(),
   priorityTarget: z.boolean().default(false),
@@ -120,7 +120,7 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
       physical: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.physical),
       mentalPsychology: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.mentalPsychology),
       setPieces: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.setPieces),
-      hidden: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.hidden, 10),
+      hidden: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.hidden, 5), // Default hidden rating to 5, max 10
       keyStrengths: "",
       areasForDevelopment: "",
       priorityTarget: false,
@@ -204,7 +204,7 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
                 <Input
                   type="number"
                   min="1"
-                  max="10"
+                  max={fieldArrayName === "hidden" ? "10" : "10"} // Max 10 for hidden
                   className="bg-input border-border text-foreground text-sm text-center h-8"
                   {...field}
                   onChange={(e) => {
@@ -532,7 +532,7 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
             {renderAttributeSection("physical", "Physical", "physical")}
             {renderAttributeSection("mentalPsychology", "Mental & Psychology", "mentalPsychology")}
             {renderAttributeSection("setPieces", "Set Pieces", "setPieces")}
-            {renderAttributeSection("hidden", "Hidden (1-20)", "hidden")}
+            {renderAttributeSection("hidden", "Hidden (1-10)", "hidden")}
           </div>
 
           {/* Strengths & Development */}
