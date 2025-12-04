@@ -30,7 +30,7 @@ import {
   Camera,
   History,
   Trash2,
-  PlusCircle, // Added PlusCircle import
+  PlusCircle,
 } from "lucide-react";
 import { Player, PlayerAttribute, AttributeHistoryEntry, PlayerPosition } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
@@ -75,7 +75,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ALL_FOOTBALL_POSITIONS } from "@/utils/positions"; // Import the new positions list
+import { ALL_FOOTBALL_POSITIONS } from "@/utils/positions";
 
 // Zod schema for player attributes
 const attributeSchema = z.array(z.object({
@@ -119,16 +119,16 @@ const formSchema = z.object({
     potentialAbility: z.coerce.number().min(1).max(10, { message: "Potential Ability must be between 1 and 10." }),
     teamFit: z.coerce.number().min(1).max(10, { message: "Team Fit must be between 1 and 10." }),
   }),
-  positionsData: z.array(playerPositionInputSchema).min(1, { message: "At least one position is required." }), // Now an array of objects
+  positionsData: z.array(playerPositionInputSchema).min(1, { message: "At least one position is required." }),
   technical: attributeSchema,
   tactical: attributeSchema,
   physical: attributeSchema,
   mentalPsychology: attributeSchema,
   setPieces: attributeSchema,
-  hidden: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })), // Changed max to 10
+  hidden: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
   keyStrengths: z.string().optional(),
   areasForDevelopment: z.string().optional(),
-  changedByScout: z.string().optional(), // New field for selecting scout in edit mode
+  changedByScout: z.string().optional(),
 });
 
 type PlayerFormValues = z.infer<typeof formSchema>;
@@ -136,7 +136,7 @@ type PlayerFormValues = z.infer<typeof formSchema>;
 interface PlayerProfileProps {
   players: Player[];
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
-  scouts: Scout[]; // Receive scouts as prop
+  scouts: Scout[];
 }
 
 // Helper function to assign position type based on rating
@@ -144,7 +144,7 @@ const assignPositionType = (rating: number): "natural" | "alternative" | "tertia
   if (rating >= 8) return "natural";
   if (rating >= 6) return "alternative";
   if (rating >= 4) return "tertiary";
-  return null; // Positions with rating < 4 are not considered primary player positions
+  return null;
 };
 
 // Helper to get highlight type for an attribute
@@ -170,16 +170,16 @@ const getHighlightType = (
 // Helper function to calculate the average rating for an attribute, considering its history
 const getDisplayedAttributeRating = (attribute: PlayerAttribute, isEditMode: boolean): number => {
   if (isEditMode) {
-    return attribute.rating; // In edit mode, show the current editable rating
+    return attribute.rating;
   }
 
   const allRatings = (attribute.history || []).map(entry => entry.rating);
   if (attribute.rating !== undefined) {
-    allRatings.push(attribute.rating); // Include the current rating in the average
+    allRatings.push(attribute.rating);
   }
 
   if (allRatings.length === 0) {
-    return 0; // Or attribute.rating if you prefer a default
+    return 0;
   }
 
   const sum = allRatings.reduce((acc, val) => acc + val, 0);
@@ -203,8 +203,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   const [selectedPositionForRoles, setSelectedPositionForRoles] = useState<string | null>(null);
   const [selectedFmRole, setSelectedFmRole] = useState<FmRole | null>(null);
 
-  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false); // State for history dialog
-  const [selectedHistoryAttribute, setSelectedHistoryAttribute] = useState<{ name: string; category: FmAttributeCategory } | null>(null); // State for selected attribute history
+  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
+  const [selectedHistoryAttribute, setSelectedHistoryAttribute] = useState<{ name: string; category: FmAttributeCategory } | null>(null);
 
   const [selectedFormationId, setSelectedFormationId] = useState<string | null>(null);
   const [playerFormationFit, setPlayerFormationFit] = useState<PlayerFormationFitPosition[] | null>(null);
@@ -225,7 +225,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       avatarUrl: currentPlayer.avatarUrl || '',
       details: currentPlayer.details,
       scoutingProfile: currentPlayer.scoutingProfile,
-      positionsData: currentPlayer.positionsData.map(p => ({ name: p.name, rating: p.rating })), // Map existing positionsData for form
+      positionsData: currentPlayer.positionsData.map(p => ({ name: p.name, rating: p.rating })),
       technical: currentPlayer.technical,
       tactical: currentPlayer.tactical,
       physical: currentPlayer.physical,
@@ -234,7 +234,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       hidden: currentPlayer.hidden,
       keyStrengths: currentPlayer.keyStrengths.join('\n'),
       areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
-      changedByScout: "", // Default empty
+      changedByScout: "",
     } : undefined,
   });
 
@@ -258,7 +258,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
         avatarUrl: currentPlayer.avatarUrl || '',
         details: currentPlayer.details,
         scoutingProfile: currentPlayer.scoutingProfile,
-        positionsData: currentPlayer.positionsData.map(p => ({ name: p.name, rating: p.rating })), // Map existing positionsData for form
+        positionsData: currentPlayer.positionsData.map(p => ({ name: p.name, rating: p.rating })),
         technical: currentPlayer.technical,
         tactical: currentPlayer.tactical,
         physical: currentPlayer.physical,
@@ -267,14 +267,14 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
         hidden: currentPlayer.hidden,
         keyStrengths: currentPlayer.keyStrengths.join('\n'),
         areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
-        changedByScout: "", // Reset scout selection
+        changedByScout: "",
       });
 
       // Calculate and sort formations by overall fit
       const calculatedFormationsWithFit = FM_FORMATIONS.map(formation => {
         const fitScore = calculateFormationOverallFit(currentPlayer, formation);
         return { ...formation, overallFit: fitScore };
-      }).sort((a, b) => b.overallFit - a.overallFit); // Sort descending
+      }).sort((a, b) => b.overallFit - a.overallFit);
 
       setFormationsWithFit(calculatedFormationsWithFit);
 
@@ -352,7 +352,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   const onSubmit = (values: PlayerFormValues) => {
     if (!currentPlayer) return;
 
-    const changedByScoutName = values.changedByScout || "User Edit"; // Use selected scout or default
+    const changedByScoutName = values.changedByScout || "User Edit";
 
     const processedPositionsData: PlayerPosition[] = [];
     const generalPositions: string[] = [];
@@ -375,14 +375,14 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     }
 
     const updatedPlayer: Player = {
-      ...player, // Keep existing properties like scoutingReports etc.
+      ...player,
       ...values,
-      positions: generalPositions, // Derived from processedPositionsData
-      positionsData: processedPositionsData, // Updated positionsData
+      positions: generalPositions,
+      positionsData: processedPositionsData,
       keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
       areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
       avatarUrl: values.avatarUrl,
-      lastEdited: new Date().toISOString(), // Update lastEdited on save
+      lastEdited: new Date().toISOString(),
     };
 
     // Function to compare and update attribute history
@@ -397,7 +397,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
           const newHistoryEntry: AttributeHistoryEntry = {
             date: new Date().toISOString(),
             rating: newAttr.rating,
-            changedBy: changedByScoutName, // Use selected scout name
+            changedBy: changedByScoutName,
             comment: `Rating changed from ${currentAttr.rating} to ${newAttr.rating}.`,
           };
           return {
@@ -405,7 +405,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
             history: [...(currentAttr.history || []), newHistoryEntry],
           };
         }
-        return { ...newAttr, history: currentAttr?.history || [] }; // Keep existing history if no change
+        return { ...newAttr, history: currentAttr?.history || [] };
       });
     };
 
@@ -420,7 +420,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     setPlayers((prevPlayers) =>
       prevPlayers.map((p) => (p.id === updatedPlayer.id ? updatedPlayer : p))
     );
-    setPlayer(updatedPlayer); // Update local state as well
+    setPlayer(updatedPlayer);
     setIsEditMode(false);
     toast.success("Player profile updated successfully!");
   };
@@ -433,7 +433,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   ];
 
   const renderAttributeSection = (
-    categoryName: FmAttributeCategory, // Changed to FmAttributeCategory
+    categoryName: FmAttributeCategory,
     label: string,
     fieldArrayName: "technical" | "tactical" | "physical" | "mentalPsychology" | "setPieces" | "hidden"
   ) => (
@@ -452,7 +452,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     <Input
                       type="number"
                       min="1"
-                      max={fieldArrayName === "hidden" ? "10" : "10"} // Max 10 for hidden
+                      max={fieldArrayName === "hidden" ? "10" : "10"}
                       className="bg-input border-border text-foreground text-sm text-center h-8"
                       {...field}
                       onChange={(e) => {
@@ -468,10 +468,10 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
           ) : (
             <AttributeRating
               name={attr.name}
-              rating={getDisplayedAttributeRating(attr, isEditMode)} // Use calculated average
+              rating={getDisplayedAttributeRating(attr, isEditMode)}
               highlightType={getHighlightType(attr.name, categoryName, selectedFmRole)}
-              onViewHistory={handleAttributeHistoryClick} // Pass the handler
-              attributeCategory={categoryName} // Pass the category
+              onViewHistory={handleAttributeHistoryClick}
+              attributeCategory={categoryName}
             />
           )}
         </div>
@@ -618,7 +618,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                                   {scout.name}
                                 </SelectItem>
                               ))}
-                              <SelectItem value="User Edit">User Edit</SelectItem> {/* Option for manual user edit */}
+                              <SelectItem value="User Edit">User Edit</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -681,7 +681,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   <DialogTrigger asChild>
                     <Button className="bg-blue-600 hover:bg-blue-700 text-white">New Report</Button>
                   </DialogTrigger>
-                  <ScoutReportForm player={player} onReportSubmit={handleAddReport} onClose={() => setIsReportFormOpen(false)} scouts={scouts} /> {/* Pass scouts */}
+                  <ScoutReportForm player={player} onReportSubmit={handleAddReport} onClose={() => setIsReportFormOpen(false)} scouts={scouts} />
                 </Dialog>
               </div>
             </div>
@@ -910,7 +910,18 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                         )}
                       />
                     ) : (
-                      <p className="text-sm mt-4 border-t border-border pt-3">{player.details.notes}</p>
+                      player.details.notes && (
+                        <Accordion type="single" collapsible className="w-full mt-4 border-t border-border pt-3">
+                          <AccordionItem value="player-notes" className="border-b-0">
+                            <AccordionTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground">
+                              View Player Biography
+                            </AccordionTrigger>
+                            <AccordionContent className="text-sm text-muted-foreground">
+                              {player.details.notes}
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+                      )
                     )}
                   </CardContent>
                 </Card>
