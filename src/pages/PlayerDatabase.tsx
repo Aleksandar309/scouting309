@@ -9,6 +9,8 @@ import {
   useReactTable,
   getSortedRowModel,
   SortingState,
+  getFilteredRowModel, // Import this
+  ColumnFiltersState, // Import this
 } from '@tanstack/react-table';
 import { ArrowUpDown, Plus, ChevronLeft, Table2, LayoutGrid } from 'lucide-react';
 
@@ -31,6 +33,7 @@ import PlayerCard from '@/components/PlayerCard';
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AddPlayerForm from '@/components/AddPlayerForm';
 import { ALL_ATTRIBUTE_NAMES } from '@/utils/player-attributes';
+import { Input } from '@/components/ui/input'; // Import Input for filters
 
 interface PlayerDatabaseProps {
   players: Player[];
@@ -84,7 +87,7 @@ const columns: ColumnDef<Player>[] = [
     accessorKey: "name",
     header: ({ column }) => {
       return (
-        <TableHead className="sticky left-0 z-10 bg-background text-foreground"> {/* Updated sticky classes */}
+        <TableHead className="sticky-column-header"> {/* Updated sticky classes */}
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
@@ -97,7 +100,7 @@ const columns: ColumnDef<Player>[] = [
       );
     },
     cell: ({ row }) => (
-      <TableCell className="sticky left-0 z-10 bg-card text-foreground"> {/* Updated sticky classes */}
+      <TableCell className="sticky-column-cell"> {/* Updated sticky classes */}
         <Link to={`/player/${row.original.id}`} className="text-blue-400 hover:underline">
           {row.getValue("name")}
         </Link>
@@ -130,6 +133,10 @@ const columns: ColumnDef<Player>[] = [
       </div>
     ),
     enableSorting: false,
+    filterFn: (row, columnId, filterValue) => {
+      const positions: string[] = row.getValue(columnId);
+      return positions.some(pos => pos.toLowerCase().includes(filterValue.toLowerCase()));
+    },
   },
   {
     accessorKey: "nationality",
@@ -251,6 +258,8 @@ const columns: ColumnDef<Player>[] = [
 
 const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]); // New state for column filters
+  const [globalFilter, setGlobalFilter] = React.useState(''); // New state for global filter
   const navigate = useNavigate();
   const [viewMode, setViewMode] = React.useState<'table' | 'card'>(() => {
     // Load from localStorage or default to 'table'
@@ -279,8 +288,13 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    onColumnFiltersChange: setColumnFilters, // Add this
+    onGlobalFilterChange: setGlobalFilter,   // Add this
+    getFilteredRowModel: getFilteredRowModel(), // Add this
     state: {
       sorting,
+      columnFilters, // Add this
+      globalFilter,  // Add this
     },
   });
 
@@ -325,6 +339,52 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
               </ToggleGroupItem>
             </ToggleGroup>
             <ThemeToggle />
+          </div>
+        </div>
+
+        {/* Filter Section */}
+        <div className="mb-6 p-4 border border-border rounded-lg bg-card">
+          <h2 className="text-xl font-semibold mb-4 text-foreground">Filter Players</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Input
+              placeholder="Filter by name..."
+              value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+              onChange={(event) =>
+                table.getColumn("name")?.setFilterValue(event.target.value)
+              }
+              className="bg-input border-border text-foreground"
+            />
+            <Input
+              placeholder="Filter by team..."
+              value={(table.getColumn("team")?.getFilterValue() as string) ?? ""}
+              onChange={(event) =>
+                table.getColumn("team")?.setFilterValue(event.target.value)
+              }
+              className="bg-input border-border text-foreground"
+            />
+            <Input
+              placeholder="Filter by nationality..."
+              value={(table.getColumn("nationality")?.getFilterValue() as string) ?? ""}
+              onChange={(event) =>
+                table.getColumn("nationality")?.setFilterValue(event.target.value)
+              }
+              className="bg-input border-border text-foreground"
+            />
+            <Input
+              placeholder="Filter by position (e.g., CDM)..."
+              value={(table.getColumn("positions")?.getFilterValue() as string) ?? ""}
+              onChange={(event) =>
+                table.getColumn("positions")?.setFilterValue(event.target.value)
+              }
+              className="bg-input border-border text-foreground"
+            />
+            {/* Global filter for general search */}
+            <Input
+              placeholder="Global search..."
+              value={globalFilter ?? ""}
+              onChange={(event) => setGlobalFilter(event.target.value)}
+              className="bg-input border-border text-foreground lg:col-span-3"
+            />
           </div>
         </div>
 
