@@ -131,7 +131,7 @@ export const FM_ROLES: FmRole[] = [
       { name: "Tackling", category: "technical", weight: 3 },
       { name: "Defensive Awareness", category: "tactical", weight: 3 },
       { name: "Strength", category: "physical", weight: 3 },
-      { name: "Aerial Ability", category: "technical", weight: 2 },
+      { name: "Heading", category: "technical", weight: 2 }, // Promenjeno iz "Aerial Ability"
       { name: "Positioning", category: "tactical", weight: 2 },
       { name: "Composure", category: "mentalPsychology", weight: 1 },
     ],

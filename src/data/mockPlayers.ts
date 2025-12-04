@@ -46,7 +46,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Ball Striking", rating: 8 },
       { name: "Dribbling", rating: 7 },
       { name: "Crossing", rating: 6 },
-      { name: "Aerial Ability", rating: 8 },
+      { name: "Heading", rating: 8 }, // Promenjeno iz "Aerial Ability"
       { name: "Tackling", rating: 8, history: [
         { date: "2023-01-15", rating: 7, changedBy: "James Clark", comment: "Strong in tackles, sometimes mistimes." },
         { date: "2023-09-01", rating: 8, changedBy: "David Lee", comment: "More disciplined in challenges." },
@@ -69,6 +69,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Pace", rating: 8 },
       { name: "Acceleration", rating: 8 },
       { name: "Strength", rating: 9 },
+      { name: "Jumping Reach", rating: 8 }, // Dodato
       { name: "Stamina", rating: 9 },
       { name: "Agility", rating: 8 },
       { name: "Recovery", rating: 9 },
@@ -180,7 +181,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Ball Striking", rating: 9 },
       { name: "Dribbling", rating: 9 },
       { name: "Crossing", rating: 7 },
-      { name: "Aerial Ability", rating: 6 },
+      { name: "Heading", rating: 6 }, // Promenjeno iz "Aerial Ability"
       { name: "Tackling", rating: 5 },
       { name: "Finishing", rating: 8 },
       { name: "Technique", rating: 8 },
@@ -200,6 +201,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Pace", rating: 9 },
       { name: "Acceleration", rating: 9 },
       { name: "Strength", rating: 7 },
+      { name: "Jumping Reach", rating: 7 }, // Dodato
       { name: "Stamina", rating: 8 },
       { name: "Agility", rating: 9 },
       { name: "Recovery", rating: 8 },
@@ -300,7 +302,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Ball Striking", rating: 9 },
       { name: "Dribbling", rating: 9 },
       { name: "Crossing", rating: 8 },
-      { name: "Aerial Ability", rating: 5 },
+      { name: "Heading", rating: 5 }, // Promenjeno iz "Aerial Ability"
       { name: "Tackling", rating: 6 },
       { name: "Finishing", rating: 9 },
       { name: "Technique", rating: 10 },
@@ -320,6 +322,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Pace", rating: 8 },
       { name: "Acceleration", rating: 8 },
       { name: "Strength", rating: 6 },
+      { name: "Jumping Reach", rating: 6 }, // Dodato
       { name: "Stamina", rating: 8 },
       { name: "Agility", rating: 9 },
       { name: "Recovery", rating: 8 },
@@ -418,7 +421,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Ball Striking", rating: 7 },
       { name: "Dribbling", rating: 7 },
       { name: "Crossing", rating: 6 },
-      { name: "Aerial Ability", rating: 8 },
+      { name: "Heading", rating: 8 }, // Promenjeno iz "Aerial Ability"
       { name: "Tackling", rating: 9 },
       { name: "Finishing", rating: 4 },
       { name: "Technique", rating: 8 },
@@ -438,6 +441,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Pace", rating: 7 },
       { name: "Acceleration", rating: 7 },
       { name: "Strength", rating: 9 },
+      { name: "Jumping Reach", rating: 9 }, // Dodato
       { name: "Stamina", rating: 8 },
       { name: "Agility", rating: 7 },
       { name: "Recovery", rating: 8 },
@@ -536,7 +540,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Ball Striking", rating: 9 },
       { name: "Dribbling", rating: 7 },
       { name: "Crossing", rating: 6 },
-      { name: "Aerial Ability", rating: 9 },
+      { name: "Heading", rating: 9 }, // Promenjeno iz "Aerial Ability"
       { name: "Tackling", rating: 5 },
       { name: "Finishing", rating: 9 },
       { name: "Technique", rating: 8 },
@@ -556,6 +560,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Pace", rating: 7 },
       { name: "Acceleration", rating: 7 },
       { name: "Strength", rating: 9 },
+      { name: "Jumping Reach", rating: 9 }, // Dodato
       { name: "Stamina", rating: 8 },
       { name: "Agility", rating: 7 },
       { name: "Recovery", rating: 8 },
