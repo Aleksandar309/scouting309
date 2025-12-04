@@ -861,11 +861,11 @@ export const getAttributesByCategory = (player: Player, category: FmAttributeCat
 
 // Mapping of specific pitch positions to general FmRole position types
 const positionTypeMapping: { [key: string]: string } = {
-  "LCB": "CB", "RCB": "CB", "CB": "CB", "SW": "CB", // Map SW to CB
-  "LDM": "CDM", "RDM": "CDM", "CDM": "CDM", "DM": "CDM", // Map DM to CDM
+  "LCB": "CB", "RCB": "CB", "CB": "CB",
+  "LDM": "CDM", "RDM": "CDM", "CDM": "CDM",
   "LCM": "CM", "RCM": "CM", "CM": "CM",
-  "LW": "RW", "RW": "RW", "LM": "RW", "RM": "RW", // Map LM, RM to RW (generic winger)
-  "LB": "LB", "RB": "LB", // Using LB as generic for both full-backs/wing-backs
+  "LW": "RW", "RW": "RW",
+  "LB": "LB", "RB": "LB",
   "LWB": "LB", "RWB": "LB",
   "CAM": "CAM", "AM": "CAM", // Map AM to CAM
   "GK": "GK",

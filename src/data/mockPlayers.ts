@@ -46,7 +46,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Ball Striking", rating: 8 },
       { name: "Dribbling", rating: 7 },
       { name: "Crossing", rating: 6 },
-      { name: "Heading", rating: 8 }, // Promenjeno iz "Aerial Ability"
+      { name: "Heading", rating: 8 },
       { name: "Tackling", rating: 8, history: [
         { date: "2023-01-15", rating: 7, changedBy: "James Clark", comment: "Strong in tackles, sometimes mistimes." },
         { date: "2023-09-01", rating: 8, changedBy: "David Lee", comment: "More disciplined in challenges." },
@@ -69,7 +69,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Pace", rating: 8 },
       { name: "Acceleration", rating: 8 },
       { name: "Strength", rating: 9 },
-      { name: "Jumping Reach", rating: 8 }, // Dodato
+      { name: "Jumping Reach", rating: 8 },
       { name: "Stamina", rating: 9 },
       { name: "Agility", rating: 8 },
       { name: "Recovery", rating: 9 },
@@ -96,14 +96,14 @@ export const initialMockPlayers: Player[] = [
       { name: "Defending corners", rating: 7 },
     ],
     hidden: [
-      { name: "Consistency", rating: 10 }, // Capped from 15
-      { name: "Important Matches", rating: 10 }, // Capped from 16
-      { name: "Versatility", rating: 10 }, // Capped from 14
+      { name: "Consistency", rating: 10 },
+      { name: "Important Matches", rating: 10 },
+      { name: "Versatility", rating: 10 },
       { name: "Dirtiness", rating: 8 },
       { name: "Injury Proneness", rating: 5 },
-      { name: "Adaptability", rating: 10 }, // Capped from 17
-      { name: "Ambition", rating: 10 }, // Capped from 18
-      { name: "Loyalty", rating: 10 }, // Capped from 15
+      { name: "Adaptability", rating: 10 },
+      { name: "Ambition", rating: 10 },
+      { name: "Loyalty", rating: 10 },
     ],
     keyStrengths: [
       "Exceptional reading of the game and anticipation.",
