@@ -12,15 +12,31 @@ import ScoutProfile from "./pages/ScoutProfile";
 import ShortlistPage from "./pages/Shortlist";
 import { ShortlistProvider } from "./context/ShortlistContext";
 import { ThemeProvider } from "./components/ThemeProvider";
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Import useEffect
 import { initialMockPlayers } from "./data/mockPlayers";
-import { mockScouts, initialMockAssignments } from "./data/mockScouts"; // Import initialMockAssignments
+import { mockScouts, initialMockAssignments } from "./data/mockScouts";
+import { Player } from "./types/player"; // Import Player type
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [players, setPlayers] = useState(initialMockPlayers);
-  const [assignments, setAssignments] = useState(initialMockAssignments); // New state for assignments
+  // Initialize players state from localStorage or use initial mock data
+  const [players, setPlayers] = useState<Player[]>(() => {
+    if (typeof window !== 'undefined') {
+      const savedPlayers = localStorage.getItem('players');
+      return savedPlayers ? JSON.parse(savedPlayers) : initialMockPlayers;
+    }
+    return initialMockPlayers;
+  });
+
+  // Save players state to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('players', JSON.stringify(players));
+    }
+  }, [players]);
+
+  const [assignments, setAssignments] = useState(initialMockAssignments);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -34,10 +50,9 @@ const App = () => {
                 <Route path="/" element={<Index />} />
                 <Route path="/player/:id" element={<PlayerProfile players={players} setPlayers={setPlayers} scouts={mockScouts} />} />
                 <Route path="/players" element={<PlayerDatabase players={players} setPlayers={setPlayers} />} />
-                <Route path="/scouts" element={<Scouts assignments={assignments} setAssignments={setAssignments} />} /> {/* Pass assignments */}
-                <Route path="/scouts/:id" element={<ScoutProfile players={players} assignments={assignments} />} /> {/* Pass assignments */}
+                <Route path="/scouts" element={<Scouts assignments={assignments} setAssignments={setAssignments} />} />
+                <Route path="/scouts/:id" element={<ScoutProfile players={players} assignments={assignments} />} />
                 <Route path="/shortlists" element={<ShortlistPage />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </ShortlistProvider>
