@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -34,6 +34,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import { format, isPast } from 'date-fns';
 import ScoutAttributesSection from '@/components/ScoutAttributesSection'; // Import the new component
+import { ScoutRole } from '@/utils/scout-roles'; // Import ScoutRole
 
 interface ScoutProfileProps {
   players: Player[]; // Receive all players as prop
@@ -264,6 +265,7 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
     return 'table';
   });
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [selectedScoutRole, setSelectedScoutRole] = useState<ScoutRole | null>(null); // New state for selected scout role
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -388,7 +390,11 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
         {/* Scout Attributes Section */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Scout Attributes</h2>
-          <ScoutAttributesSection scout={scout} />
+          <ScoutAttributesSection
+            scout={scout}
+            selectedScoutRole={selectedScoutRole}
+            onRoleSelect={setSelectedScoutRole}
+          />
         </div>
 
         {/* Scout Assignments Section */}
