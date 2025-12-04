@@ -24,7 +24,7 @@ interface AttributeRatingProps {
   attributeCategory?: FmAttributeCategory; // New prop to pass category for history
 }
 
-const getRatingColorClass = (rating: number): string => {
+export const getRatingColorClass = (rating: number): string => {
   if (rating === 1) {
     return "!bg-red-800"; // Tamno crvena
   } else if (rating === 2) {
