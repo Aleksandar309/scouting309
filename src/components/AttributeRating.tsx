@@ -31,7 +31,7 @@ const getRatingColorClass = (rating: number): string => {
   } else if (rating === 9) {
     return "!bg-emerald-600"; // Dark Green
   } else if (rating === 10) {
-    return "!bg-blue-500";
+    return "!bg-emerald-800"; // Tamnija zelena za ocenu 10
   }
   return "!bg-muted-foreground"; // Default color for ratings outside 1-10 or 0
 };
