@@ -151,7 +151,7 @@ export const initialMockPlayers: Player[] = [
     positionsData: [
       { name: "CAM", type: "natural", rating: 9 },
       { name: "RW", type: "natural", rating: 9 },
-      { name: "CF", type: "alternative", rating: 8 }, // Changed from ST
+      { name: "CF", type: "alternative", rating: 8 },
     ],
     priorityTarget: false,
     criticalPriority: false,
@@ -181,7 +181,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Ball Striking", rating: 9 },
       { name: "Dribbling", rating: 9 },
       { name: "Crossing", rating: 7 },
-      { name: "Heading", rating: 6 }, // Promenjeno iz "Aerial Ability"
+      { name: "Heading", rating: 6 },
       { name: "Tackling", rating: 5 },
       { name: "Finishing", rating: 8 },
       { name: "Technique", rating: 8 },
@@ -201,7 +201,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Pace", rating: 9 },
       { name: "Acceleration", rating: 9 },
       { name: "Strength", rating: 7 },
-      { name: "Jumping Reach", rating: 7 }, // Dodato
+      { name: "Jumping Reach", rating: 7 },
       { name: "Stamina", rating: 8 },
       { name: "Agility", rating: 9 },
       { name: "Recovery", rating: 8 },
@@ -228,14 +228,14 @@ export const initialMockPlayers: Player[] = [
       { name: "Defending corners", rating: 6 },
     ],
     hidden: [
-      { name: "Consistency", rating: 10 }, // Capped from 14
-      { name: "Important Matches", rating: 10 }, // Capped from 15
-      { name: "Versatility", rating: 10 }, // Capped from 16
+      { name: "Consistency", rating: 10 },
+      { name: "Important Matches", rating: 10 },
+      { name: "Versatility", rating: 10 },
       { name: "Dirtiness", rating: 7 },
       { name: "Injury Proneness", rating: 6 },
-      { name: "Adaptability", rating: 10 }, // Capped from 15
-      { name: "Ambition", rating: 10 }, // Capped from 17
-      { name: "Loyalty", rating: 10 }, // Capped from 12
+      { name: "Adaptability", rating: 10 },
+      { name: "Ambition", rating: 10 },
+      { name: "Loyalty", rating: 10 },
     ],
     keyStrengths: [
       "Explosive dribbling and close control.",
@@ -302,7 +302,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Ball Striking", rating: 9 },
       { name: "Dribbling", rating: 9 },
       { name: "Crossing", rating: 8 },
-      { name: "Heading", rating: 5 }, // Promenjeno iz "Aerial Ability"
+      { name: "Heading", rating: 5 },
       { name: "Tackling", rating: 6 },
       { name: "Finishing", rating: 9 },
       { name: "Technique", rating: 10 },
@@ -322,7 +322,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Pace", rating: 8 },
       { name: "Acceleration", rating: 8 },
       { name: "Strength", rating: 6 },
-      { name: "Jumping Reach", rating: 6 }, // Dodato
+      { name: "Jumping Reach", rating: 6 },
       { name: "Stamina", rating: 8 },
       { name: "Agility", rating: 9 },
       { name: "Recovery", rating: 8 },
@@ -349,14 +349,14 @@ export const initialMockPlayers: Player[] = [
       { name: "Defending corners", rating: 6 },
     ],
     hidden: [
-      { name: "Consistency", rating: 10 }, // Capped from 18
-      { name: "Important Matches", rating: 10 }, // Capped from 19
-      { name: "Versatility", rating: 10 }, // Capped from 17
+      { name: "Consistency", rating: 10 },
+      { name: "Important Matches", rating: 10 },
+      { name: "Versatility", rating: 10 },
       { name: "Dirtiness", rating: 6 },
       { name: "Injury Proneness", rating: 4 },
-      { name: "Adaptability", rating: 10 }, // Capped from 18
-      { name: "Ambition", rating: 10 }, // Capped from 20
-      { name: "Loyalty", rating: 10 }, // Capped from 14
+      { name: "Adaptability", rating: 10 },
+      { name: "Ambition", rating: 10 },
+      { name: "Loyalty", rating: 10 },
     ],
     keyStrengths: [
       "Exceptional vision and passing range.",
@@ -421,7 +421,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Ball Striking", rating: 7 },
       { name: "Dribbling", rating: 7 },
       { name: "Crossing", rating: 6 },
-      { name: "Heading", rating: 8 }, // Promenjeno iz "Aerial Ability"
+      { name: "Heading", rating: 8 },
       { name: "Tackling", rating: 9 },
       { name: "Finishing", rating: 4 },
       { name: "Technique", rating: 8 },
@@ -441,7 +441,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Pace", rating: 7 },
       { name: "Acceleration", rating: 7 },
       { name: "Strength", rating: 9 },
-      { name: "Jumping Reach", rating: 9 }, // Dodato
+      { name: "Jumping Reach", rating: 9 },
       { name: "Stamina", rating: 8 },
       { name: "Agility", rating: 7 },
       { name: "Recovery", rating: 8 },
@@ -468,14 +468,14 @@ export const initialMockPlayers: Player[] = [
       { name: "Defending corners", rating: 9 },
     ],
     hidden: [
-      { name: "Consistency", rating: 10 }, // Capped from 15
-      { name: "Important Matches", rating: 10 }, // Capped from 14
-      { name: "Versatility", rating: 10 }, // Capped from 16
+      { name: "Consistency", rating: 10 },
+      { name: "Important Matches", rating: 10 },
+      { name: "Versatility", rating: 10 },
       { name: "Dirtiness", rating: 7 },
       { name: "Injury Proneness", rating: 6 },
-      { name: "Adaptability", rating: 10 }, // Capped from 16
-      { name: "Ambition", rating: 10 }, // Capped from 16
-      { name: "Loyalty", rating: 10 }, // Capped from 15
+      { name: "Adaptability", rating: 10 },
+      { name: "Ambition", rating: 10 },
+      { name: "Loyalty", rating: 10 },
     ],
     keyStrengths: [
       "Strong in aerial duels and ground tackles.",
@@ -507,9 +507,9 @@ export const initialMockPlayers: Player[] = [
     id: "5",
     name: "Evan Ferguson",
     team: "Brighton",
-    positions: ["CF"], // Changed from ST
+    positions: ["CF"],
     positionsData: [
-      { name: "CF", type: "natural", rating: 9 }, // Changed from ST
+      { name: "CF", type: "natural", rating: 9 },
       { name: "CAM", type: "alternative", rating: 7 },
     ],
     priorityTarget: false,
@@ -540,7 +540,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Ball Striking", rating: 9 },
       { name: "Dribbling", rating: 7 },
       { name: "Crossing", rating: 6 },
-      { name: "Heading", rating: 9 }, // Promenjeno iz "Aerial Ability"
+      { name: "Heading", rating: 9 },
       { name: "Tackling", rating: 5 },
       { name: "Finishing", rating: 9 },
       { name: "Technique", rating: 8 },
@@ -560,7 +560,7 @@ export const initialMockPlayers: Player[] = [
       { name: "Pace", rating: 7 },
       { name: "Acceleration", rating: 7 },
       { name: "Strength", rating: 9 },
-      { name: "Jumping Reach", rating: 9 }, // Dodato
+      { name: "Jumping Reach", rating: 9 },
       { name: "Stamina", rating: 8 },
       { name: "Agility", rating: 7 },
       { name: "Recovery", rating: 8 },
@@ -587,14 +587,14 @@ export const initialMockPlayers: Player[] = [
       { name: "Defending corners", rating: 7 },
     ],
     hidden: [
-      { name: "Consistency", rating: 10 }, // Capped from 16
-      { name: "Important Matches", rating: 10 }, // Capped from 17
-      { name: "Versatility", rating: 10 }, // Capped from 14
+      { name: "Consistency", rating: 10 },
+      { name: "Important Matches", rating: 10 },
+      { name: "Versatility", rating: 10 },
       { name: "Dirtiness", rating: 6 },
       { name: "Injury Proneness", rating: 5 },
-      { name: "Adaptability", rating: 10 }, // Capped from 17
-      { name: "Ambition", rating: 10 }, // Capped from 19
-      { name: "Loyalty", rating: 10 }, // Capped from 16
+      { name: "Adaptability", rating: 10 },
+      { name: "Ambition", rating: 10 },
+      { name: "Loyalty", rating: 10 },
     ],
     keyStrengths: [
       "Exceptional finishing ability.",

@@ -70,11 +70,11 @@ export const FM_ROLES: FmRole[] = [
       { name: "Composure", category: "mentalPsychology", weight: 2 },
     ],
   },
-  // CF Roles (formerly ST Roles)
+  // CF Roles
   {
     name: "Complete Forward",
     description: "Combines the attributes of a Target Man, Poacher, and Deep-Lying Forward.",
-    positionType: "CF", // Changed from ST
+    positionType: "CF",
     attributes: [
       { name: "Finishing", category: "technical", weight: 3 },
       { name: "Off-Ball Movement", category: "tactical", weight: 3 },
@@ -87,7 +87,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Poacher",
     description: "Stays on the shoulder of the last defender, looking for quick finishes.",
-    positionType: "CF", // Changed from ST
+    positionType: "CF",
     attributes: [
       { name: "Finishing", category: "technical", weight: 3 },
       { name: "Off-Ball Movement", category: "tactical", weight: 3 },
@@ -131,7 +131,7 @@ export const FM_ROLES: FmRole[] = [
       { name: "Tackling", category: "technical", weight: 3 },
       { name: "Defensive Awareness", category: "tactical", weight: 3 },
       { name: "Strength", category: "physical", weight: 3 },
-      { name: "Heading", category: "technical", weight: 2 }, // Promenjeno iz "Aerial Ability"
+      { name: "Heading", category: "technical", weight: 2 },
       { name: "Positioning", category: "tactical", weight: 2 },
       { name: "Composure", category: "mentalPsychology", weight: 1 },
     ],
@@ -762,7 +762,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Half-Space Forward",
     description: "A forward who attacks the half-space from a wider position, closer to a wide forward than a classic number nine.",
-    positionType: "CF", // Changed from ST
+    positionType: "CF",
     attributes: [
       { name: "Off-Ball Movement", category: "tactical", weight: 3 },
       { name: "Anticipation", category: "tactical", weight: 3 },
@@ -776,7 +776,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Channel Forward",
     description: "A striker specialized in running into the channels between full-back and centre-back, great for asymmetrical attacks.",
-    positionType: "CF", // Changed from ST
+    positionType: "CF",
     attributes: [
       { name: "Acceleration", category: "physical", weight: 3 },
       { name: "Pace", category: "physical", weight: 3 },
@@ -791,7 +791,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Second Striker",
     description: "A 'number 10.5' behind the main striker – linking play and scoring goals from deep.",
-    positionType: "CF", // Changed from ST
+    positionType: "CF",
     attributes: [
       { name: "Off-Ball Movement", category: "tactical", weight: 3 },
       { name: "Anticipation", category: "tactical", weight: 3 },
@@ -805,7 +805,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Central Outlet Centre Forward",
     description: "A centre-forward who stays high and central in defense – a primary 'out ball' for counter-attacks.",
-    positionType: "CF", // Changed from ST
+    positionType: "CF",
     attributes: [
       { name: "Strength", category: "physical", weight: 3 },
       { name: "Balance", category: "physical", weight: 3 },
@@ -819,7 +819,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Splitting Outlet Centre Forward",
     description: "An outlet centre-forward who moves wide in defense/on the counter to stretch the opponent's backline.",
-    positionType: "CF", // Changed from ST
+    positionType: "CF",
     attributes: [
       { name: "Acceleration", category: "physical", weight: 3 },
       { name: "Pace", category: "physical", weight: 3 },
@@ -833,7 +833,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Tracking Centre Forward",
     description: "A centre-forward who drops deep in defense, almost acting as an additional midfielder defensively.",
-    positionType: "CF", // Changed from ST
+    positionType: "CF",
     attributes: [
       { name: "Work Rate", category: "mentalPsychology", weight: 3 },
       { name: "Stamina", category: "physical", weight: 3 },
@@ -861,16 +861,16 @@ export const getAttributesByCategory = (player: Player, category: FmAttributeCat
 
 // Mapping of specific pitch positions to general FmRole position types
 const positionTypeMapping: { [key: string]: string } = {
-  "LCB": "CB", "RCB": "CB", "CB": "CB",
-  "LDM": "CDM", "RDM": "CDM", "CDM": "CDM",
+  "LCB": "CB", "RCB": "CB", "CB": "CB", "SW": "CB", // Map SW to CB
+  "LDM": "CDM", "RDM": "CDM", "CDM": "CDM", "DM": "CDM", // Map DM to CDM
   "LCM": "CM", "RCM": "CM", "CM": "CM",
-  "LW": "RW", "RW": "RW", // Using RW as generic for both wings
+  "LW": "RW", "RW": "RW", "LM": "RW", "RM": "RW", // Map LM, RM to RW (generic winger)
   "LB": "LB", "RB": "LB", // Using LB as generic for both full-backs/wing-backs
   "LWB": "LB", "RWB": "LB",
-  "CAM": "CAM",
+  "CAM": "CAM", "AM": "CAM", // Map AM to CAM
   "GK": "GK",
-  "CF_CENTRAL": "CF", "CF_LEFT": "CF", "CF_RIGHT": "CF", // Map all CF variants to general CF
-  "CF": "CF", // Ensure CF itself is mapped
+  "CF_CENTRAL": "CF", "CF_LEFT": "CF", "CF_RIGHT": "CF",
+  "CF": "CF",
 };
 
 // Function to calculate role compatibility
