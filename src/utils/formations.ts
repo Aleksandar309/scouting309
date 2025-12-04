@@ -1,29 +1,29 @@
 import { Player, PlayerPosition } from '@/types/player';
 import { Formation, FormationPosition, PlayerFormationFitPosition } from '@/types/formation';
 
-// Transformed for vertical pitch (attack bottom, defense top)
+// Transformed for vertical pitch (defense top, attack bottom)
 const positionCoordinates: { [key: string]: { x: string; y: string } } = {
-  "GK": { x: "50%", y: "90%" }, // Golman na dnu
-  "CB": { x: "50%", y: "78%" },
-  "LCB": { x: "30%", y: "78%" },
-  "RCB": { x: "70%", y: "78%" },
-  "LB": { x: "10%", y: "70%" },
-  "RB": { x: "90%", y: "70%" },
-  "DM": { x: "50%", y: "60%" },
-  "LDM": { x: "30%", y: "60%" },
-  "RDM": { x: "70%", y: "60%" },
+  "GK": { x: "50%", y: "10%" }, // Golman na vrhu
+  "CB": { x: "50%", y: "22%" },
+  "LCB": { x: "30%", y: "22%" },
+  "RCB": { x: "70%", y: "22%" },
+  "LB": { x: "10%", y: "30%" },
+  "RB": { x: "90%", y: "30%" },
+  "DM": { x: "50%", y: "40%" },
+  "LDM": { x: "30%", y: "40%" },
+  "RDM": { x: "70%", y: "40%" },
   "LCM": { x: "30%", y: "50%" },
   "RCM": { x: "70%", y: "50%" },
   "CM": { x: "50%", y: "50%" },
   "LWB": { x: "10%", y: "55%" },
   "RWB": { x: "90%", y: "55%" },
-  "AM": { x: "50%", y: "30%" },
-  "LW": { x: "15%", y: "20%" },
-  "RW": { x: "85%", y: "20%" },
-  "CF_CENTRAL": { x: "50%", y: "10%" }, // Napadač na vrhu
-  "CF_LEFT": { x: "35%", y: "10%" },
-  "CF_RIGHT": { x: "65%", y: "10%" },
-  "CF": { x: "50%", y: "10%" }, // Generic CF
+  "AM": { x: "50%", y: "70%" },
+  "LW": { x: "15%", y: "80%" },
+  "RW": { x: "85%", y: "80%" },
+  "CF_CENTRAL": { x: "50%", y: "90%" }, // Napadač na dnu
+  "CF_LEFT": { x: "35%", y: "90%" },
+  "CF_RIGHT": { x: "65%", y: "90%" },
+  "CF": { x: "50%", y: "90%" }, // Generic CF
 };
 
 export const FM_FORMATIONS: Formation[] = [
@@ -67,13 +67,13 @@ export const FM_FORMATIONS: Formation[] = [
     positions: [
       { name: "GK", ...positionCoordinates["GK"] },
       { name: "LB", ...positionCoordinates["LB"] },
-      { name: "LCB", x: "30%", y: "78%" },
-      { name: "RCB", x: "70%", y: "78%" },
+      { name: "LCB", x: "30%", y: "22%" },
+      { name: "RCB", x: "70%", y: "22%" },
       { name: "RB", ...positionCoordinates["RB"] },
-      { name: "LM", x: "10%", y: "40%" },
+      { name: "LM", x: "10%", y: "60%" },
       { name: "LCM", x: "30%", y: "50%" },
       { name: "RCM", x: "70%", y: "50%" },
-      { name: "RM", x: "90%", y: "40%" },
+      { name: "RM", x: "90%", y: "60%" },
       { name: "CF_LEFT", ...positionCoordinates["CF_LEFT"] },
       { name: "CF_RIGHT", ...positionCoordinates["CF_RIGHT"] },
     ],
@@ -83,13 +83,13 @@ export const FM_FORMATIONS: Formation[] = [
     name: "3-4-3",
     positions: [
       { name: "GK", ...positionCoordinates["GK"] },
-      { name: "LCB", x: "30%", y: "78%" },
-      { name: "CB", x: "50%", y: "78%" },
-      { name: "RCB", x: "70%", y: "78%" },
+      { name: "LCB", x: "30%", y: "22%" },
+      { name: "CB", x: "50%", y: "22%" },
+      { name: "RCB", x: "70%", y: "22%" },
       { name: "LWB", ...positionCoordinates["LWB"] },
       { name: "RWB", ...positionCoordinates["RWB"] },
-      { name: "LCM", x: "30%", y: "45%" },
-      { name: "RCM", x: "70%", y: "45%" },
+      { name: "LCM", x: "30%", y: "55%" },
+      { name: "RCM", x: "70%", y: "55%" },
       { name: "LW", ...positionCoordinates["LW"] },
       { name: "RW", ...positionCoordinates["RW"] },
       { name: "CF_CENTRAL", ...positionCoordinates["CF_CENTRAL"] },
@@ -100,14 +100,14 @@ export const FM_FORMATIONS: Formation[] = [
     name: "3-5-2",
     positions: [
       { name: "GK", ...positionCoordinates["GK"] },
-      { name: "LCB", x: "30%", y: "78%" },
-      { name: "CB", x: "50%", y: "78%" },
-      { name: "RCB", x: "70%", y: "78%" },
+      { name: "LCB", x: "30%", y: "22%" },
+      { name: "CB", x: "50%", y: "22%" },
+      { name: "RCB", x: "70%", y: "22%" },
       { name: "LWB", ...positionCoordinates["LWB"] },
       { name: "RWB", ...positionCoordinates["RWB"] },
       { name: "DM", ...positionCoordinates["DM"] },
-      { name: "LCM", x: "30%", y: "40%" },
-      { name: "RCM", x: "70%", y: "40%" },
+      { name: "LCM", x: "30%", y: "60%" },
+      { name: "RCM", x: "70%", y: "60%" },
       { name: "CF_LEFT", ...positionCoordinates["CF_LEFT"] },
       { name: "CF_RIGHT", ...positionCoordinates["CF_RIGHT"] },
     ],
