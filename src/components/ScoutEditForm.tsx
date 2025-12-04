@@ -40,7 +40,7 @@ import ScoutAttributeDisplay from "./ScoutAttributeDisplay"; // Reusing for edit
 // Define schema for a single attribute (name and rating)
 const attributeSchema = z.object({
   name: z.string(),
-  rating: z.coerce.number().min(1).max(20, { message: "Rating must be between 1 and 20." }),
+  rating: z.coerce.number().min(1).max(10, { message: "Rating must be between 1 and 10." }), // Changed max to 10
 });
 
 // Define schema for the entire form
@@ -51,26 +51,26 @@ const formSchema = z.object({
   phone: z.string().min(5, { message: "Phone number is too short." }).optional().or(z.literal('')),
   avatarUrl: z.string().url({ message: "Invalid URL." }).optional().or(z.literal('')),
   scoutingAttributes: z.object({
-    analysingData: z.coerce.number().min(1).max(20),
-    judgingPlayerAbility: z.coerce.number().min(1).max(20),
-    judgingPlayerPotential: z.coerce.number().min(1).max(20),
-    judgingStaffAbility: z.coerce.number().min(1).max(20),
-    judgingStaffPotential: z.coerce.number().min(1).max(20),
-    negotiating: z.coerce.number().min(1).max(20),
-    tacticalKnowledge: z.coerce.number().min(1).max(20),
+    analysingData: z.coerce.number().min(1).max(10), // Changed max to 10
+    judgingPlayerAbility: z.coerce.number().min(1).max(10), // Changed max to 10
+    judgingPlayerPotential: z.coerce.number().min(1).max(10), // Changed max to 10
+    judgingStaffAbility: z.coerce.number().min(1).max(10), // Changed max to 10
+    judgingStaffPotential: z.coerce.number().min(1).max(10), // Changed max to 10
+    negotiating: z.coerce.number().min(1).max(10), // Changed max to 10
+    tacticalKnowledge: z.coerce.number().min(1).max(10), // Changed max to 10
   }),
   mentalAttributes: z.object({
-    adaptability: z.coerce.number().min(1).max(20),
-    authority: z.coerce.number().min(1).max(20),
-    determination: z.coerce.number().min(1).max(20),
-    motivating: z.coerce.number().min(1).max(20),
-    peopleManagement: z.coerce.number().min(1).max(20),
-    ambition: z.coerce.number().min(1).max(20),
-    loyalty: z.coerce.number().min(1).max(20),
-    pressure: z.coerce.number().min(1).max(20),
-    professionalism: z.coerce.number().min(1).max(20),
-    temperament: z.coerce.number().min(1).max(20),
-    controversy: z.coerce.number().min(1).max(20),
+    adaptability: z.coerce.number().min(1).max(10), // Changed max to 10
+    authority: z.coerce.number().min(1).max(10), // Changed max to 10
+    determination: z.coerce.number().min(1).max(10), // Changed max to 10
+    motivating: z.coerce.number().min(1).max(10), // Changed max to 10
+    peopleManagement: z.coerce.number().min(1).max(10), // Changed max to 10
+    ambition: z.coerce.number().min(1).max(10), // Changed max to 10
+    loyalty: z.coerce.number().min(1).max(10), // Changed max to 10
+    pressure: z.coerce.number().min(1).max(10), // Changed max to 10
+    professionalism: z.coerce.number().min(1).max(10), // Changed max to 10
+    temperament: z.coerce.number().min(1).max(10), // Changed max to 10
+    controversy: z.coerce.number().min(1).max(10), // Changed max to 10
   }),
   preferredJobs: z.array(z.string()).optional(),
   newPreferredJob: z.string().optional(), // Temporary field for adding new jobs
@@ -160,7 +160,7 @@ const ScoutEditForm: React.FC<ScoutEditFormProps> = ({ scout, onSave, onClose })
                     <Input
                       type="number"
                       min="1"
-                      max="20"
+                      max="10" // Changed max to 10
                       className="bg-input border-border text-foreground text-sm text-center h-8"
                       {...field}
                       onChange={(e) => {
@@ -308,7 +308,7 @@ const ScoutEditForm: React.FC<ScoutEditFormProps> = ({ scout, onSave, onClose })
 
           {/* Attributes Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-border pt-6">
-            <h2 className="text-xl font-bold text-foreground md:col-span-2 mb-2">Attributes (1-20)</h2>
+            <h2 className="text-xl font-bold text-foreground md:col-span-2 mb-2">Attributes (1-10)</h2>
             {renderAttributeSection("scouting", "Scouting Attributes", SCOUT_ATTRIBUTE_CATEGORIES.scouting)}
             {renderAttributeSection("mental", "Mental Attributes", SCOUT_ATTRIBUTE_CATEGORIES.mental)}
           </div>

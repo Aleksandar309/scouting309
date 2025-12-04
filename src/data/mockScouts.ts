@@ -2,6 +2,20 @@
 
 import { Scout, Assignment } from '@/types/scout';
 
+// Helper to scale 1-20 rating to 1-10
+const scaleRating = (rating20: number): number => {
+  if (rating20 <= 2) return 1;
+  if (rating20 <= 4) return 2;
+  if (rating20 <= 6) return 3;
+  if (rating20 <= 8) return 4;
+  if (rating20 <= 10) return 5;
+  if (rating20 <= 12) return 6;
+  if (rating20 <= 14) return 7;
+  if (rating20 <= 16) return 8;
+  if (rating20 <= 18) return 9;
+  return 10; // 19-20
+};
+
 export const mockScouts: Scout[] = [
   {
     id: "1",
@@ -13,26 +27,26 @@ export const mockScouts: Scout[] = [
     lastReportDate: "2024-07-20",
     avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=JC",
     scoutingAttributes: {
-      analysingData: 16,
-      judgingPlayerAbility: 18,
-      judgingPlayerPotential: 17,
-      judgingStaffAbility: 15,
-      judgingStaffPotential: 14, // Dodato
-      negotiating: 14,
-      tacticalKnowledge: 16,
+      analysingData: scaleRating(16),
+      judgingPlayerAbility: scaleRating(18),
+      judgingPlayerPotential: scaleRating(17),
+      judgingStaffAbility: scaleRating(15),
+      judgingStaffPotential: scaleRating(14), // Dodato
+      negotiating: scaleRating(14),
+      tacticalKnowledge: scaleRating(16),
     },
     mentalAttributes: {
-      adaptability: 15,
-      authority: 17,
-      determination: 18,
-      motivating: 16,
-      peopleManagement: 17,
-      ambition: 16,
-      loyalty: 18,
-      pressure: 15,
-      professionalism: 19,
-      temperament: 16,
-      controversy: 5,
+      adaptability: scaleRating(15),
+      authority: scaleRating(17),
+      determination: scaleRating(18),
+      motivating: scaleRating(16),
+      peopleManagement: scaleRating(17),
+      ambition: scaleRating(16),
+      loyalty: scaleRating(18),
+      pressure: scaleRating(15),
+      professionalism: scaleRating(19),
+      temperament: scaleRating(16),
+      controversy: scaleRating(5),
     },
     preferredJobs: ["Head Scout", "Technical Director", "Director of Football"],
   },
@@ -46,26 +60,26 @@ export const mockScouts: Scout[] = [
     lastReportDate: "2024-07-22",
     avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=MS",
     scoutingAttributes: {
-      analysingData: 14,
-      judgingPlayerAbility: 16,
-      judgingPlayerPotential: 17,
-      judgingStaffAbility: 12,
-      judgingStaffPotential: 13, // Dodato
-      negotiating: 10,
-      tacticalKnowledge: 15,
+      analysingData: scaleRating(14),
+      judgingPlayerAbility: scaleRating(16),
+      judgingPlayerPotential: scaleRating(17),
+      judgingStaffAbility: scaleRating(12),
+      judgingStaffPotential: scaleRating(13), // Dodato
+      negotiating: scaleRating(10),
+      tacticalKnowledge: scaleRating(15),
     },
     mentalAttributes: {
-      adaptability: 18,
-      authority: 14,
-      determination: 16,
-      motivating: 15,
-      peopleManagement: 16,
-      ambition: 17,
-      loyalty: 15,
-      pressure: 17,
-      professionalism: 17,
-      temperament: 14,
-      controversy: 7,
+      adaptability: scaleRating(18),
+      authority: scaleRating(14),
+      determination: scaleRating(16),
+      motivating: scaleRating(15),
+      peopleManagement: scaleRating(16),
+      ambition: scaleRating(17),
+      loyalty: scaleRating(15),
+      pressure: scaleRating(17),
+      professionalism: scaleRating(17),
+      temperament: scaleRating(14),
+      controversy: scaleRating(7),
     },
     preferredJobs: ["Senior Scout", "Scout", "Recruitment Analyst"], // Updated preferred jobs
   },
@@ -79,26 +93,26 @@ export const mockScouts: Scout[] = [
     lastReportDate: "2024-07-18",
     avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=DL",
     scoutingAttributes: {
-      analysingData: 10,
-      judgingPlayerAbility: 14,
-      judgingPlayerPotential: 16,
-      judgingStaffAbility: 8,
-      judgingStaffPotential: 9, // Dodato
-      negotiating: 7,
-      tacticalKnowledge: 12,
+      analysingData: scaleRating(10),
+      judgingPlayerAbility: scaleRating(14),
+      judgingPlayerPotential: scaleRating(16),
+      judgingStaffAbility: scaleRating(8),
+      judgingStaffPotential: scaleRating(9), // Dodato
+      negotiating: scaleRating(7),
+      tacticalKnowledge: scaleRating(12),
     },
     mentalAttributes: {
-      adaptability: 16,
-      authority: 10,
-      determination: 14,
-      motivating: 12,
-      peopleManagement: 13,
-      ambition: 14,
-      loyalty: 16,
-      pressure: 13,
-      professionalism: 15,
-      temperament: 12,
-      controversy: 9,
+      adaptability: scaleRating(16),
+      authority: scaleRating(10),
+      determination: scaleRating(14),
+      motivating: scaleRating(12),
+      peopleManagement: scaleRating(13),
+      ambition: scaleRating(14),
+      loyalty: scaleRating(16),
+      pressure: scaleRating(13),
+      professionalism: scaleRating(15),
+      temperament: scaleRating(12),
+      controversy: scaleRating(9),
     },
     preferredJobs: ["Youth Scout", "Head of Youth Development", "Performance Analyst"],
   },

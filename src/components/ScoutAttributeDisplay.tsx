@@ -3,7 +3,6 @@
 import React from 'react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
-import { getQualitativeRating } from '@/types/scout-attributes';
 import {
   Tooltip,
   TooltipContent,
@@ -12,30 +11,19 @@ import {
 } from "@/components/ui/tooltip";
 import { scoutAttributeDescriptions } from '@/utils/scout-attribute-descriptions'; // Import descriptions
 import { Input } from '@/components/ui/input'; // Import Input for editable mode
+import { getRatingColorClass as getPlayerRatingColorClass } from './AttributeRating'; // Import player's color logic
 
 interface ScoutAttributeDisplayProps {
   name: string;
-  rating: number; // 1-20 scale
+  rating: number; // 1-10 scale
   highlightType?: 'primary' | 'secondary' | 'tertiary' | null; // New prop for highlighting
   isEditable?: boolean; // New prop for edit mode
   onRatingChange?: (newRating: number) => void; // Callback for rating change
 }
 
-const getRatingColorClass = (rating: number): string => {
-  if (rating <= 5) {
-    return "!bg-destructive";
-  } else if (rating <= 10) {
-    return "!bg-yellow-600";
-  } else if (rating <= 15) {
-    return "!bg-green-600";
-  } else { // 16-20
-    return "!bg-blue-600";
-  }
-};
-
 const ScoutAttributeDisplay: React.FC<ScoutAttributeDisplayProps> = ({ name, rating, highlightType, isEditable = false, onRatingChange }) => {
-  const { colorClass } = getQualitativeRating(rating);
-  const progressValue = (rating / 20) * 100; // Scale 1-20 to 0-100 for Progress component
+  const progressValue = (rating / 10) * 100; // Scale 1-10 to 0-100 for Progress component
+  const indicatorColorClass = getPlayerRatingColorClass(rating); // Use player's color logic
 
   // More discreet highlight classes: subtle left border and bold text
   const highlightClasses = {
@@ -62,7 +50,7 @@ const ScoutAttributeDisplay: React.FC<ScoutAttributeDisplayProps> = ({ name, rat
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newRating = parseInt(e.target.value, 10);
-    if (!isNaN(newRating) && newRating >= 1 && newRating <= 20 && onRatingChange) {
+    if (!isNaN(newRating) && newRating >= 1 && newRating <= 10 && onRatingChange) { // Validate for 1-10 scale
       onRatingChange(newRating);
     } else if (e.target.value === "" && onRatingChange) {
       onRatingChange(0); // Or some other indicator for invalid/empty
@@ -85,14 +73,14 @@ const ScoutAttributeDisplay: React.FC<ScoutAttributeDisplayProps> = ({ name, rat
                 <Input
                   type="number"
                   min="1"
-                  max="20"
+                  max="10" // Max 10 for 1-10 scale
                   value={rating === 0 ? "" : rating}
                   onChange={handleInputChange}
                   className="w-full h-6 bg-input border-border text-foreground text-sm text-center"
                 />
               ) : (
                 <>
-                  <Progress value={progressValue} className="h-2 flex-1 bg-muted" indicatorClassName={colorClass} />
+                  <Progress value={progressValue} className="h-2 flex-1 bg-muted" indicatorClassName={indicatorColorClass} />
                   <span className={cn("ml-2 text-sm", highlightType ? "text-text-on-colored-background" : "text-muted-foreground")}>{rating}</span>
                 </>
               )}
