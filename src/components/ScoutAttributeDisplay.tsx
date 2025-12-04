@@ -23,11 +23,18 @@ const ScoutAttributeDisplay: React.FC<ScoutAttributeDisplayProps> = ({ name, rat
   };
 
   // Skraćivanje naziva atributa za prikaz
-  const displayedName = name === "Judging Player Ability"
-    ? "Judging Play. Ability"
-    : name === "Judging Player Potential"
-      ? "Judging Play. Potential"
-      : name;
+  const displayedName = (() => {
+    switch (name) {
+      case "Judging Player Ability": return "J. Play. Ability";
+      case "Judging Player Potential": return "J. Play. Potential";
+      case "Judging Staff Ability": return "J. Staff Ability";
+      case "Judging Staff Potential": return "J. Staff Potential";
+      case "People Management": return "People Mgmt.";
+      case "Tactical Knowledge": return "Tact. Knowledge";
+      case "Professionalism": return "Profess.";
+      default: return name;
+    }
+  })();
 
   return (
     <div
