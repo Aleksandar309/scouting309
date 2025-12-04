@@ -34,7 +34,7 @@ const App = () => {
                 <Route path="/player/:id" element={<PlayerProfile players={players} setPlayers={setPlayers} scouts={mockScouts} />} /> {/* Pass scouts */}
                 <Route path="/players" element={<PlayerDatabase players={players} setPlayers={setPlayers} />} />
                 <Route path="/scouts" element={<Scouts />} />
-                <Route path="/scouts/:id" element={<ScoutProfile />} /> {/* New route for individual scout profiles */}
+                <Route path="/scouts/:id" element={<ScoutProfile players={players} />} /> {/* Pass players to ScoutProfile */}
                 <Route path="/shortlists" element={<ShortlistPage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

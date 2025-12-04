@@ -1,18 +1,272 @@
 "use client";
 
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, User, ChevronLeft, CalendarDays, Briefcase } from 'lucide-react';
+import { Mail, Phone, User, ChevronLeft, CalendarDays, Briefcase, ArrowUpDown, Table2, LayoutGrid, Plus } from 'lucide-react';
 import { Scout } from '@/types/scout';
 import { mockScouts } from '@/data/mockScouts';
+import { Player } from '@/types/player';
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  getSortedRowModel,
+  SortingState,
+} from '@tanstack/react-table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import PlayerCard from '@/components/PlayerCard';
+import { ALL_ATTRIBUTE_NAMES } from '@/utils/player-attributes';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 
-const ScoutProfile: React.FC = () => {
+interface ScoutProfileProps {
+  players: Player[]; // Receive all players as prop
+}
+
+// Helper function to find an attribute's rating across all categories
+const getAttributeRating = (player: Player, attributeName: string): number => {
+  const categories = [
+    player.technical,
+    player.tactical,
+    player.physical,
+    player.mentalPsychology,
+    player.setPieces,
+    player.hidden,
+  ];
+
+  for (const category of categories) {
+    const attribute = category.find(attr => attr.name === attributeName);
+    if (attribute) {
+      return attribute.rating;
+    }
+  }
+  return 0; // Default to 0 if not found
+};
+
+// List of all unique attributes to create columns for
+const attributeColumns: ColumnDef<Player>[] = ALL_ATTRIBUTE_NAMES.map(attrName => ({
+  accessorFn: (row) => getAttributeRating(row, attrName),
+  id: attrName.replace(/\s/g, ''), // Create a unique ID for the column
+  header: ({ column }) => (
+    <Button
+      variant="ghost"
+      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      className="text-foreground hover:bg-accent"
+    >
+      {attrName}
+      <ArrowUpDown className="ml-2 h-4 w-4" />
+    </Button>
+  ),
+  cell: ({ row }) => {
+    const rating = getAttributeRating(row.original, attrName);
+    return <span className="text-foreground">{rating}</span>;
+  },
+  enableSorting: true,
+}));
+
+const columns: ColumnDef<Player>[] = [
+  {
+    accessorKey: "name",
+    header: ({ column }) => {
+      return (
+        <TableHead className="sticky-column-header">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="text-foreground hover:bg-accent"
+          >
+            Name
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </TableHead>
+      );
+    },
+    cell: ({ row }) => (
+      <TableCell className="sticky-column-cell">
+        <Link to={`/player/${row.original.id}`} className="text-blue-400 hover:underline">
+          {row.getValue("name")}
+        </Link>
+      </TableCell>
+    ),
+  },
+  {
+    accessorKey: "team",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="text-foreground hover:bg-accent"
+      >
+        Team
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+  },
+  {
+    accessorKey: "positions",
+    header: "Positions",
+    cell: ({ row }) => (
+      <div className="flex flex-wrap gap-1">
+        {row.original.positions.map((pos) => (
+          <Badge key={pos} variant="secondary" className="bg-muted text-muted-foreground">
+            {pos}
+          </Badge>
+        ))}
+      </div>
+    ),
+    enableSorting: false,
+  },
+  {
+    accessorKey: "nationality",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="text-foreground hover:bg-accent"
+      >
+        Nationality
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+  },
+  {
+    accessorKey: "age",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="text-foreground hover:bg-accent"
+      >
+        Age
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+  },
+  {
+    accessorKey: "value",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="text-foreground hover:bg-accent"
+      >
+        Value
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+  },
+  {
+    accessorKey: "scoutingProfile.currentAbility",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="text-foreground hover:bg-accent"
+      >
+        Current Ability
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    id: "currentAbilityRating",
+    cell: ({ row }) => {
+      const rating = row.original.scoutingProfile.currentAbility;
+      const progressValue = Math.min(Math.max(rating * 10, 0), 100);
+      return (
+        <div className="flex items-center w-full">
+          <Progress value={progressValue} className="h-2 w-full bg-muted" indicatorClassName="bg-blue-500" />
+          <span className="ml-2 text-sm text-foreground">{rating}</span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "scoutingProfile.potentialAbility",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="text-foreground hover:bg-accent"
+      >
+        Potential Ability
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    id: "potentialAbilityRating",
+    cell: ({ row }) => {
+      const rating = row.original.scoutingProfile.potentialAbility;
+      const progressValue = Math.min(Math.max(rating * 10, 0), 100);
+      return (
+        <div className="flex items-center w-full">
+          <Progress value={progressValue} className="h-2 w-full bg-muted" indicatorClassName="bg-green-500" />
+          <span className="ml-2 text-sm text-foreground">{rating}</span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "priorityTarget",
+    header: "Priority",
+    cell: ({ row }) => (
+      row.getValue("priorityTarget") ? <Badge className="bg-yellow-600 text-white">Yes</Badge> : <Badge variant="secondary" className="bg-muted text-muted-foreground">No</Badge>
+    ),
+    enableSorting: true,
+  },
+  ...attributeColumns, // Add all dynamically generated attribute columns here
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => {
+      const player = row.original;
+      const [isShortlistDialogOpen, setIsShortlistDialogOpen] = React.useState(false);
+      return (
+        <Dialog open={isShortlistDialogOpen} onOpenChange={setIsShortlistDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <AddToShortlistDialog player={player} onClose={() => setIsShortlistDialogOpen(false)} />
+        </Dialog>
+      );
+    },
+    enableSorting: false,
+    enableHiding: false,
+  },
+];
+
+
+const ScoutProfile: React.FC<ScoutProfileProps> = ({ players }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const scout = mockScouts.find(s => s.id === id);
+
+  const [viewMode, setViewMode] = React.useState<'table' | 'card'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('scoutProfileViewMode') as 'table' | 'card') || 'table';
+    }
+    return 'table';
+  });
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('scoutProfileViewMode', viewMode);
+    }
+  }, [viewMode]);
 
   if (!scout) {
     return (
@@ -32,9 +286,25 @@ const ScoutProfile: React.FC = () => {
     );
   }
 
+  // Filter players reported by this scout
+  const scoutedPlayers = players.filter(player =>
+    player.scoutingReports.some(report => report.scout === scout.name)
+  );
+
+  const table = useReactTable({
+    data: scoutedPlayers,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
+  });
+
   return (
     <div className="min-h-screen bg-background text-foreground p-6">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Back Button */}
         <Button
           variant="ghost"
@@ -44,7 +314,7 @@ const ScoutProfile: React.FC = () => {
           <ChevronLeft className="h-5 w-5 mr-1" /> Back
         </Button>
 
-        <Card className="bg-card border-border text-card-foreground shadow-lg">
+        <Card className="bg-card border-border text-card-foreground shadow-lg mb-8">
           <CardHeader className="flex flex-row items-center space-x-6 pb-4">
             <Avatar className="h-24 w-24">
               <AvatarImage src={scout.avatarUrl} alt={scout.name} />
@@ -76,16 +346,95 @@ const ScoutProfile: React.FC = () => {
                 {scout.role === "Head Scout" && "Oversees all scouting operations, focusing on strategic targets and team fit across all regions."}
                 {scout.role === "European Scout" && "Specializes in identifying talent across major European leagues, with an emphasis on technical ability and tactical intelligence."}
                 {scout.role === "Youth Scout" && "Focuses on emerging talents in youth academies and lower leagues, looking for high potential and coachability."}
-                {/* Add more specific descriptions if needed */}
               </p>
             </div>
-            {/* Future: List of reports by this scout, or players scouted by this scout */}
-            {/* <div className="border-t border-border pt-4 mt-4">
-              <h3 className="text-xl font-semibold text-foreground mb-2">Recent Reports</h3>
-              <p className="text-sm text-muted-foreground">Coming soon: A list of recent reports filed by {scout.name}.</p>
-            </div> */}
           </CardContent>
         </Card>
+
+        {/* Scouted Players Section */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">Players Scouted by {scout.name} ({scoutedPlayers.length})</h2>
+          <ToggleGroup
+            type="single"
+            value={viewMode}
+            onValueChange={(value: 'table' | 'card') => {
+              if (value) setViewMode(value);
+            }}
+            className="bg-muted rounded-md p-1 border border-border"
+          >
+            <ToggleGroupItem value="table" aria-label="Toggle table view" className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground text-muted-foreground hover:bg-accent">
+              <Table2 className="h-4 w-4 mr-2" /> Table View
+            </ToggleGroupItem>
+            <ToggleGroupItem value="card" aria-label="Toggle card view" className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground text-muted-foreground hover:bg-accent">
+              <LayoutGrid className="h-4 w-4 mr-2" /> Card View
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+
+        {scoutedPlayers.length === 0 ? (
+          <Card className="bg-card border-border text-card-foreground text-center p-8">
+            <CardTitle className="text-xl mb-4">No Players Scouted Yet!</CardTitle>
+            <CardContent>
+              <p className="text-muted-foreground">
+                {scout.name} has not filed any reports for players yet.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          viewMode === 'table' ? (
+            <div className="rounded-md border border-border bg-card overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id} className="border-border">
+                      {headerGroup.headers.map((header) => {
+                        return (
+                          <TableHead key={header.id} className="text-foreground">
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                          </TableHead>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && "selected"}
+                        className="border-border hover:bg-accent"
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id} className="text-foreground">
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
+                        No results.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {scoutedPlayers.map((player) => (
+                <PlayerCard key={player.id} player={player} />
+              ))}
+            </div>
+          )
+        )}
       </div>
     </div>
   );
