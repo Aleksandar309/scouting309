@@ -39,6 +39,7 @@ import PlayerCardGridDisplay from '@/components/PlayerCardGridDisplay';
 import { playerTableColumns } from '@/utils/player-table-columns'; // Import the shared columns
 import { Input } from '@/components/ui/input'; // Keep Input for global filter
 import { ALL_FOOTBALL_POSITIONS } from '@/utils/positions'; // Import ALL_FOOTBALL_POSITIONS
+import { Label } from "@/components/ui/label"; // Add this import
 
 interface PlayerDatabaseProps {
   players: Player[];
@@ -143,7 +144,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
               </h2>
             </AccordionTrigger>
             <AccordionContent className="p-4 border border-t-0 border-border rounded-b-lg bg-card">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"> {/* Changed to lg:grid-cols-3 */}
                 {/* Name Filter with Autocomplete */}
                 <Popover open={openNameFilter} onOpenChange={setOpenNameFilter}>
                   <PopoverTrigger asChild>
@@ -384,12 +385,60 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                   </PopoverContent>
                 </Popover>
 
+                {/* New: Current Ability Filter */}
+                <div className="flex flex-col space-y-1">
+                  <Label htmlFor="minCurrentAbility" className="text-muted-foreground">Min Current Ability</Label>
+                  <Input
+                    id="minCurrentAbility"
+                    type="number"
+                    min="1"
+                    max="10"
+                    placeholder="Min CA (1-10)"
+                    value={(columnFilters.find(f => f.id === 'currentAbilityRating')?.value as number) ?? ""}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value, 10);
+                      setColumnFilters(prev => {
+                        const newFilters = prev.filter(f => f.id !== 'currentAbilityRating');
+                        if (!isNaN(value) && value >= 1 && value <= 10) {
+                          newFilters.push({ id: 'currentAbilityRating', value });
+                        }
+                        return newFilters;
+                      });
+                    }}
+                    className="bg-input border-border text-foreground"
+                  />
+                </div>
+
+                {/* New: Potential Ability Filter */}
+                <div className="flex flex-col space-y-1">
+                  <Label htmlFor="minPotentialAbility" className="text-muted-foreground">Min Potential Ability</Label>
+                  <Input
+                    id="minPotentialAbility"
+                    type="number"
+                    min="1"
+                    max="10"
+                    placeholder="Min PA (1-10)"
+                    value={(columnFilters.find(f => f.id === 'potentialAbilityRating')?.value as number) ?? ""}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value, 10);
+                      setColumnFilters(prev => {
+                        const newFilters = prev.filter(f => f.id !== 'potentialAbilityRating');
+                        if (!isNaN(value) && value >= 1 && value <= 10) {
+                          newFilters.push({ id: 'potentialAbilityRating', value });
+                        }
+                        return newFilters;
+                      });
+                    }}
+                    className="bg-input border-border text-foreground"
+                  />
+                </div>
+
                 {/* Global filter for general search */}
                 <Input
                   placeholder="Global search..."
                   value={globalFilter ?? ""}
                   onChange={(event) => setGlobalFilter(event.target.value)}
-                  className="bg-input border-border text-foreground lg:col-span-3"
+                  className="bg-input border-border text-foreground lg:col-span-3" // Spans all 3 columns in lg
                 />
               </div>
             </AccordionContent>

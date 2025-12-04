@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react'; // Added React import
+import React from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -229,6 +229,10 @@ export const playerTableColumns: ColumnDef<Player>[] = [
         </div>
       );
     },
+    filterFn: (row, columnId, filterValue: number) => {
+      const rating = row.original.scoutingProfile.currentAbility;
+      return rating >= filterValue;
+    },
   },
   {
     accessorKey: "scoutingProfile.potentialAbility",
@@ -252,6 +256,10 @@ export const playerTableColumns: ColumnDef<Player>[] = [
           <span className="ml-2 text-sm text-foreground">{rating}</span>
         </div>
       );
+    },
+    filterFn: (row, columnId, filterValue: number) => {
+      const rating = row.original.scoutingProfile.potentialAbility;
+      return rating >= filterValue;
     },
   },
   {
