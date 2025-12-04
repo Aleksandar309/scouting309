@@ -112,6 +112,58 @@ export const FM_FORMATIONS: Formation[] = [
       { name: "CF_RIGHT", ...positionCoordinates["CF_RIGHT"] },
     ],
   },
+  // New Formations
+  {
+    id: "41212-narrow",
+    name: "4-1-2-1-2 (Narrow Diamond)",
+    positions: [
+      { name: "GK", ...positionCoordinates["GK"] },
+      { name: "LB", ...positionCoordinates["LB"] },
+      { name: "LCB", ...positionCoordinates["LCB"] },
+      { name: "RCB", ...positionCoordinates["RCB"] },
+      { name: "RB", ...positionCoordinates["RB"] },
+      { name: "DM", ...positionCoordinates["DM"] },
+      { name: "LCM", x: "38%", y: "50%" }, // Narrower CMs
+      { name: "RCM", x: "62%", y: "50%" }, // Narrower CMs
+      { name: "AM", ...positionCoordinates["AM"] },
+      { name: "CF_LEFT", x: "40%", y: "10%" }, // Two strikers
+      { name: "CF_RIGHT", x: "60%", y: "10%" }, // Two strikers
+    ],
+  },
+  {
+    id: "532",
+    name: "5-3-2",
+    positions: [
+      { name: "GK", ...positionCoordinates["GK"] },
+      { name: "LCB", x: "30%", y: "78%" },
+      { name: "CB", x: "50%", y: "78%" },
+      { name: "RCB", x: "70%", y: "78%" },
+      { name: "LWB", ...positionCoordinates["LWB"] },
+      { name: "RWB", ...positionCoordinates["RWB"] },
+      { name: "LCM", x: "30%", y: "50%" },
+      { name: "CM", x: "50%", y: "50%" },
+      { name: "RCM", x: "70%", y: "50%" },
+      { name: "CF_LEFT", ...positionCoordinates["CF_LEFT"] },
+      { name: "CF_RIGHT", ...positionCoordinates["CF_RIGHT"] },
+    ],
+  },
+  {
+    id: "4312",
+    name: "4-3-1-2",
+    positions: [
+      { name: "GK", ...positionCoordinates["GK"] },
+      { name: "LB", ...positionCoordinates["LB"] },
+      { name: "LCB", ...positionCoordinates["LCB"] },
+      { name: "RCB", ...positionCoordinates["RCB"] },
+      { name: "RB", ...positionCoordinates["RB"] },
+      { name: "LDM", x: "30%", y: "60%" }, // Three central midfielders, can be DM or CM
+      { name: "CM", x: "50%", y: "60%" },
+      { name: "RDM", x: "70%", y: "60%" },
+      { name: "AM", ...positionCoordinates["AM"] },
+      { name: "CF_LEFT", x: "40%", y: "10%" },
+      { name: "CF_RIGHT", x: "60%", y: "10%" },
+    ],
+  },
 ];
 
 // Helper to find the best player position data for a given formation position name
@@ -128,6 +180,7 @@ const getPlayerPositionDataForFormationPosition = (playerPositions: PlayerPositi
     "CF_LEFT": "CF", "CF_RIGHT": "CF", "CF_CENTRAL": "CF", // Map all CF variants to general CF
     "LWB": "LB", "RWB": "RB", // LWB/RWB map to LB/RB for player positions
     "AM": "AM", // Ensure AM maps to AM
+    "LM": "LW", "RM": "RW", // Map LM/RM to LW/RW for player positions
   };
 
   const generalPositionName = specificToGeneralMap[formationPositionName];
@@ -138,8 +191,6 @@ const getPlayerPositionDataForFormationPosition = (playerPositions: PlayerPositi
 
   return undefined;
 };
-
-// REMOVED: adjustRatingForFootedness function
 
 export const calculateFormationFit = (player: Player, formation: Formation): PlayerFormationFitPosition[] => {
   const playerFitPositions: PlayerFormationFitPosition[] = [];
@@ -154,8 +205,6 @@ export const calculateFormationFit = (player: Player, formation: Formation): Pla
       fitType = playerPositionData.type;
       fitRating = playerPositionData.rating;
     }
-
-    // REMOVED: Apply footedness adjustment for LCB/RCB
 
     playerFitPositions.push({
       name: formPos.name,
