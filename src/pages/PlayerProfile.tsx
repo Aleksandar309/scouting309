@@ -537,7 +537,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
                 {/* Avatar/Initial Display */}
-                <div className="relative w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mr-4 overflow-hidden bg-blue-600">
+                <div className="relative w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mr-4 overflow-hidden bg-primary">
                   {isEditMode ? (
                     <>
                       <input
@@ -636,7 +636,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                         </FormItem>
                       )}
                     />
-                    <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white">
+                    <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
                       <Save className="mr-2 h-4 w-4" /> Save
                     </Button>
                     <Button
@@ -682,7 +682,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                 )}
                 <Dialog open={isShortlistFormOpen} onOpenChange={setIsShortlistFormOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-green-600 hover:bg-green-700 text-white">
+                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
                       <Plus className="mr-2 h-4 w-4" /> Shortlist
                     </Button>
                   </DialogTrigger>
@@ -690,7 +690,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                 </Dialog>
                 <Dialog open={isReportFormOpen} onOpenChange={setIsReportFormOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">New Report</Button>
+                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">New Report</Button>
                   </DialogTrigger>
                   <ScoutReportForm player={player} onReportSubmit={handleAddReport} onClose={() => setIsReportFormOpen(false)} scouts={scouts} />
                 </Dialog>
@@ -1263,7 +1263,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                               <p className="font-medium text-foreground">{report.title}</p>
                               <p className="text-xs text-muted-foreground">{report.date} • {report.scout}</p>
                             </div>
-                            <Badge className="bg-blue-500 text-white">{report.rating}</Badge>
+                            <Badge className="bg-primary text-primary-foreground">{report.rating}</Badge>
                           </AccordionTrigger>
                           <AccordionContent className="p-4 bg-muted rounded-b-md text-muted-foreground space-y-2">
                             {report.keyStrengths && (
@@ -1284,7 +1284,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                               {report.potentialAbility !== undefined && <p className="text-sm">Potential Ability: {report.potentialAbility}</p>}
                               {report.teamFit !== undefined && <p className="text-sm">Team Fit: {report.teamFit}</p>}
                             </div>
-                            <Button variant="ghost" size="sm" className="text-blue-400 hover:text-blue-300 mt-2">
+                            <Button variant="ghost" size="sm" className="text-primary hover:text-primary/90 mt-2">
                               Sign Immediately <ArrowRight className="ml-1 h-4 w-4" />
                             </Button>
                           </AccordionContent>

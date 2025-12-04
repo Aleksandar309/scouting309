@@ -112,7 +112,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
     },
     cell: ({ row }) => (
       <TableCell className="sticky-column-cell">
-        <Link to={`/player/${row.original.id}`} className="text-blue-400 hover:underline">
+        <Link to={`/player/${row.original.id}`} className="text-primary hover:underline">
           {row.getValue("name")}
         </Link>
       </TableCell>
@@ -224,7 +224,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       const progressValue = Math.min(Math.max(rating * 10, 0), 100);
       return (
         <div className="flex items-center w-full">
-          <Progress value={progressValue} className="h-2 w-full bg-muted" indicatorClassName="bg-blue-500" />
+          <Progress value={progressValue} className="h-2 w-full bg-muted" indicatorClassName="bg-primary" />
           <span className="ml-2 text-sm text-foreground">{rating}</span>
         </div>
       );

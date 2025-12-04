@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, LayoutDashboard, Search, UserRound, ListChecks } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle"; // Import ThemeToggle
+import Logo from "@/components/Logo"; // Import Logo
 
 const Index = () => {
   return (
@@ -12,9 +13,8 @@ const Index = () => {
         <ThemeToggle /> {/* Add ThemeToggle here */}
       </div>
       <div className="max-w-4xl w-full text-center p-8 bg-card rounded-lg shadow-2xl border border-border">
-        <h1 className="text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
-          Brighton Scouting Dashboard
-        </h1>
+        {/* Replace h1 with Logo component */}
+        <Logo className="mb-10 mx-auto" /> {/* Center the logo and add margin-bottom */}
         <p className="text-xl text-muted-foreground mb-10">
           Your central hub for player analysis and team management.
         </p>
@@ -23,12 +23,12 @@ const Index = () => {
           <Card className="bg-card border-border text-card-foreground hover:bg-accent transition-colors duration-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-lg font-medium">Player Database</CardTitle>
-              <Search className="h-6 w-6 text-blue-400" />
+              <Search className="h-6 w-6 text-primary" />
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">Browse and manage all scouted players.</p>
               <Link to="/players">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
                   View Players
                 </Button>
               </Link>
@@ -38,12 +38,12 @@ const Index = () => {
           <Card className="bg-card border-border text-card-foreground hover:bg-accent transition-colors duration-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-lg font-medium">Scouting Team</CardTitle>
-              <Users className="h-6 w-6 text-blue-400" />
+              <Users className="h-6 w-6 text-primary" />
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">Meet our dedicated scouting personnel.</p>
               <Link to="/scouts">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
                   View Scouts
                 </Button>
               </Link>
@@ -53,12 +53,12 @@ const Index = () => {
           <Card className="bg-card border-border text-card-foreground hover:bg-accent transition-colors duration-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-lg font-medium">Shortlists</CardTitle>
-              <ListChecks className="h-6 w-6 text-blue-400" />
+              <ListChecks className="h-6 w-6 text-primary" />
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">Manage your curated player shortlists.</p>
               <Link to="/shortlists">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
                   View Shortlists
                 </Button>
               </Link>
@@ -69,12 +69,12 @@ const Index = () => {
         <Card className="bg-card border-border text-card-foreground hover:bg-accent transition-colors duration-200 col-span-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-lg font-medium">Example Player Profile</CardTitle>
-              <UserRound className="h-6 w-6 text-blue-400" />
+              <UserRound className="h-6 w-6 text-primary" />
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">See a detailed player profile in action.</p>
               <Link to="/player/1">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
                   View Example Player
                 </Button>
               </Link>

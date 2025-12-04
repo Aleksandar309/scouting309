@@ -83,7 +83,7 @@ const ShortlistPage: React.FC = () => {
                             {shortlist.players.map((player) => (
                               <TableRow key={player.id} className="border-border hover:bg-accent">
                                 <TableCell>
-                                  <Link to={`/player/${player.id}`} className="text-blue-400 hover:underline">
+                                  <Link to={`/player/${player.id}`} className="text-primary hover:underline">
                                     {player.name}
                                   </Link>
                                 </TableCell>

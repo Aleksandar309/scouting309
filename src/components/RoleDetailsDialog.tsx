@@ -72,7 +72,7 @@ const RoleDetailsDialog: React.FC<RoleDetailsDialogProps> = ({
               className={cn(
                 "p-4 border rounded-md cursor-pointer transition-all duration-200",
                 "bg-muted border-border hover:bg-accent",
-                isSelected ? "ring-2 ring-blue-500 border-blue-500" : ""
+                isSelected ? "ring-2 ring-primary border-primary" : ""
               )}
               onClick={() => onRoleSelect(isSelected ? null : role)}
             >
@@ -92,7 +92,7 @@ const RoleDetailsDialog: React.FC<RoleDetailsDialogProps> = ({
               <p className="text-muted-foreground mb-2">{role.description}</p>
               {isSelected && (
                 <div className="mt-3">
-                  <h4 className="font-medium text-blue-300 mb-1">Key Attributes:</h4> {/* text-blue-300 can be kept as an accent */}
+                  <h4 className="font-medium text-primary mb-1">Key Attributes:</h4> {/* text-primary can be kept as an accent */}
                   <div className="flex flex-wrap gap-2">
                     {role.attributes.map((attr, idx) => (
                       <span

@@ -59,7 +59,7 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}
-            className="text-blue-400 hover:text-blue-300 p-0 h-auto"
+            className="text-primary hover:text-primary/90 p-0 h-auto"
           >
             <ChevronLeft className="h-5 w-5 mr-1" /> Go Back
           </Button>
@@ -92,7 +92,7 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
           <CardHeader className="flex flex-row items-center space-x-6 pb-4">
             <Avatar className="h-24 w-24">
               <AvatarImage src={scout.avatarUrl} alt={scout.name} />
-              <AvatarFallback className="bg-blue-600 text-white text-4xl">{scout.name.charAt(0)}</AvatarFallback>
+              <AvatarFallback className="bg-primary text-primary-foreground text-4xl">{scout.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div>
               <CardTitle className="text-3xl font-bold">{scout.name}</CardTitle>
@@ -157,7 +157,7 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
                       <Badge className={getPriorityBadgeClass(assignment.priority)}>{assignment.priority}</Badge>
                     </div>
                     <p className="text-sm text-muted-foreground flex items-center mt-1">
-                      <Briefcase className="h-4 w-4 mr-1" /> Assigned to: <Link to={`/scouts/${assignment.assignedTo}`} className="text-blue-400 hover:underline ml-1">{assignment.assignedToName}</Link>
+                      <Briefcase className="h-4 w-4 mr-1" /> Assigned to: <Link to={`/scouts/${assignment.assignedTo}`} className="text-primary hover:underline ml-1">{assignment.assignedToName}</Link>
                     </p>
                   </CardHeader>
                   <CardContent className="space-y-2 text-muted-foreground text-sm">

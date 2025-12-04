@@ -22,7 +22,7 @@ const NotFound = () => {
         <Button
           variant="ghost"
           onClick={() => navigate(-1)} // Go back to the previous page
-          className="text-blue-400 hover:text-blue-300 p-0 h-auto"
+          className="text-primary hover:text-primary/90 p-0 h-auto"
         >
           <ChevronLeft className="h-5 w-5 mr-1" /> Go Back
         </Button>

@@ -24,7 +24,7 @@ const ScoutAttributeDisplay: React.FC<ScoutAttributeDisplayProps> = ({ name, rat
 
   // More discreet highlight classes: subtle left border and bold text
   const highlightClasses = {
-    primary: "border-l-4 border-blue-500 pl-2", // Blue border for primary
+    primary: "border-l-4 border-primary pl-2", // Blue border for primary
     secondary: "border-l-4 border-purple-500 pl-2", // Purple border for secondary
     tertiary: "border-l-4 border-muted-foreground pl-2", // Muted border for tertiary
   };

@@ -63,7 +63,7 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({
   const indicatorColorClass = getRatingColorClass(rating);
 
   const highlightClasses = {
-    primary: "bg-role-primary ring-1 ring-blue-400", // Use semantic color
+    primary: "bg-role-primary ring-1 ring-primary", // Use semantic color
     secondary: "bg-role-secondary ring-1 ring-purple-400", // Use semantic color
     tertiary: "bg-role-tertiary ring-1 ring-muted-foreground", // Use semantic color
   };

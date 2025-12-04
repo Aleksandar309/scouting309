@@ -75,6 +75,11 @@ export default {
         'role-tertiary': 'hsl(var(--role-tertiary))',
         'text-on-colored-background': 'hsl(var(--text-on-colored-background))',
         'table-row-hover': 'hsl(var(--table-row-hover))', // Dodato: Nova boja za hover redova tabele
+        // Add brand color
+        brand: {
+          DEFAULT: "hsl(var(--brand))",
+          foreground: "hsl(var(--brand-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

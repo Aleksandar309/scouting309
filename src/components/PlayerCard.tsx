@@ -21,11 +21,11 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player }) => {
       <CardHeader className="flex flex-row items-center space-x-4 pb-2">
         <Avatar className="h-12 w-12">
           <AvatarImage src={player.avatarUrl} alt={player.name} />
-          <AvatarFallback className="bg-blue-600 text-white text-lg">{player.name.charAt(0)}</AvatarFallback>
+          <AvatarFallback className="bg-primary text-primary-foreground text-lg">{player.name.charAt(0)}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <CardTitle className="text-xl font-semibold truncate">
-            <Link to={`/player/${player.id}`} className="hover:underline text-blue-400">
+            <Link to={`/player/${player.id}`} className="hover:underline text-primary">
               {player.name}
             </Link>
           </CardTitle>
@@ -57,7 +57,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player }) => {
         <div className="space-y-2">
           <div>
             <div className="text-xs font-medium text-muted-foreground mb-1">Current Ability: {player.scoutingProfile.currentAbility}</div>
-            <Progress value={currentAbilityProgress} className="h-2 bg-muted" indicatorClassName="bg-blue-500" />
+            <Progress value={currentAbilityProgress} className="h-2 bg-muted" indicatorClassName="bg-primary" />
           </div>
           <div>
             <div className="text-xs font-medium text-muted-foreground mb-1">Potential Ability: {player.scoutingProfile.potentialAbility}</div>

@@ -90,7 +90,7 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments }) 
                           <CardHeader className="flex flex-row items-center space-x-4 pb-4">
                             <Avatar className="h-16 w-16">
                               <AvatarImage src={scout.avatarUrl} alt={scout.name} />
-                              <AvatarFallback className="bg-blue-600 text-white text-xl">{scout.name.charAt(0)}</AvatarFallback>
+                              <AvatarFallback className="bg-primary text-primary-foreground text-xl">{scout.name.charAt(0)}</AvatarFallback>
                             </Avatar>
                             <div>
                               <CardTitle className="text-xl font-semibold">{scout.name}</CardTitle>
@@ -149,7 +149,7 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments }) 
                         <Badge className={getPriorityBadgeClass(assignment.priority)}>{assignment.priority}</Badge>
                       </div>
                       <p className="text-sm text-muted-foreground flex items-center mt-1">
-                        <Briefcase className="h-4 w-4 mr-1" /> Assigned to: <Link to={`/scouts/${assignment.assignedTo}`} className="text-blue-400 hover:underline ml-1">{assignment.assignedToName}</Link>
+                        <Briefcase className="h-4 w-4 mr-1" /> Assigned to: <Link to={`/scouts/${assignment.assignedTo}`} className="text-primary hover:underline ml-1">{assignment.assignedToName}</Link>
                       </p>
                     </CardHeader>
                     <CardContent className="space-y-2 text-muted-foreground text-sm">
