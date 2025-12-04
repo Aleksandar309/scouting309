@@ -12,7 +12,7 @@ import PlayerDatabase from "./pages/PlayerDatabase";
 import Scouts from "./pages/Scouts";
 import ScoutProfile from "./pages/ScoutProfile";
 import ShortlistPage from "./pages/Shortlist";
-import PlaceholderPage from "./pages/PlaceholderPage"; // Import the new placeholder page
+import PlaceholderPage from "./pages/PlaceholderPage";
 import { ShortlistProvider } from "./context/ShortlistContext";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { useState, useEffect } from "react";
@@ -20,6 +20,7 @@ import { initialMockPlayers } from "./data/mockPlayers";
 import { mockScouts as initialMockScouts, initialMockAssignments } from "./data/mockScouts";
 import { Player } from "./types/player";
 import { Scout, Assignment } from "./types/scout";
+import { Shortlist } from "./types/shortlist"; // Import Shortlist type
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,14 @@ const App = () => {
     return initialMockAssignments;
   });
 
+  const [shortlists, setShortlists] = useState<Shortlist[]>(() => { // Moved shortlists state here
+    if (typeof window !== 'undefined') {
+      const savedShortlists = localStorage.getItem('shortlists');
+      return savedShortlists ? JSON.parse(savedShortlists) : [];
+    }
+    return [];
+  });
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('players', JSON.stringify(players));
@@ -66,6 +75,12 @@ const App = () => {
     }
   }, [assignments]);
 
+  useEffect(() => { // New useEffect for shortlists
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('shortlists', JSON.stringify(shortlists));
+    }
+  }, [shortlists]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -73,15 +88,14 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <ShortlistProvider>
+            <ShortlistProvider shortlists={shortlists} setShortlists={setShortlists}> {/* Pass shortlists and setShortlists */}
               <Routes>
-                <Route path="/" element={<Index />} />
+                <Route path="/" element={<Index players={players} scouts={scouts} shortlists={shortlists} />} /> {/* Pass data to Index */}
                 <Route path="/player/:id" element={<PlayerProfile players={players} setPlayers={setPlayers} scouts={scouts} />} />
                 <Route path="/players" element={<PlayerDatabase players={players} setPlayers={setPlayers} />} />
                 <Route path="/scouts" element={<Scouts assignments={assignments} setAssignments={setAssignments} scouts={scouts} />} />
                 <Route path="/scouts/:id" element={<ScoutProfile players={players} assignments={assignments} scouts={scouts} setScouts={setScouts} />} />
                 <Route path="/shortlists" element={<ShortlistPage />} />
-                {/* New placeholder routes */}
                 <Route path="/new-page-1" element={<PlaceholderPage />} />
                 <Route path="/new-page-2" element={<PlaceholderPage />} />
                 <Route path="/new-page-3" element={<PlaceholderPage />} />

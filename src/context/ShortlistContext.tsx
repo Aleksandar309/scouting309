@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
 import { Shortlist, ShortlistItem } from '@/types/shortlist';
 import { toast } from 'sonner';
 
@@ -13,8 +13,14 @@ interface ShortlistContextType {
 
 const ShortlistContext = createContext<ShortlistContextType | undefined>(undefined);
 
-export const ShortlistProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [shortlists, setShortlists] = useState<Shortlist[]>([]);
+interface ShortlistProviderProps {
+  children: ReactNode;
+  shortlists: Shortlist[]; // Now received as prop
+  setShortlists: React.Dispatch<React.SetStateAction<Shortlist[]>>; // Now received as prop
+}
+
+export const ShortlistProvider: React.FC<ShortlistProviderProps> = ({ children, shortlists, setShortlists }) => {
+  // shortlists state is now managed in App.tsx and passed down
 
   const addPlayerToShortlist = (shortlistId: string, player: ShortlistItem) => {
     setShortlists((prevShortlists) => {
