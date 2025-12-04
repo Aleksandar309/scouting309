@@ -7,6 +7,27 @@ export interface Scout {
   activePlayers: number;
   lastReportDate: string;
   avatarUrl?: string;
+  scoutingAttributes: { // NEW: Scouting attributes
+    analysingData: number;
+    judgingPlayerAbility: number;
+    judgingPlayerPotential: number;
+    judgingStaffAbility: number;
+    negotiating: number;
+    tacticalKnowledge: number;
+  };
+  mentalAttributes: { // NEW: Mental attributes
+    adaptability: number;
+    authority: number;
+    determination: number;
+    motivating: number;
+    peopleManagement: number;
+    ambition: number;
+    loyalty: number;
+    pressure: number;
+    professionalism: number;
+    temperament: number;
+    controversy: number;
+  };
 }
 
 export type AssignmentPriority = "P1" | "P2" | "P3";

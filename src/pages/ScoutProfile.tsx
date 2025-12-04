@@ -33,6 +33,7 @@ import { ALL_ATTRIBUTE_NAMES } from '@/utils/player-attributes';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import { format, isPast } from 'date-fns';
+import ScoutAttributesSection from '@/components/ScoutAttributesSection'; // Import the new component
 
 interface ScoutProfileProps {
   players: Player[]; // Receive all players as prop
@@ -383,6 +384,12 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
             </div>
           </CardContent>
         </Card>
+
+        {/* Scout Attributes Section */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Scout Attributes</h2>
+          <ScoutAttributesSection scout={scout} />
+        </div>
 
         {/* Scout Assignments Section */}
         <div className="mb-8">
