@@ -16,29 +16,29 @@ interface ShadowPitchProps {
   pitchColor: 'green' | 'theme';
 }
 
-// Transformed for vertical pitch (defense top, attack bottom)
+// Transformed for vertical pitch (attack top, defense bottom)
 const positionCoordinates: { [key: string]: { x: string; y: string } } = {
-  "GK": { x: "50%", y: "10%" },
-  "CB": { x: "50%", y: "22%" },
-  "LCB": { x: "30%", y: "22%" },
-  "RCB": { x: "70%", y: "22%" },
-  "LB": { x: "10%", y: "30%" },
-  "RB": { x: "90%", y: "30%" },
-  "DM": { x: "50%", y: "40%" },
-  "LDM": { x: "30%", y: "40%" },
-  "RDM": { x: "70%", y: "40%" },
+  "GK": { x: "50%", y: "90%" }, // Golman na dnu
+  "CB": { x: "50%", y: "78%" },
+  "LCB": { x: "30%", y: "78%" },
+  "RCB": { x: "70%", y: "78%" },
+  "LB": { x: "10%", y: "70%" },
+  "RB": { x: "90%", y: "70%" },
+  "DM": { x: "50%", y: "60%" },
+  "LDM": { x: "30%", y: "60%" },
+  "RDM": { x: "70%", y: "60%" },
   "LCM": { x: "30%", y: "50%" },
   "RCM": { x: "70%", y: "50%" },
   "CM": { x: "50%", y: "50%" },
   "LWB": { x: "10%", y: "55%" },
   "RWB": { x: "90%", y: "55%" },
-  "AM": { x: "50%", y: "70%" },
-  "LW": { x: "15%", y: "80%" },
-  "RW": { x: "85%", y: "80%" },
-  "CF": { x: "50%", y: "90%" },
-  "CF_CENTRAL": { x: "50%", y: "90%" },
-  "CF_LEFT": { x: "35%", y: "90%" },
-  "CF_RIGHT": { x: "65%", y: "90%" },
+  "AM": { x: "50%", y: "30%" },
+  "LW": { x: "15%", y: "20%" },
+  "RW": { x: "85%", y: "20%" },
+  "CF": { x: "50%", y: "10%" }, // Generic CF
+  "CF_CENTRAL": { x: "50%", y: "10%" },
+  "CF_LEFT": { x: "35%", y: "10%" },
+  "CF_RIGHT": { x: "65%", y: "10%" },
 };
 
 const ShadowPitch: React.FC<ShadowPitchProps> = ({
@@ -55,7 +55,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   if (!formation) {
     return (
       <div className={cn(
-        "relative w-full aspect-[3/2] max-h-[800px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner flex items-center justify-center",
+        "relative w-full aspect-[2/3] max-h-[800px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner flex items-center justify-center",
         pitchBackgroundClass,
         pitchLineColorClass
       )}>
@@ -79,32 +79,58 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   return (
     <TooltipProvider>
       <div className={cn(
-        "relative w-full aspect-[3/2] max-h-[800px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner",
+        "relative w-full aspect-[2/3] max-h-[800px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner",
         pitchBackgroundClass,
         pitchLineColorClass
       )}>
         {/* Pitch Lines */}
-        <div className={cn("absolute inset-0 border-dashed border-opacity-50", pitchLineColorClass)}>
+        <div className="absolute inset-0">
           {/* Halfway line (horizontal) */}
-          <div className={cn("absolute top-1/2 left-0 right-0 h-0.5 bg-opacity-50 transform -translate-y-1/2", pitchLineColorClass)}></div>
+          <div className={cn("absolute top-1/2 left-0 right-0 h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
           {/* Center circle */}
-          <div className={cn("absolute top-1/2 left-1/2 w-20 h-20 border-2 rounded-full transform -translate-x-1/2 -translate-y-1/2", pitchLineColorClass)}></div>
+          <div className={cn("absolute top-1/2 left-1/2 w-20 h-20 border-2 border-solid rounded-full transform -translate-x-1/2 -translate-y-1/2", pitchLineColorClass)}></div>
 
-          {/* Top Penalty Box (defense goal area) */}
-          {/* 18-yard line */}
-          <div className={cn("absolute top-[10%] left-1/2 w-[70%] h-0.5 bg-opacity-50 transform -translate-x-1/2", pitchLineColorClass)}></div>
-          {/* Left vertical line */}
-          <div className={cn("absolute top-0 left-[15%] w-0.5 h-[10%] bg-opacity-50", pitchLineColorClass)}></div>
-          {/* Right vertical line */}
-          <div className={cn("absolute top-0 right-[15%] w-0.5 h-[10%] bg-opacity-50", pitchLineColorClass)}></div>
+          {/* Bottom Penalty Box (Defense) */}
+          <div className="absolute bottom-0 left-1/2 w-[70%] h-[20%] transform -translate-x-1/2">
+            {/* 18-yard line */}
+            <div className={cn("absolute top-0 left-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            {/* Left vertical line */}
+            <div className={cn("absolute top-0 left-0 w-0.5 h-full", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            {/* Right vertical line */}
+            <div className={cn("absolute top-0 right-0 w-0.5 h-full", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            {/* Penalty spot */}
+            <div className={cn("absolute top-[30%] left-1/2 w-1.5 h-1.5 rounded-full transform -translate-x-1/2", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            {/* Penalty arc (semi-circle) */}
+            <div className={cn("absolute top-[30%] left-1/2 w-24 h-12 border-2 border-solid rounded-t-full transform -translate-x-1/2 -translate-y-1/2", pitchLineColorClass)}></div>
 
-          {/* Bottom Penalty Box (attacking penalty area) */}
-          {/* 18-yard line */}
-          <div className={cn("absolute bottom-[10%] left-1/2 w-[70%] h-0.5 bg-opacity-50 transform -translate-x-1/2", pitchLineColorClass)}></div>
-          {/* Left vertical line */}
-          <div className={cn("absolute bottom-0 left-[15%] w-0.5 h-[10%] bg-opacity-50", pitchLineColorClass)}></div>
-          {/* Right vertical line */}
-          <div className={cn("absolute bottom-0 right-[15%] w-0.5 h-[10%] bg-opacity-50", pitchLineColorClass)}></div>
+            {/* 6-yard box (Goal Area) */}
+            <div className="absolute bottom-0 left-1/2 w-[30%] h-[10%] transform -translate-x-1/2">
+              <div className={cn("absolute top-0 left-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+              <div className={cn("absolute top-0 left-0 w-0.5 h-full", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+              <div className={cn("absolute top-0 right-0 w-0.5 h-full", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            </div>
+          </div>
+
+          {/* Top Penalty Box (Attack) */}
+          <div className="absolute top-0 left-1/2 w-[70%] h-[20%] transform -translate-x-1/2">
+            {/* 18-yard line */}
+            <div className={cn("absolute bottom-0 left-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            {/* Left vertical line */}
+            <div className={cn("absolute bottom-0 left-0 w-0.5 h-full", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            {/* Right vertical line */}
+            <div className={cn("absolute bottom-0 right-0 w-0.5 h-full", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            {/* Penalty spot */}
+            <div className={cn("absolute bottom-[30%] left-1/2 w-1.5 h-1.5 rounded-full transform -translate-x-1/2", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            {/* Penalty arc (semi-circle) */}
+            <div className={cn("absolute bottom-[30%] left-1/2 w-24 h-12 border-2 border-solid rounded-b-full transform -translate-x-1/2 translate-y-1/2", pitchLineColorClass)}></div>
+
+            {/* 6-yard box (Goal Area) */}
+            <div className="absolute top-0 left-1/2 w-[30%] h-[10%] transform -translate-x-1/2">
+              <div className={cn("absolute bottom-0 left-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+              <div className={cn("absolute bottom-0 left-0 w-0.5 h-full", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+              <div className={cn("absolute bottom-0 right-0 w-0.5 h-full", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            </div>
+          </div>
         </div>
 
         {formation.positions.map((formPos: FormationPosition) => {
