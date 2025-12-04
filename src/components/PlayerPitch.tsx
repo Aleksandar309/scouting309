@@ -50,11 +50,10 @@ const positionCoordinates: { [key: string]: { x: string; y: string } } = {
   "LW": { x: "80%", y: "15%" },
   // RW: { x: "85%", y: "20%" } -> { x: "80%", y: "85%" }
   "RW": { x: "80%", y: "85%" },
-  // ST: { x: "50%", y: "10%" } -> { x: "90%", y: "50%" }
-  "ST": { x: "90%", y: "50%" },
-  // LS: { x: "35%", y: "10%" } -> { x: "90%", y: "35%" }
-  "LS": { x: "90%", y: "35%" },
-  // RS: { x: "65%", y: "10%" } -> { x: "90%", y: "65%" },
+  // Central Forwards (CF)
+  "CF_CENTRAL": { x: "90%", y: "50%" },
+  "CF_LEFT": { x: "90%", y: "35%" },
+  "CF_RIGHT": { x: "90%", y: "65%" },
   // LWB (for 3-4-3, 3-5-2):
   "LWB": { x: "45%", y: "10%" },
   // RWB (for 3-4-3, 3-5-2):
@@ -94,6 +93,13 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
           if (!coords) return null;
 
           let circleClasses = "";
+          let displayedName = pos.name; // Default to actual name
+
+          // If it's a CF variant, display as "CF"
+          if (pos.name.startsWith("CF_")) {
+            displayedName = "CF";
+          }
+
           let tooltipText = `${pos.name}`;
 
           // Determine classes and tooltip based on whether it's player's positions or formation fit
@@ -151,7 +157,7 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
                   }}
                   onClick={() => onPositionClick(pos.name)}
                 >
-                  {pos.name}
+                  {displayedName}
                 </div>
               </TooltipTrigger>
               <TooltipContent className="bg-popover text-popover-foreground border-border">

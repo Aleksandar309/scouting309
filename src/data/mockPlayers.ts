@@ -151,7 +151,7 @@ export const initialMockPlayers: Player[] = [
     positionsData: [
       { name: "CAM", type: "natural", rating: 9 },
       { name: "RW", type: "natural", rating: 9 },
-      { name: "ST", type: "alternative", rating: 8 },
+      { name: "CF", type: "alternative", rating: 8 }, // Changed from ST
     ],
     priorityTarget: false,
     criticalPriority: false,
@@ -507,9 +507,9 @@ export const initialMockPlayers: Player[] = [
     id: "5",
     name: "Evan Ferguson",
     team: "Brighton",
-    positions: ["ST"],
+    positions: ["CF"], // Changed from ST
     positionsData: [
-      { name: "ST", type: "natural", rating: 9 },
+      { name: "CF", type: "natural", rating: 9 }, // Changed from ST
       { name: "CAM", type: "alternative", rating: 7 },
     ],
     priorityTarget: false,

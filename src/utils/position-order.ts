@@ -6,5 +6,5 @@ export const POSITION_ORDER = [
   "CM", "LCM", "RCM", // Central Midfielders
   "CAM", // Attacking Midfielders
   "LW", "RW", // Wingers
-  "ST", "LS", "RS", // Strikers
+  "CF", // Central Forward
 ];
