@@ -58,54 +58,54 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 220 15% 10%; /* Dublja, manje zasićena plavo-siva */
+    --foreground: 210 20% 90%; /* Svetlija, blago desaturisana bela */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 15% 12%; /* Malo svetlija od pozadine za kartice */
+    --card-foreground: 210 20% 90%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 15% 15%; /* Još svetlija za popovere */
+    --popover-foreground: 210 20% 90%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 210 20% 90%; /* Pozadina primarnog dugmeta, svetao tekst */
+    --primary-foreground: 220 15% 10%; /* Tekst primarnog dugmeta, taman */
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 220 10% 20%; /* Sekundarni elementi, malo svetlija siva */
+    --secondary-foreground: 210 20% 90%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 220 10% 20%;
+    --muted-foreground: 210 10% 60%; /* Muted tekst, svetlija siva */
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 220 10% 25%; /* Akcenat za hover stanja */
+    --accent-foreground: 210 20% 90%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 70% 40%; /* Tamnija crvena za destruktivne akcije */
+    --destructive-foreground: 210 20% 90%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --border: 220 10% 25%;
+    --input: 220 15% 15%;
+    --ring: 210 20% 90%;
+    --sidebar-background: 220 15% 10%; /* Prilagođeno novoj tamnoj pozadini */
+    --sidebar-foreground: 210 20% 90%;
+    --sidebar-primary: 217.2 91.2% 59.8%; /* Plava */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-accent: 220 10% 25%;
+    --sidebar-accent-foreground: 210 20% 90%;
+    --sidebar-border: 220 10% 25%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* New semantic colors for charts, pitch, and role highlights - Dark theme */
-    --chart-grid: 217.2 32.6% 17.5%; /* Border color for dark theme */
-    --chart-axis-label: 215 20.2% 65.1%; /* Muted foreground for dark theme */
-    --pitch-line: 217.2 32.6% 17.5%; /* Border color for dark theme */
-    --pitch-natural: 142.1 76.2% 36.3%; /* Green for natural position */
-    --pitch-alternative: 48 96% 70%; /* Brighter Yellow for alternative position */
-    --pitch-tertiary: 215 20.2% 65.1%; /* Lighter gray for tertiary position in dark mode */
-    --pitch-unsuited: 0 62.8% 30.6%; /* Destructive for unsuited position */
-    --role-primary: 217.2 91.2% 59.8%; /* Blue for primary role attribute */
-    --role-secondary: 262.1 83.3% 57.8%; /* Purple for secondary role attribute */
-    --role-tertiary: 215 20.2% 65.1%; /* Muted foreground for tertiary role attribute */
-    --text-on-colored-background: 0 0% 100%; /* White text for colored backgrounds */
+    --chart-grid: 220 10% 25%;
+    --chart-axis-label: 210 10% 60%;
+    --pitch-line: 220 10% 25%;
+    --pitch-natural: 142.1 76.2% 36.3%;
+    --pitch-alternative: 48 96% 70%;
+    --pitch-tertiary: 210 10% 60%;
+    --pitch-unsuited: 0 70% 40%;
+    --role-primary: 217.2 91.2% 59.8%;
+    --role-secondary: 262.1 83.3% 57.8%;
+    --role-tertiary: 210 10% 60%;
+    --text-on-colored-background: 0 0% 100%;
   }
 }
 
