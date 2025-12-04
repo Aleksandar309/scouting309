@@ -38,6 +38,7 @@ import PlayerTableDisplay from '@/components/PlayerTableDisplay';
 import PlayerCardGridDisplay from '@/components/PlayerCardGridDisplay';
 import { playerTableColumns } from '@/utils/player-table-columns'; // Import the shared columns
 import { Input } from '@/components/ui/input'; // Keep Input for global filter
+import { ALL_FOOTBALL_POSITIONS } from '@/utils/positions'; // Import ALL_FOOTBALL_POSITIONS
 
 interface PlayerDatabaseProps {
   players: Player[];
@@ -87,20 +88,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
     return Array.from(nationalities).sort();
   }, [players]);
 
-  const uniquePositions = React.useMemo(() => {
-    const positions = new Set<string>();
-    players.forEach(player => player.positions.forEach(pos => positions.add(pos)));
-    // Sort unique positions based on POSITION_ORDER
-    return Array.from(positions).sort((a, b) => {
-      const indexA = POSITION_ORDER.indexOf(a);
-      const indexB = POSITION_ORDER.indexOf(b);
-      // Handle positions not in POSITION_ORDER by placing them at the end
-      if (indexA === -1 && indexB === -1) return a.localeCompare(b);
-      if (indexA === -1) return 1;
-      if (indexB === -1) return -1;
-      return indexA - indexB;
-    });
-  }, [players]);
+  // Removed uniquePositions derived from players, now using ALL_FOOTBALL_POSITIONS directly for filter options
 
   return (
     <div className="min-h-screen bg-background text-foreground p-6">
@@ -359,12 +347,20 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                       <CommandList>
                         <CommandEmpty>No position found.</CommandEmpty>
                         <CommandGroup>
-                          {uniquePositions
+                          {ALL_FOOTBALL_POSITIONS // Using ALL_FOOTBALL_POSITIONS for filter options
                             .filter(position =>
                               position.toLowerCase().startsWith(
                                 (columnFilters.find(f => f.id === 'positions')?.value as string || "").toLowerCase()
                               )
                             )
+                            .sort((a, b) => { // Keep sorting based on POSITION_ORDER
+                              const indexA = POSITION_ORDER.indexOf(a);
+                              const indexB = POSITION_ORDER.indexOf(b);
+                              if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+                              if (indexA === -1) return 1;
+                              if (indexB === -1) return -1;
+                              return indexA - indexB;
+                            })
                             .map((position) => (
                               <CommandItem
                                 key={position}
