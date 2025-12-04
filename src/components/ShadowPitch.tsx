@@ -147,13 +147,13 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
                 transform: "translate(-50%, -50%)",
               }}
             >
-              {/* Position Label */}
-              <span className={cn(
+              {/* Removed Position Label */}
+              {/* <span className={cn(
                 "text-xs font-bold mb-1 px-1 rounded",
                 pitchColor === 'green' ? 'bg-black bg-opacity-50 text-white' : 'bg-muted text-muted-foreground'
               )}>
                 {formPos.name}
-              </span>
+              </span> */}
 
               {/* Player Slots / Add Player Button */}
               <div className="relative flex flex-col items-center justify-center">
