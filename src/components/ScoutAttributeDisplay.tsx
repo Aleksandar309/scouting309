@@ -4,6 +4,13 @@ import React from 'react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { getQualitativeRating } from '@/types/scout-attributes';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { scoutAttributeDescriptions } from '@/utils/scout-attribute-descriptions'; // Import descriptions
 
 interface ScoutAttributeDisplayProps {
   name: string;
@@ -36,18 +43,30 @@ const ScoutAttributeDisplay: React.FC<ScoutAttributeDisplayProps> = ({ name, rat
     }
   })();
 
+  const description = scoutAttributeDescriptions[name] || "No description available.";
+
   return (
-    <div
-      className={cn(
-        "flex items-center justify-between py-1 px-2 rounded-md transition-all duration-200",
-        highlightType ? highlightClasses[highlightType] : ""
-      )}
-    >
-      <span className={cn("text-sm w-1/2", highlightType ? "font-semibold text-foreground" : "text-muted-foreground")}>{displayedName}</span>
-      <div className="flex items-center w-1/2 space-x-2">
-        <Progress value={progressValue} className="h-2 flex-1 bg-muted" indicatorClassName={colorClass} />
-      </div>
-    </div>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            className={cn(
+              "flex items-center justify-between py-1 px-2 rounded-md transition-all duration-200",
+              highlightType ? highlightClasses[highlightType] : ""
+            )}
+          >
+            <span className={cn("text-sm w-1/2", highlightType ? "font-semibold text-foreground" : "text-muted-foreground")}>{displayedName}</span>
+            <div className="flex items-center w-1/2 space-x-2">
+              <Progress value={progressValue} className="h-2 flex-1 bg-muted" indicatorClassName={colorClass} />
+            </div>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent className="bg-popover border-border text-popover-foreground max-w-xs">
+          <p className="font-semibold">{name}</p>
+          <p className="text-sm text-muted-foreground">{description}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 
