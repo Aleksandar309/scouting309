@@ -5,255 +5,27 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, User, ChevronLeft, CalendarDays, Briefcase, ArrowUpDown, Table2, LayoutGrid, Plus } from 'lucide-react';
+import { Mail, Phone, User, ChevronLeft, CalendarDays, Briefcase, Table2, LayoutGrid } from 'lucide-react';
 import { Scout, Assignment } from '@/types/scout';
 import { mockScouts } from '@/data/mockScouts';
 import { Player } from '@/types/player';
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  getSortedRowModel,
   SortingState,
+  ColumnFiltersState, // Import ColumnFiltersState
 } from '@tanstack/react-table';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import PlayerCard from '@/components/PlayerCard';
-import { ALL_ATTRIBUTE_NAMES } from '@/utils/player-attributes';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
-import AddToShortlistDialog from '@/components/AddToShortlistDialog';
+import PlayerCardGridDisplay from '@/components/PlayerCardGridDisplay';
+import PlayerTableDisplay from '@/components/PlayerTableDisplay';
+import { playerTableColumns } from '@/utils/player-table-columns'; // Import the shared columns
 import { format, isPast } from 'date-fns';
-import ScoutAttributesSection from '@/components/ScoutAttributesSection'; // Import the new component
-import { ScoutRole } from '@/utils/scout-roles'; // Import ScoutRole
+import ScoutAttributesSection from '@/components/ScoutAttributesSection';
+import { ScoutRole } from '@/utils/scout-roles';
+import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/assignment-utils'; // Import assignment utils
 
 interface ScoutProfileProps {
-  players: Player[]; // Receive all players as prop
-  assignments: Assignment[]; // Receive all assignments as prop
+  players: Player[];
+  assignments: Assignment[];
 }
-
-// Helper function to find an attribute's rating across all categories
-const getAttributeRating = (player: Player, attributeName: string): number => {
-  const categories = [
-    player.technical,
-    player.tactical,
-    player.physical,
-    player.mentalPsychology,
-    player.setPieces,
-    player.hidden,
-  ];
-
-  for (const category of categories) {
-    if (Array.isArray(category)) { // Added check
-      const attribute = category.find(attr => attr.name === attributeName);
-      if (attribute) {
-        return attribute.rating;
-      }
-    }
-  }
-  return 0; // Default to 0 if not found
-};
-
-// List of all unique attributes to create columns for
-const attributeColumns: ColumnDef<Player>[] = ALL_ATTRIBUTE_NAMES.map(attrName => ({
-  accessorFn: (row) => getAttributeRating(row, attrName),
-  id: attrName.replace(/\s/g, ''), // Create a unique ID for the column
-  header: ({ column }) => (
-    <Button
-      variant="ghost"
-      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      className="text-foreground hover:bg-accent"
-    >
-      {attrName}
-      <ArrowUpDown className="ml-2 h-4 w-4" />
-    </Button>
-  ),
-  cell: ({ row }) => {
-    const rating = getAttributeRating(row.original, attrName);
-    return <span className="text-foreground">{rating}</span>;
-  },
-  enableSorting: true,
-}));
-
-const columns: ColumnDef<Player>[] = [
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <TableHead className="sticky-column-header">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="text-foreground hover:bg-accent"
-          >
-            Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        </TableHead>
-      );
-    },
-    cell: ({ row }) => (
-      <TableCell className="sticky-column-cell">
-        <Link to={`/player/${row.original.id}`} className="text-blue-400 hover:underline">
-          {row.getValue("name")}
-        </Link>
-      </TableCell>
-    ),
-  },
-  {
-    accessorKey: "team",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
-      >
-        Team
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "positions",
-    header: "Positions",
-    cell: ({ row }) => (
-      <div className="flex flex-wrap gap-1">
-        {row.original.positions.map((pos) => (
-          <Badge key={pos} variant="secondary" className="bg-muted text-muted-foreground">
-            {pos}
-          </Badge>
-        ))}
-      </div>
-    ),
-    enableSorting: false,
-  },
-  {
-    accessorKey: "nationality",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
-      >
-        Nationality
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "age",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
-      >
-        Age
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "value",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
-      >
-        Value
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "scoutingProfile.currentAbility",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
-      >
-        Current Ability
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    id: "currentAbilityRating",
-    cell: ({ row }) => {
-      const rating = row.original.scoutingProfile.currentAbility;
-      const progressValue = Math.min(Math.max(rating * 10, 0), 100);
-      return (
-        <div className="flex items-center w-full">
-          <Progress value={progressValue} className="h-2 w-full bg-muted" indicatorClassName="bg-blue-500" />
-          <span className="ml-2 text-sm text-foreground">{rating}</span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "scoutingProfile.potentialAbility",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
-      >
-        Potential Ability
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    id: "potentialAbilityRating",
-    cell: ({ row }) => {
-      const rating = row.original.scoutingProfile.potentialAbility;
-      const progressValue = Math.min(Math.max(rating * 10, 0), 100);
-      return (
-        <div className="flex items-center w-full">
-          <Progress value={progressValue} className="h-2 w-full bg-muted" indicatorClassName="bg-green-500" />
-          <span className="ml-2 text-sm text-foreground">{rating}</span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "priorityTarget",
-    header: "Priority",
-    cell: ({ row }) => (
-      row.getValue("priorityTarget") ? <Badge className="bg-yellow-600 text-white">Yes</Badge> : <Badge variant="secondary" className="bg-muted text-muted-foreground">No</Badge>
-    ),
-    enableSorting: true,
-  },
-  ...attributeColumns, // Add all dynamically generated attribute columns here
-  {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => {
-      const player = row.original;
-      const [isShortlistDialogOpen, setIsShortlistDialogOpen] = React.useState(false);
-      return (
-        <Dialog open={isShortlistDialogOpen} onOpenChange={setIsShortlistDialogOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-          <AddToShortlistDialog player={player} onClose={() => setIsShortlistDialogOpen(false)} />
-        </Dialog>
-      );
-    },
-    enableSorting: false,
-    enableHiding: false,
-  },
-];
-
 
 const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => {
   const { id } = useParams<{ id: string }>();
@@ -267,7 +39,9 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
     return 'table';
   });
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [selectedScoutRole, setSelectedScoutRole] = useState<ScoutRole | null>(null); // New state for selected scout role
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]); // Add columnFilters state
+  const [globalFilter, setGlobalFilter] = React.useState(''); // Add globalFilter state
+  const [selectedScoutRole, setSelectedScoutRole] = useState<ScoutRole | null>(null);
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -300,45 +74,6 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
 
   // Filter assignments for this scout
   const scoutAssignments = assignments.filter(assignment => assignment.assignedTo === scout.id);
-
-  const table = useReactTable({
-    data: scoutedPlayers,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    state: {
-      sorting,
-    },
-  });
-
-  const getPriorityBadgeClass = (priority: Assignment["priority"]) => {
-    switch (priority) {
-      case "P1": return "bg-red-600 text-white";
-      case "P2": return "bg-yellow-600 text-white";
-      case "P3": return "bg-blue-600 text-white";
-      default: return "bg-gray-500 text-white";
-    }
-  };
-
-  const getStatusBadgeClass = (status: Assignment["status"]) => {
-    switch (status) {
-      case "Pending": return "bg-gray-500 text-white";
-      case "In Progress": return "bg-blue-500 text-white";
-      case "Completed": return "bg-green-600 text-white";
-      case "Overdue": return "bg-destructive text-destructive-foreground";
-      default: return "bg-gray-500 text-white";
-    }
-  };
-
-  const getDueDateStatus = (dueDate: string, status: Assignment["status"]) => {
-    if (status === "Completed") return null;
-    const date = new Date(dueDate);
-    if (isPast(date) && status !== "Completed") {
-      return <Badge variant="destructive" className="bg-destructive text-destructive-foreground ml-2">Overdue</Badge>;
-    }
-    return null;
-  };
 
   return (
     <div className="min-h-screen bg-background text-foreground p-6">
@@ -468,57 +203,18 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
           </Card>
         ) : (
           viewMode === 'table' ? (
-            <div className="rounded-md border border-border bg-card overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id} className="border-border">
-                      {headerGroup.headers.map((header) => {
-                        return (
-                          <TableHead key={header.id} className="text-foreground">
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                          </TableHead>
-                        );
-                      })}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  {table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && "selected"}
-                        className="border-border hover:bg-accent"
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id} className="text-foreground">
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                        No results.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+            <PlayerTableDisplay
+              data={scoutedPlayers}
+              columns={playerTableColumns}
+              sorting={sorting}
+              setSorting={setSorting}
+              columnFilters={columnFilters}
+              setColumnFilters={setColumnFilters}
+              globalFilter={globalFilter}
+              setGlobalFilter={setGlobalFilter}
+            />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {scoutedPlayers.map((player) => (
-                <PlayerCard key={player.id} player={player} />
-              ))}
-            </div>
+            <PlayerCardGridDisplay players={scoutedPlayers} />
           )
         )}
       </div>

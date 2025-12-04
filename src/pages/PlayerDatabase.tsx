@@ -1,40 +1,19 @@
 "use client";
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  getSortedRowModel,
   SortingState,
-  getFilteredRowModel,
   ColumnFiltersState,
-  SortingFn, // Import SortingFn
 } from '@tanstack/react-table';
-import { ArrowUpDown, Plus, ChevronLeft, Table2, LayoutGrid, Filter, Search } from 'lucide-react';
+import { Plus, ChevronLeft, Table2, LayoutGrid, Filter, Search } from 'lucide-react';
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Player } from "@/types/player";
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
-import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import PlayerCard from '@/components/PlayerCard';
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AddPlayerForm from '@/components/AddPlayerForm';
-import { ALL_ATTRIBUTE_NAMES } from '@/utils/player-attributes';
-import { Input } from '@/components/ui/input';
 import {
   Accordion,
   AccordionContent,
@@ -54,279 +33,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { POSITION_ORDER } from '@/utils/position-order'; // Import POSITION_ORDER
+import { POSITION_ORDER } from '@/utils/position-order';
+import PlayerTableDisplay from '@/components/PlayerTableDisplay';
+import PlayerCardGridDisplay from '@/components/PlayerCardGridDisplay';
+import { playerTableColumns } from '@/utils/player-table-columns'; // Import the shared columns
+import { Input } from '@/components/ui/input'; // Keep Input for global filter
 
 interface PlayerDatabaseProps {
   players: Player[];
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
 }
-
-// Helper function to find an attribute's rating across all categories
-const getAttributeRating = (player: Player, attributeName: string): number => {
-  const categories = [
-    player.technical,
-    player.tactical,
-    player.physical,
-    player.mentalPsychology,
-    player.setPieces,
-    player.hidden,
-  ];
-
-  for (const category of categories) {
-    if (Array.isArray(category)) { // Added check
-      const attribute = category.find(attr => attr.name === attributeName);
-      if (attribute) {
-        return attribute.rating;
-      }
-    }
-  }
-  return 0; // Default to 0 if not found
-};
-
-// Custom sorting function for positions
-const positionSortFn: SortingFn<Player> = (rowA, rowB, columnId) => {
-  const positionsA: string[] = rowA.getValue(columnId);
-  const positionsB: string[] = rowB.getValue(columnId);
-
-  const getEarliestPositionIndex = (playerPositions: string[]) => {
-    let minIndex = Infinity;
-    for (const pos of playerPositions) {
-      const index = POSITION_ORDER.indexOf(pos);
-      if (index !== -1 && index < minIndex) {
-        minIndex = index;
-      }
-    }
-    return minIndex;
-  };
-
-  const indexA = getEarliestPositionIndex(positionsA);
-  const indexB = getEarliestPositionIndex(positionsB);
-
-  if (indexA === indexB) {
-    // Fallback to alphabetical if primary position is the same or not found
-    return positionsA[0]?.localeCompare(positionsB[0] || '') || 0;
-  }
-  // Handle positions not in POSITION_ORDER by placing them at the end
-  if (indexA === Infinity) return 1;
-  if (indexB === Infinity) return -1;
-  
-  return indexA - indexB;
-};
-
-
-// List of all unique attributes to create columns for
-const attributeColumns: ColumnDef<Player>[] = ALL_ATTRIBUTE_NAMES.map(attrName => ({
-  accessorFn: (row) => getAttributeRating(row, attrName),
-  id: attrName.replace(/\s/g, ''), // Create a unique ID for the column
-  header: ({ column }) => (
-    <Button
-      variant="ghost"
-      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      className="text-foreground hover:bg-accent"
-    >
-      {attrName}
-      <ArrowUpDown className="ml-2 h-4 w-4" />
-    </Button>
-  ),
-  cell: ({ row }) => {
-    const rating = getAttributeRating(row.original, attrName);
-    return <span className="text-foreground">{rating}</span>;
-  },
-  enableSorting: true,
-}));
-
-
-const columns: ColumnDef<Player>[] = [
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <TableHead className="sticky-column-header">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="text-foreground hover:bg-accent"
-          >
-            Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        </TableHead>
-      );
-    },
-    cell: ({ row }) => (
-      <TableCell className="sticky-column-cell">
-        <Link to={`/player/${row.original.id}`} className="text-blue-400 hover:underline">
-          {row.getValue("name")}
-        </Link>
-      </TableCell>
-    ),
-  },
-  {
-    accessorKey: "team",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
-      >
-        Team
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    filterFn: (row, columnId, filterValue) => {
-      const team: string = row.getValue(columnId);
-      return team.toLowerCase().includes(filterValue.toLowerCase());
-    },
-  },
-  {
-    accessorKey: "positions",
-    header: ({ column }) => ( // Make header sortable
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
-      >
-        Positions
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => (
-      <div className="flex flex-wrap gap-1">
-        {row.original.positions.map((pos) => (
-          <Badge key={pos} variant="secondary" className="bg-muted text-muted-foreground">
-            {pos}
-          </Badge>
-        ))}
-      </div>
-    ),
-    enableSorting: true, // Enable sorting
-    sortingFn: positionSortFn, // Use custom sorting function
-    filterFn: (row, columnId, filterValue) => {
-      const positions: string[] = row.getValue(columnId);
-      return positions.some(pos => pos.toLowerCase().includes(filterValue.toLowerCase()));
-    },
-  },
-  {
-    accessorKey: "nationality",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
-      >
-        Nationality
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    filterFn: (row, columnId, filterValue) => {
-      const nationality: string = row.getValue(columnId);
-      return nationality.toLowerCase().includes(filterValue.toLowerCase());
-    },
-  },
-  {
-    accessorKey: "age",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
-      >
-        Age
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "value",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
-      >
-        Value
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "scoutingProfile.currentAbility",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
-      >
-        Current Ability
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    id: "currentAbilityRating",
-    cell: ({ row }) => {
-      const rating = row.original.scoutingProfile.currentAbility;
-      const progressValue = Math.min(Math.max(rating * 10, 0), 100);
-      return (
-        <div className="flex items-center w-full">
-          <Progress value={progressValue} className="h-2 w-full bg-muted" indicatorClassName="bg-blue-500" />
-          <span className="ml-2 text-sm text-foreground">{rating}</span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "scoutingProfile.potentialAbility",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
-      >
-        Potential Ability
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    id: "potentialAbilityRating",
-    cell: ({ row }) => {
-      const rating = row.original.scoutingProfile.potentialAbility;
-      const progressValue = Math.min(Math.max(rating * 10, 0), 100);
-      return (
-        <div className="flex items-center w-full">
-          <Progress value={progressValue} className="h-2 w-full bg-muted" indicatorClassName="bg-green-500" />
-          <span className="ml-2 text-sm text-foreground">{rating}</span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "priorityTarget",
-    header: "Priority",
-    cell: ({ row }) => (
-      row.getValue("priorityTarget") ? <Badge className="bg-yellow-600 text-white">Yes</Badge> : <Badge variant="secondary" className="bg-muted text-muted-foreground">No</Badge>
-    ),
-    enableSorting: true,
-  },
-  ...attributeColumns, // Add all dynamically generated attribute columns here
-  {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => {
-      const player = row.original;
-      const [isShortlistDialogOpen, setIsShortlistDialogOpen] = React.useState(false);
-      return (
-        <Dialog open={isShortlistDialogOpen} onOpenChange={setIsShortlistDialogOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-          <AddToShortlistDialog player={player} onClose={() => setIsShortlistDialogOpen(false)} />
-        </Dialog>
-      );
-    },
-    enableSorting: false,
-    enableHiding: false,
-  },
-];
 
 const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -357,22 +73,6 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
     setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
     setIsAddPlayerDialogOpen(false);
   };
-
-  const table = useReactTable({
-    data: players,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      sorting,
-      columnFilters,
-      globalFilter,
-    },
-  });
 
   // Get unique values for autocomplete filters
   const uniqueTeams = React.useMemo(() => {
@@ -465,9 +165,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                       aria-expanded={openNameFilter}
                       className="w-full justify-between bg-input border-border text-foreground hover:bg-accent"
                     >
-                      {table.getColumn("name")?.getFilterValue()
-                        ? (table.getColumn("name")?.getFilterValue() as string)
-                        : "Filter by name..."}
+                      {(columnFilters.find(f => f.id === 'name')?.value as string) ?? "Filter by name..."}
                       <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -475,9 +173,13 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                     <Command>
                       <CommandInput
                         placeholder="Search player name..."
-                        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                        value={(columnFilters.find(f => f.id === 'name')?.value as string) ?? ""}
                         onValueChange={(value) => {
-                          table.getColumn("name")?.setFilterValue(value);
+                          setColumnFilters(prev => {
+                            const newFilters = prev.filter(f => f.id !== 'name');
+                            if (value) newFilters.push({ id: 'name', value });
+                            return newFilters;
+                          });
                         }}
                       />
                       <CommandList>
@@ -486,7 +188,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                           {players
                             .filter(player =>
                               player.name.toLowerCase().startsWith(
-                                (table.getColumn("name")?.getFilterValue() as string || "").toLowerCase()
+                                (columnFilters.find(f => f.id === 'name')?.value as string || "").toLowerCase()
                               )
                             )
                             .map((player) => (
@@ -494,7 +196,11 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                                 key={player.id}
                                 value={player.name}
                                 onSelect={(currentValue) => {
-                                  table.getColumn("name")?.setFilterValue(currentValue);
+                                  setColumnFilters(prev => {
+                                    const newFilters = prev.filter(f => f.id !== 'name');
+                                    newFilters.push({ id: 'name', value: currentValue });
+                                    return newFilters;
+                                  });
                                   setOpenNameFilter(false);
                                 }}
                                 className="cursor-pointer hover:bg-accent"
@@ -517,9 +223,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                       aria-expanded={openTeamFilter}
                       className="w-full justify-between bg-input border-border text-foreground hover:bg-accent"
                     >
-                      {table.getColumn("team")?.getFilterValue()
-                        ? (table.getColumn("team")?.getFilterValue() as string)
-                        : "Filter by team..."}
+                      {(columnFilters.find(f => f.id === 'team')?.value as string) ?? "Filter by team..."}
                       <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -527,9 +231,13 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                     <Command>
                       <CommandInput
                         placeholder="Search team..."
-                        value={(table.getColumn("team")?.getFilterValue() as string) ?? ""}
+                        value={(columnFilters.find(f => f.id === 'team')?.value as string) ?? ""}
                         onValueChange={(value) => {
-                          table.getColumn("team")?.setFilterValue(value);
+                          setColumnFilters(prev => {
+                            const newFilters = prev.filter(f => f.id !== 'team');
+                            if (value) newFilters.push({ id: 'team', value });
+                            return newFilters;
+                          });
                         }}
                       />
                       <CommandList>
@@ -538,7 +246,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                           {uniqueTeams
                             .filter(team =>
                               team.toLowerCase().startsWith(
-                                (table.getColumn("team")?.getFilterValue() as string || "").toLowerCase()
+                                (columnFilters.find(f => f.id === 'team')?.value as string || "").toLowerCase()
                               )
                             )
                             .map((team) => (
@@ -546,7 +254,11 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                                 key={team}
                                 value={team}
                                 onSelect={(currentValue) => {
-                                  table.getColumn("team")?.setFilterValue(currentValue);
+                                  setColumnFilters(prev => {
+                                    const newFilters = prev.filter(f => f.id !== 'team');
+                                    newFilters.push({ id: 'team', value: currentValue });
+                                    return newFilters;
+                                  });
                                   setOpenTeamFilter(false);
                                 }}
                                 className="cursor-pointer hover:bg-accent"
@@ -569,9 +281,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                       aria-expanded={openNationalityFilter}
                       className="w-full justify-between bg-input border-border text-foreground hover:bg-accent"
                     >
-                      {table.getColumn("nationality")?.getFilterValue()
-                        ? (table.getColumn("nationality")?.getFilterValue() as string)
-                        : "Filter by nationality..."}
+                      {(columnFilters.find(f => f.id === 'nationality')?.value as string) ?? "Filter by nationality..."}
                       <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -579,9 +289,13 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                     <Command>
                       <CommandInput
                         placeholder="Search nationality..."
-                        value={(table.getColumn("nationality")?.getFilterValue() as string) ?? ""}
+                        value={(columnFilters.find(f => f.id === 'nationality')?.value as string) ?? ""}
                         onValueChange={(value) => {
-                          table.getColumn("nationality")?.setFilterValue(value);
+                          setColumnFilters(prev => {
+                            const newFilters = prev.filter(f => f.id !== 'nationality');
+                            if (value) newFilters.push({ id: 'nationality', value });
+                            return newFilters;
+                          });
                         }}
                       />
                       <CommandList>
@@ -590,7 +304,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                           {uniqueNationalities
                             .filter(nationality =>
                               nationality.toLowerCase().startsWith(
-                                (table.getColumn("nationality")?.getFilterValue() as string || "").toLowerCase()
+                                (columnFilters.find(f => f.id === 'nationality')?.value as string || "").toLowerCase()
                               )
                             )
                             .map((nationality) => (
@@ -598,7 +312,11 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                                 key={nationality}
                                 value={nationality}
                                 onSelect={(currentValue) => {
-                                  table.getColumn("nationality")?.setFilterValue(currentValue);
+                                  setColumnFilters(prev => {
+                                    const newFilters = prev.filter(f => f.id !== 'nationality');
+                                    newFilters.push({ id: 'nationality', value: currentValue });
+                                    return newFilters;
+                                  });
                                   setOpenNationalityFilter(false);
                                 }}
                                 className="cursor-pointer hover:bg-accent"
@@ -621,9 +339,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                       aria-expanded={openPositionFilter}
                       className="w-full justify-between bg-input border-border text-foreground hover:bg-accent"
                     >
-                      {table.getColumn("positions")?.getFilterValue()
-                        ? (table.getColumn("positions")?.getFilterValue() as string)
-                        : "Filter by position (e.g., CDM)..."}
+                      {(columnFilters.find(f => f.id === 'positions')?.value as string) ?? "Filter by position (e.g., CDM)..."}
                       <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -631,9 +347,13 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                     <Command>
                       <CommandInput
                         placeholder="Search position..."
-                        value={(table.getColumn("positions")?.getFilterValue() as string) ?? ""}
+                        value={(columnFilters.find(f => f.id === 'positions')?.value as string) ?? ""}
                         onValueChange={(value) => {
-                          table.getColumn("positions")?.setFilterValue(value);
+                          setColumnFilters(prev => {
+                            const newFilters = prev.filter(f => f.id !== 'positions');
+                            if (value) newFilters.push({ id: 'positions', value });
+                            return newFilters;
+                          });
                         }}
                       />
                       <CommandList>
@@ -642,7 +362,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                           {uniquePositions
                             .filter(position =>
                               position.toLowerCase().startsWith(
-                                (table.getColumn("positions")?.getFilterValue() as string || "").toLowerCase()
+                                (columnFilters.find(f => f.id === 'positions')?.value as string || "").toLowerCase()
                               )
                             )
                             .map((position) => (
@@ -650,7 +370,11 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                                 key={position}
                                 value={position}
                                 onSelect={(currentValue) => {
-                                  table.getColumn("positions")?.setFilterValue(currentValue);
+                                  setColumnFilters(prev => {
+                                    const newFilters = prev.filter(f => f.id !== 'positions');
+                                    newFilters.push({ id: 'positions', value: currentValue });
+                                    return newFilters;
+                                  });
                                   setOpenPositionFilter(false);
                                 }}
                                 className="cursor-pointer hover:bg-accent"
@@ -677,57 +401,18 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
         </Accordion>
 
         {viewMode === 'table' ? (
-          <div className="rounded-md border border-border bg-card overflow-x-auto">
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="border-border">
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead key={header.id} className="text-foreground">
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                        </TableHead>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                      className="border-border hover:bg-accent"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="text-foreground">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                      No results.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
+          <PlayerTableDisplay
+            data={players}
+            columns={playerTableColumns}
+            sorting={sorting}
+            setSorting={setSorting}
+            columnFilters={columnFilters}
+            setColumnFilters={setColumnFilters}
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+          />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {players.map((player) => (
-              <PlayerCard key={player.id} player={player} />
-            ))}
-          </div>
+          <PlayerCardGridDisplay players={players} />
         )}
       </div>
     </div>
