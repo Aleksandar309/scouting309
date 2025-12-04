@@ -73,9 +73,11 @@ const getAttributeRating = (player: Player, attributeName: string): number => {
   ];
 
   for (const category of categories) {
-    const attribute = category.find(attr => attr.name === attributeName);
-    if (attribute) {
-      return attribute.rating;
+    if (Array.isArray(category)) { // Added check
+      const attribute = category.find(attr => attr.name === attributeName);
+      if (attribute) {
+        return attribute.rating;
+      }
     }
   }
   return 0; // Default to 0 if not found
