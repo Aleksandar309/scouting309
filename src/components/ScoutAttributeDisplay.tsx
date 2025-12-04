@@ -15,10 +15,11 @@ const ScoutAttributeDisplay: React.FC<ScoutAttributeDisplayProps> = ({ name, rat
   const { colorClass } = getQualitativeRating(rating);
   const progressValue = (rating / 20) * 100; // Scale 1-20 to 0-100 for Progress component
 
+  // More discreet highlight classes: subtle left border and bold text
   const highlightClasses = {
-    primary: "bg-role-primary ring-1 ring-blue-400", // Use semantic color
-    secondary: "bg-role-secondary ring-1 ring-purple-400", // Use semantic color
-    tertiary: "bg-role-tertiary ring-1 ring-muted-foreground", // Use semantic color
+    primary: "border-l-4 border-blue-500 pl-2", // Blue border for primary
+    secondary: "border-l-4 border-purple-500 pl-2", // Purple border for secondary
+    tertiary: "border-l-4 border-muted-foreground pl-2", // Muted border for tertiary
   };
 
   return (
@@ -28,7 +29,7 @@ const ScoutAttributeDisplay: React.FC<ScoutAttributeDisplayProps> = ({ name, rat
         highlightType ? highlightClasses[highlightType] : ""
       )}
     >
-      <span className={cn("text-sm w-1/2", highlightType ? "text-text-on-colored-background" : "text-muted-foreground")}>{name}</span>
+      <span className={cn("text-sm w-1/2", highlightType ? "font-semibold text-foreground" : "text-muted-foreground")}>{name}</span>
       <div className="flex items-center w-1/2 space-x-2">
         <Progress value={progressValue} className="h-2 flex-1 bg-muted" indicatorClassName={colorClass} />
       </div>
