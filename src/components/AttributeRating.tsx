@@ -5,6 +5,13 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input"; // Import Input component
 import { FmAttributeCategory } from '@/utils/fm-roles'; // Import FmAttributeCategory
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { playerAttributeDescriptions } from '@/utils/player-attribute-descriptions'; // Import player attribute descriptions
 
 interface AttributeRatingProps {
   name: string;
@@ -78,39 +85,51 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({
     }
   };
 
+  const description = playerAttributeDescriptions[name] || "No description available.";
+
   return (
-    <div
-      className={cn(
-        "flex items-center justify-between py-1 px-2 rounded-md transition-all duration-200",
-        highlightType ? highlightClasses[highlightType] : "",
-        !isEditable && onViewHistory && attributeCategory ? "cursor-pointer hover:bg-accent/50" : "", // Make clickable if history view is enabled
-        className
-      )}
-      onClick={handleClick}
-    >
-      <span className={cn("text-sm w-1/2", highlightType ? "text-text-on-colored-background" : "text-muted-foreground")}>{name}</span> {/* Use semantic text color */}
-      <div className="flex items-center w-1/2">
-        {isEditable ? (
-          <Input
-            type="number"
-            min="1"
-            max="10"
-            value={rating === 0 ? "" : rating} // Display empty string if rating is 0 (e.g., during invalid input)
-            onChange={handleInputChange}
-            className="w-full h-6 bg-input border-border text-foreground text-sm text-center"
-          />
-        ) : (
-          <>
-            <Progress
-              value={progressValue}
-              className="h-2 w-full bg-muted"
-              indicatorClassName={indicatorColorClass}
-            />
-            <span className={cn("ml-2 text-sm", highlightType ? "text-text-on-colored-background" : "text-muted-foreground")}>{rating}</span> {/* Use semantic text color */}
-          </>
-        )}
-      </div>
-    </div>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            className={cn(
+              "flex items-center justify-between py-1 px-2 rounded-md transition-all duration-200",
+              highlightType ? highlightClasses[highlightType] : "",
+              !isEditable && onViewHistory && attributeCategory ? "cursor-pointer hover:bg-accent/50" : "", // Make clickable if history view is enabled
+              className
+            )}
+            onClick={handleClick}
+          >
+            <span className={cn("text-sm w-1/2", highlightType ? "text-text-on-colored-background" : "text-muted-foreground")}>{name}</span> {/* Use semantic text color */}
+            <div className="flex items-center w-1/2">
+              {isEditable ? (
+                <Input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={rating === 0 ? "" : rating} // Display empty string if rating is 0 (e.g., during invalid input)
+                  onChange={handleInputChange}
+                  className="w-full h-6 bg-input border-border text-foreground text-sm text-center"
+                />
+              ) : (
+                <>
+                  <Progress
+                    value={progressValue}
+                    className="h-2 w-full bg-muted"
+                    indicatorClassName={indicatorColorClass}
+                  />
+                  <span className={cn("ml-2 text-sm", highlightType ? "text-text-on-colored-background" : "text-muted-foreground")}>{rating}</span> {/* Use semantic text color */}
+                </>
+              )}
+            </div>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent className="bg-popover border-border text-popover-foreground max-w-xs">
+          <p className="font-semibold">{name}</p>
+          <p className="text-sm text-muted-foreground">{description}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 
