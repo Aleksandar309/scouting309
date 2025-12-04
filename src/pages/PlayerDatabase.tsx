@@ -12,7 +12,7 @@ import {
   getFilteredRowModel,
   ColumnFiltersState,
 } from '@tanstack/react-table';
-import { ArrowUpDown, Plus, ChevronLeft, Table2, LayoutGrid, Filter } from 'lucide-react'; // Added Filter icon
+import { ArrowUpDown, Plus, ChevronLeft, Table2, LayoutGrid, Filter, Search } from 'lucide-react'; // Added Search icon
 
 import {
   Table,
@@ -39,7 +39,20 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"; // Import Accordion components
+} from "@/components/ui/accordion";
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "@/components/ui/command"; // Import Command components
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"; // Import Popover components
 
 interface PlayerDatabaseProps {
   players: Player[];
@@ -274,6 +287,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
     return 'table';
   });
   const [isAddPlayerDialogOpen, setIsAddPlayerDialogOpen] = React.useState(false);
+  const [openNameFilter, setOpenNameFilter] = React.useState(false); // State for name filter popover
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -356,14 +370,58 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
             </AccordionTrigger>
             <AccordionContent className="p-4 border border-t-0 border-border rounded-b-lg bg-card">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Input
-                  placeholder="Filter by name..."
-                  value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-                  onChange={(event) =>
-                    table.getColumn("name")?.setFilterValue(event.target.value)
-                  }
-                  className="bg-input border-border text-foreground"
-                />
+                {/* Name Filter with Autocomplete */}
+                <Popover open={openNameFilter} onOpenChange={setOpenNameFilter}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openNameFilter}
+                      className="w-full justify-between bg-input border-border text-foreground hover:bg-accent"
+                    >
+                      {table.getColumn("name")?.getFilterValue()
+                        ? (table.getColumn("name")?.getFilterValue() as string)
+                        : "Filter by name..."}
+                      <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-popover border-border text-popover-foreground">
+                    <Command>
+                      <CommandInput
+                        placeholder="Search player name..."
+                        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                        onValueChange={(value) => {
+                          table.getColumn("name")?.setFilterValue(value);
+                        }}
+                      />
+                      <CommandList>
+                        <CommandEmpty>No player found.</CommandEmpty>
+                        <CommandGroup>
+                          {players
+                            .filter(player =>
+                              player.name.toLowerCase().startsWith(
+                                (table.getColumn("name")?.getFilterValue() as string || "").toLowerCase()
+                              )
+                            )
+                            .map((player) => (
+                              <CommandItem
+                                key={player.id}
+                                value={player.name}
+                                onSelect={(currentValue) => {
+                                  table.getColumn("name")?.setFilterValue(currentValue);
+                                  setOpenNameFilter(false);
+                                }}
+                                className="cursor-pointer hover:bg-accent"
+                              >
+                                {player.name}
+                              </CommandItem>
+                            ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+
                 <Input
                   placeholder="Filter by team..."
                   value={(table.getColumn("team")?.getFilterValue() as string) ?? ""}
