@@ -447,7 +447,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     fieldArrayName: "technical" | "tactical" | "physical" | "mentalPsychology" | "setPieces" | "hidden"
   ) => (
     <div className="space-y-2">
-      <h3 className="text-lg font-semibold text-foreground">{label}</h3>
+      {/* Removed the duplicate h3 element here */}
       {form.watch(fieldArrayName).map((attr, index) => (
         <div key={attr.name}>
           {isEditMode ? (
