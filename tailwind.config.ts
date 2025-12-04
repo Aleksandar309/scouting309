@@ -74,6 +74,7 @@ export default {
         'role-secondary': 'hsl(var(--role-secondary))',
         'role-tertiary': 'hsl(var(--role-tertiary))',
         'text-on-colored-background': 'hsl(var(--text-on-colored-background))',
+        'table-row-hover': 'hsl(var(--table-row-hover))', // Dodato: Nova boja za hover redova tabele
       },
       borderRadius: {
         lg: "var(--radius)",

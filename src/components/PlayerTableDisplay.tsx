@@ -11,6 +11,7 @@ import {
   getFilteredRowModel,
   ColumnFiltersState,
 } from '@tanstack/react-table';
+import { useNavigate } from 'react-router-dom'; // Dodato: Import useNavigate
 
 import {
   Table,
@@ -43,6 +44,8 @@ const PlayerTableDisplay: React.FC<PlayerTableDisplayProps> = ({
   globalFilter,
   setGlobalFilter,
 }) => {
+  const navigate = useNavigate(); // Dodato: Inicijalizacija useNavigate
+
   const table = useReactTable({
     data,
     columns,
@@ -86,7 +89,8 @@ const PlayerTableDisplay: React.FC<PlayerTableDisplayProps> = ({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
-                className="border-border hover:bg-accent"
+                className="border-border hover:bg-table-row-hover cursor-pointer" // Ažurirano: Dodata nova klasa za hover i cursor
+                onClick={() => navigate(`/player/${row.original.id}`)} // Dodato: Navigacija na klik reda
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id} className="text-foreground">

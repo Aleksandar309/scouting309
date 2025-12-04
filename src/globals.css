@@ -55,6 +55,7 @@
     --role-secondary: 262.1 83.3% 57.8%; /* Purple for secondary role attribute */
     --role-tertiary: 215.4 16.3% 46.9%; /* Muted foreground for tertiary role attribute */
     --text-on-colored-background: 0 0% 100%; /* White text for colored backgrounds */
+    --table-row-hover: 217.2 91.2% 90%; /* Dodato: Svetlo plava za hover redova tabele u svetloj temi */
   }
 
   .dark {
@@ -106,6 +107,7 @@
     --role-secondary: 262.1 83.3% 57.8%;
     --role-tertiary: 210 10% 60%;
     --text-on-colored-background: 0 0% 100%;
+    --table-row-hover: 217.2 91.2% 20%; /* Dodato: Tamno plava za hover redova tabele u tamnoj temi */
   }
 }
 
@@ -136,5 +138,5 @@
 
 /* Adjust background for hover state on sticky cells */
 .sticky-column-cell:hover {
-  background-color: hsl(var(--accent)); /* Match table row hover background */
+  background-color: hsl(var(--table-row-hover)); /* Ažurirano: Koristi novu boju za hover */
 }

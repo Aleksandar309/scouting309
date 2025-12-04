@@ -272,7 +272,12 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       return (
         <Dialog open={isShortlistDialogOpen} onOpenChange={setIsShortlistDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              onClick={(e) => e.stopPropagation()} // Dodato: Zaustavljanje propagacije događaja
+            >
               <Plus className="h-4 w-4" />
             </Button>
           </DialogTrigger>
