@@ -2,9 +2,9 @@ export const POSITION_ORDER = [
   "GK",
   "CB", "LCB", "RCB", // Central Defenders
   "LB", "RB", "LWB", "RWB", // Fullbacks/Wingbacks
-  "CDM", "LDM", "RDM", // Defensive Midfielders
+  "DM", "LDM", "RDM", // Defensive Midfielders
   "CM", "LCM", "RCM", // Central Midfielders
-  "CAM", // Attacking Midfielders
+  "AM", // Attacking Midfielders
   "LW", "RW", // Wingers
   "CF", // Central Forward
 ];

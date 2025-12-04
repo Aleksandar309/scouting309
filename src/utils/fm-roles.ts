@@ -11,16 +11,16 @@ export interface FmRoleAttribute {
 export interface FmRole {
   name: string;
   description: string;
-  positionType: string; // e.g., "CDM", "CM", "CF"
+  positionType: string; // e.g., "DM", "CM", "CF"
   attributes: FmRoleAttribute[];
 }
 
 export const FM_ROLES: FmRole[] = [
-  // CDM Roles
+  // DM Roles
   {
     name: "Defensive Midfielder",
     description: "A deep-lying midfielder focused on breaking up play and distributing simply.",
-    positionType: "CDM",
+    positionType: "DM",
     attributes: [
       { name: "Defensive Awareness", category: "tactical", weight: 3 },
       { name: "Positioning", category: "tactical", weight: 3 },
@@ -33,7 +33,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Deep-Lying Playmaker",
     description: "Controls the tempo of the game from deep, dictating play with a wide range of passes.",
-    positionType: "CDM",
+    positionType: "DM",
     attributes: [
       { name: "Passing Range", category: "technical", weight: 3 },
       { name: "Vision", category: "tactical", weight: 3 },
@@ -149,11 +149,11 @@ export const FM_ROLES: FmRole[] = [
       { name: "First Touch", category: "technical", weight: 1 },
     ],
   },
-  // CAM Roles
+  // AM Roles
   {
     name: "Attacking Midfielder",
     description: "Plays behind the striker, linking midfield and attack, scoring and assisting.",
-    positionType: "CAM",
+    positionType: "AM",
     attributes: [
       { name: "Vision", category: "tactical", weight: 3 },
       { name: "Passing Range", category: "technical", weight: 3 },
@@ -166,7 +166,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Shadow Striker",
     description: "An attacking midfielder who pushes forward to act as a second striker.",
-    positionType: "CAM",
+    positionType: "AM",
     attributes: [
       { name: "Off-Ball Movement", category: "tactical", weight: 3 },
       { name: "Finishing", category: "technical", weight: 3 },
@@ -359,7 +359,6 @@ export const FM_ROLES: FmRole[] = [
       { name: "Vision", category: "tactical", weight: 2 },
       { name: "Stamina", category: "physical", weight: 1 },
       { name: "Work Rate", category: "mentalPsychology", weight: 1 },
-      { name: "Positioning", category: "tactical", weight: 1 },
     ],
   },
   {
@@ -407,11 +406,11 @@ export const FM_ROLES: FmRole[] = [
     ],
   },
 
-  // 4. Defanzivni vezni (CDM)
+  // 4. Defanzivni vezni (DM)
   {
     name: "Dropping DM",
     description: "A defensive midfielder who drops into the defensive line under pressure, a variant of a half-back triggered by pressing.",
-    positionType: "CDM",
+    positionType: "DM",
     attributes: [
       { name: "Positioning", category: "tactical", weight: 3 },
       { name: "Anticipation", category: "tactical", weight: 3 },
@@ -426,7 +425,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Screening DM",
     description: "A classic 'screening 6' who blocks passing lanes and intercepts passes through the middle.",
-    positionType: "CDM",
+    positionType: "DM",
     attributes: [
       { name: "Positioning", category: "tactical", weight: 3 },
       { name: "Anticipation", category: "tactical", weight: 3 },
@@ -440,7 +439,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Wide Covering DM",
     description: "A defensive midfielder who shifts wide to cover aggressive full-backs/wing-backs.",
-    positionType: "CDM",
+    positionType: "DM",
     attributes: [
       { name: "Positioning", category: "tactical", weight: 3 },
       { name: "Anticipation", category: "tactical", weight: 3 },
@@ -454,7 +453,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Pressing DM",
     description: "A defensive midfielder who steps forward to press opposing central/attacking midfielders.",
-    positionType: "CDM",
+    positionType: "DM",
     attributes: [
       { name: "Aggression", category: "mentalPsychology", weight: 3 },
       { name: "Work Rate", category: "mentalPsychology", weight: 3 },
@@ -595,11 +594,11 @@ export const FM_ROLES: FmRole[] = [
     ],
   },
 
-  // 7. Attacking midfield (’10’ zona) (CAM)
+  // 7. Attacking midfield (’10’ zona) (AM)
   {
     name: "Tracking AM",
     description: "An attacking midfielder who drops deeper in defense, almost acting as a third central midfielder.",
-    positionType: "CAM",
+    positionType: "AM",
     attributes: [
       { name: "Work Rate", category: "mentalPsychology", weight: 3 },
       { name: "Stamina", category: "physical", weight: 3 },
@@ -612,7 +611,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Central Outlet AM",
     description: "A 'number 10' who stays high and doesn't drop back much, primarily a counter-attacking option through the middle.",
-    positionType: "CAM",
+    positionType: "AM",
     attributes: [
       { name: "Off-Ball Movement", category: "tactical", weight: 3 },
       { name: "Acceleration", category: "physical", weight: 3 },
@@ -628,7 +627,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Splitting Outlet AM",
     description: "An attacking midfielder who moves wide/into the half-space during transitions.",
-    positionType: "CAM",
+    positionType: "AM",
     attributes: [
       { name: "Off-Ball Movement", category: "tactical", weight: 3 },
       { name: "Anticipation", category: "tactical", weight: 3 },
@@ -643,7 +642,7 @@ export const FM_ROLES: FmRole[] = [
   {
     name: "Free Role",
     description: "A completely free creator, roaming across the pitch to create numerical superiorities and disrupt opponent's structure.",
-    positionType: "CAM",
+    positionType: "AM",
     attributes: [
       { name: "Flair", category: "mentalPsychology", weight: 3 },
       { name: "Vision", category: "tactical", weight: 3 },
@@ -862,12 +861,12 @@ export const getAttributesByCategory = (player: Player, category: FmAttributeCat
 // Mapping of specific pitch positions to general FmRole position types
 const positionTypeMapping: { [key: string]: string } = {
   "LCB": "CB", "RCB": "CB", "CB": "CB",
-  "LDM": "CDM", "RDM": "CDM", "CDM": "CDM",
+  "LDM": "DM", "RDM": "DM", "CDM": "DM", // Map CDM to DM
   "LCM": "CM", "RCM": "CM", "CM": "CM",
   "LW": "RW", "RW": "RW",
   "LB": "LB", "RB": "LB",
   "LWB": "LB", "RWB": "LB",
-  "CAM": "CAM", "AM": "CAM", // Map AM to CAM
+  "CAM": "AM", // Map CAM to AM
   "GK": "GK",
   "CF_CENTRAL": "CF", "CF_LEFT": "CF", "CF_RIGHT": "CF",
   "CF": "CF",
