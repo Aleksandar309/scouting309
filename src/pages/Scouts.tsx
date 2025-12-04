@@ -18,6 +18,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import AssignmentForm from '@/components/AssignmentForm';
 import { Badge } from '@/components/ui/badge';
 import { format, isPast } from 'date-fns';
+import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/assignment-utils'; // Import assignment utils
 
 interface ScoutsPageProps {
   assignments: Assignment[];
@@ -31,34 +32,6 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments }) 
   const handleAddAssignment = (newAssignment: Assignment) => {
     setAssignments((prevAssignments) => [...prevAssignments, newAssignment]);
     setIsAssignmentFormOpen(false);
-  };
-
-  const getPriorityBadgeClass = (priority: Assignment["priority"]) => {
-    switch (priority) {
-      case "P1": return "bg-red-600 text-white";
-      case "P2": return "bg-yellow-600 text-white";
-      case "P3": return "bg-blue-600 text-white";
-      default: return "bg-gray-500 text-white";
-    }
-  };
-
-  const getStatusBadgeClass = (status: Assignment["status"]) => {
-    switch (status) {
-      case "Pending": return "bg-gray-500 text-white";
-      case "In Progress": return "bg-blue-500 text-white";
-      case "Completed": return "bg-green-600 text-white";
-      case "Overdue": return "bg-destructive text-destructive-foreground";
-      default: return "bg-gray-500 text-white";
-    }
-  };
-
-  const getDueDateStatus = (dueDate: string, status: Assignment["status"]) => {
-    if (status === "Completed") return null;
-    const date = new Date(dueDate);
-    if (isPast(date) && status !== "Completed") {
-      return <Badge variant="destructive" className="bg-destructive text-destructive-foreground ml-2">Overdue</Badge>;
-    }
-    return null;
   };
 
   // Group scouts by custom categories
