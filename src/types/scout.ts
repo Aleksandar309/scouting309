@@ -12,6 +12,7 @@ export interface Scout {
     judgingPlayerAbility: number;
     judgingPlayerPotential: number;
     judgingStaffAbility: number;
+    judgingStaffPotential: number; // NEW: Dodato
     negotiating: number;
     tacticalKnowledge: number;
   };

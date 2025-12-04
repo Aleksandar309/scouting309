@@ -22,6 +22,13 @@ const ScoutAttributeDisplay: React.FC<ScoutAttributeDisplayProps> = ({ name, rat
     tertiary: "border-l-4 border-muted-foreground pl-2", // Muted border for tertiary
   };
 
+  // Skraćivanje naziva atributa za prikaz
+  const displayedName = name === "Judging Player Ability"
+    ? "Judging Play. Ability"
+    : name === "Judging Player Potential"
+      ? "Judging Play. Potential"
+      : name;
+
   return (
     <div
       className={cn(
@@ -29,7 +36,7 @@ const ScoutAttributeDisplay: React.FC<ScoutAttributeDisplayProps> = ({ name, rat
         highlightType ? highlightClasses[highlightType] : ""
       )}
     >
-      <span className={cn("text-sm w-1/2", highlightType ? "font-semibold text-foreground" : "text-muted-foreground")}>{name}</span>
+      <span className={cn("text-sm w-1/2", highlightType ? "font-semibold text-foreground" : "text-muted-foreground")}>{displayedName}</span>
       <div className="flex items-center w-1/2 space-x-2">
         <Progress value={progressValue} className="h-2 flex-1 bg-muted" indicatorClassName={colorClass} />
       </div>

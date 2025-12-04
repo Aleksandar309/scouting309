@@ -11,6 +11,7 @@ export const SCOUT_ATTRIBUTE_CATEGORIES: { [key: string]: string[] } = {
     "Judging Player Ability",
     "Judging Player Potential",
     "Judging Staff Ability",
+    "Judging Staff Potential", // Dodato
     "Negotiating",
     "Tactical Knowledge",
   ],

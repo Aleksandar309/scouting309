@@ -17,6 +17,7 @@ export const mockScouts: Scout[] = [
       judgingPlayerAbility: 18,
       judgingPlayerPotential: 17,
       judgingStaffAbility: 15,
+      judgingStaffPotential: 14, // Dodato
       negotiating: 14,
       tacticalKnowledge: 16,
     },
@@ -49,6 +50,7 @@ export const mockScouts: Scout[] = [
       judgingPlayerAbility: 16,
       judgingPlayerPotential: 17,
       judgingStaffAbility: 12,
+      judgingStaffPotential: 13, // Dodato
       negotiating: 10,
       tacticalKnowledge: 15,
     },
@@ -81,6 +83,7 @@ export const mockScouts: Scout[] = [
       judgingPlayerAbility: 14,
       judgingPlayerPotential: 16,
       judgingStaffAbility: 8,
+      judgingStaffPotential: 9, // Dodato
       negotiating: 7,
       tacticalKnowledge: 12,
     },
