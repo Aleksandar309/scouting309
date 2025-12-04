@@ -5,11 +5,11 @@ export const initialMockPlayers: Player[] = [
     id: "1",
     name: "Mats Wieffer",
     team: "Feyenoord",
-    positions: ["DM", "CM"],
+    positions: ["DM", "CM", "CF"], // Added CF to general positions
     positionsData: [
       { name: "DM", type: "natural", rating: 9 },
       { name: "CM", type: "alternative", rating: 8 },
-      { name: "CB", type: "tertiary", rating: 6 },
+      { name: "CF", type: "tertiary", rating: 6 }, // Changed from CB to CF
     ],
     priorityTarget: true,
     criticalPriority: true,
@@ -17,6 +17,8 @@ export const initialMockPlayers: Player[] = [
     age: 26,
     value: "€25M",
     footed: "Right Footed",
+    leftFootRating: 5, // Example rating
+    rightFootRating: 9, // Example rating
     lastEdited: "2024-07-26T10:00:00Z",
     avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=MW",
     details: {
@@ -159,6 +161,8 @@ export const initialMockPlayers: Player[] = [
     age: 23,
     value: "€45M",
     footed: "Left Footed",
+    leftFootRating: 9, // Example rating
+    rightFootRating: 6, // Example rating
     lastEdited: "2024-07-25T14:30:00Z",
     avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=MK",
     details: {
@@ -280,6 +284,8 @@ export const initialMockPlayers: Player[] = [
     age: 21,
     value: "€100M",
     footed: "Right Footed",
+    leftFootRating: 7, // Example rating
+    rightFootRating: 10, // Example rating
     lastEdited: "2024-07-26T08:15:00Z",
     avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=FW",
     details: {
@@ -399,6 +405,8 @@ export const initialMockPlayers: Player[] = [
     age: 21,
     value: "€50M",
     footed: "Left Footed",
+    leftFootRating: 9, // Example rating
+    rightFootRating: 5, // Example rating
     lastEdited: "2024-07-24T11:00:00Z",
     avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=LC",
     details: {
@@ -507,7 +515,7 @@ export const initialMockPlayers: Player[] = [
     id: "5",
     name: "Evan Ferguson",
     team: "Brighton",
-    positions: ["CF"],
+    positions: ["CF", "AM"], // Added AM to general positions
     positionsData: [
       { name: "CF", type: "natural", rating: 9 },
       { name: "AM", type: "alternative", rating: 7 },
@@ -518,6 +526,8 @@ export const initialMockPlayers: Player[] = [
     age: 19,
     value: "€60M",
     footed: "Right Footed",
+    leftFootRating: 6, // Example rating
+    rightFootRating: 9, // Example rating
     lastEdited: "2024-07-23T09:45:00Z",
     avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=EF",
     details: {

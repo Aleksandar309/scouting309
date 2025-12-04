@@ -134,6 +134,28 @@ const getPlayerPositionDataForFormationPosition = (playerPositions: PlayerPositi
   return undefined;
 };
 
+// New helper function to adjust rating based on footedness for specific positions
+const adjustRatingForFootedness = (player: Player, positionName: string, baseRating: number): number => {
+  let adjustedRating = baseRating;
+
+  // Penalty for left-footed player at RCB
+  if (positionName === "RCB" && player.footed === "Left Footed") {
+    // Reduce rating based on how low their right foot rating is
+    // Max penalty if rightFootRating is 1 (e.g., -4 or -5)
+    // Min penalty if rightFootRating is 10 (e.g., -0 or -1)
+    const penalty = Math.max(0, 5 - Math.floor(player.rightFootRating / 2)); // Example: 5 -> 2.5 penalty, 1 -> 4.5 penalty
+    adjustedRating = Math.max(1, baseRating - penalty); // Ensure rating doesn't go below 1
+  }
+  // Penalty for right-footed player at LCB
+  else if (positionName === "LCB" && player.footed === "Right Footed") {
+    const penalty = Math.max(0, 5 - Math.floor(player.leftFootRating / 2));
+    adjustedRating = Math.max(1, baseRating - penalty);
+  }
+
+  return adjustedRating;
+};
+
+
 export const calculateFormationFit = (player: Player, formation: Formation): PlayerFormationFitPosition[] => {
   const playerFitPositions: PlayerFormationFitPosition[] = [];
 
@@ -147,6 +169,9 @@ export const calculateFormationFit = (player: Player, formation: Formation): Pla
       fitType = playerPositionData.type;
       fitRating = playerPositionData.rating;
     }
+
+    // Apply footedness adjustment for LCB/RCB
+    fitRating = adjustRatingForFootedness(player, formPos.name, fitRating);
 
     playerFitPositions.push({
       name: formPos.name,

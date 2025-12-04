@@ -12,7 +12,7 @@ export interface PlayerAttribute {
 }
 
 export interface PlayerPosition {
-  name: string; // e.g., "CDM", "CM", "RW", "ST", "CB", "LB", "RB", "GK"
+  name: string; // e.g., "DM", "CM", "RW", "ST", "CB", "LB", "RB", "GK"
   type: "natural" | "alternative" | "tertiary";
   rating: number; // 0-10
 }
@@ -29,6 +29,8 @@ export interface Player {
   age: number;
   value: string;
   footed: string;
+  leftFootRating: number; // NEW: Rating for left foot (1-10)
+  rightFootRating: number; // NEW: Rating for right foot (1-10)
   lastEdited?: string; // NEW: Optional field for last edited timestamp
   avatarUrl?: string; // NEW: Optional field for player avatar image URL
   details: {

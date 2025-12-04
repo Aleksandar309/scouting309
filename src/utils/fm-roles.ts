@@ -866,7 +866,7 @@ const positionTypeMapping: { [key: string]: string } = {
   "LW": "RW", "RW": "RW",
   "LB": "LB", "RB": "LB",
   "LWB": "LB", "RWB": "LB",
-  "CAM": "AM", // Map CAM to AM
+  "CAM": "AM", "AM": "AM", // Map AM to AM
   "GK": "GK",
   "CF_CENTRAL": "CF", "CF_LEFT": "CF", "CF_RIGHT": "CF",
   "CF": "CF",

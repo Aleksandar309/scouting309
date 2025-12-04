@@ -5,7 +5,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
-import { CalendarIcon, PlusCircle, Trash2 } from "lucide-react"; // Added Trash2 icon
+import { CalendarIcon, PlusCircle, Trash2, Foot } from "lucide-react"; // Added Trash2 and Foot icon
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -72,6 +72,8 @@ const formSchema = z.object({
   age: z.coerce.number().min(1, { message: "Age must be at least 1." }),
   value: z.string().min(2, { message: "Value must be specified." }),
   footed: z.string().min(2, { message: "Footed must be specified." }),
+  leftFootRating: z.coerce.number().min(1).max(10, { message: "Left Foot Rating must be between 1 and 10." }), // New field
+  rightFootRating: z.coerce.number().min(1).max(10, { message: "Right Foot Rating must be between 1 and 10." }), // New field
   avatarUrl: z.string().optional(),
   details: z.object({
     height: z.string().min(2, { message: "Height must be specified." }),
@@ -125,6 +127,8 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
       age: 18,
       value: "€1M",
       footed: "Right Footed",
+      leftFootRating: 7, // Default rating
+      rightFootRating: 7, // Default rating
       avatarUrl: "",
       details: {
         height: "180 cm",
@@ -191,6 +195,8 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
       age: values.age,
       value: values.value,
       footed: values.footed,
+      leftFootRating: values.leftFootRating,
+      rightFootRating: values.rightFootRating,
       lastEdited: new Date().toISOString(),
       avatarUrl: values.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${values.name.charAt(0)}`,
       details: values.details as Player['details'], // Explicitly cast
@@ -344,6 +350,39 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
                   <FormLabel className="text-muted-foreground">Avatar URL (Optional)</FormLabel>
                   <FormControl>
                     <Input className="bg-input border-border text-foreground" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Footedness Ratings */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-border pt-6">
+            <h2 className="text-xl font-bold text-foreground md:col-span-2 mb-2 flex items-center">
+              <Foot className="mr-2 h-5 w-5" /> Footedness Ratings (1-10)
+            </h2>
+            <FormField
+              control={form.control}
+              name="leftFootRating"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-muted-foreground">Left Foot Rating</FormLabel>
+                  <FormControl>
+                    <Input type="number" className="bg-input border-border text-foreground" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="rightFootRating"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-muted-foreground">Right Foot Rating</FormLabel>
+                  <FormControl>
+                    <Input type="number" className="bg-input border-border text-foreground" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
