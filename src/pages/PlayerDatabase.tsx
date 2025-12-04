@@ -11,6 +11,7 @@ import {
   SortingState,
   getFilteredRowModel,
   ColumnFiltersState,
+  SortingFn, // Import SortingFn
 } from '@tanstack/react-table';
 import { ArrowUpDown, Plus, ChevronLeft, Table2, LayoutGrid, Filter, Search } from 'lucide-react';
 
@@ -53,6 +54,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { POSITION_ORDER } from '@/utils/position-order'; // Import POSITION_ORDER
 
 interface PlayerDatabaseProps {
   players: Player[];
@@ -78,6 +80,37 @@ const getAttributeRating = (player: Player, attributeName: string): number => {
   }
   return 0; // Default to 0 if not found
 };
+
+// Custom sorting function for positions
+const positionSortFn: SortingFn<Player> = (rowA, rowB, columnId) => {
+  const positionsA: string[] = rowA.getValue(columnId);
+  const positionsB: string[] = rowB.getValue(columnId);
+
+  const getEarliestPositionIndex = (playerPositions: string[]) => {
+    let minIndex = Infinity;
+    for (const pos of playerPositions) {
+      const index = POSITION_ORDER.indexOf(pos);
+      if (index !== -1 && index < minIndex) {
+        minIndex = index;
+      }
+    }
+    return minIndex;
+  };
+
+  const indexA = getEarliestPositionIndex(positionsA);
+  const indexB = getEarliestPositionIndex(positionsB);
+
+  if (indexA === indexB) {
+    // Fallback to alphabetical if primary position is the same or not found
+    return positionsA[0]?.localeCompare(positionsB[0] || '') || 0;
+  }
+  // Handle positions not in POSITION_ORDER by placing them at the end
+  if (indexA === Infinity) return 1;
+  if (indexB === Infinity) return -1;
+  
+  return indexA - indexB;
+};
+
 
 // List of all unique attributes to create columns for
 const attributeColumns: ColumnDef<Player>[] = ALL_ATTRIBUTE_NAMES.map(attrName => ({
@@ -145,7 +178,16 @@ const columns: ColumnDef<Player>[] = [
   },
   {
     accessorKey: "positions",
-    header: "Positions",
+    header: ({ column }) => ( // Make header sortable
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="text-foreground hover:bg-accent"
+      >
+        Positions
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => (
       <div className="flex flex-wrap gap-1">
         {row.original.positions.map((pos) => (
@@ -155,7 +197,8 @@ const columns: ColumnDef<Player>[] = [
         ))}
       </div>
     ),
-    enableSorting: false,
+    enableSorting: true, // Enable sorting
+    sortingFn: positionSortFn, // Use custom sorting function
     filterFn: (row, columnId, filterValue) => {
       const positions: string[] = row.getValue(columnId);
       return positions.some(pos => pos.toLowerCase().includes(filterValue.toLowerCase()));
@@ -345,7 +388,16 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
   const uniquePositions = React.useMemo(() => {
     const positions = new Set<string>();
     players.forEach(player => player.positions.forEach(pos => positions.add(pos)));
-    return Array.from(positions).sort();
+    // Sort unique positions based on POSITION_ORDER
+    return Array.from(positions).sort((a, b) => {
+      const indexA = POSITION_ORDER.indexOf(a);
+      const indexB = POSITION_ORDER.indexOf(b);
+      // Handle positions not in POSITION_ORDER by placing them at the end
+      if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
   }, [players]);
 
   return (
