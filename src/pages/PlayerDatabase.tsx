@@ -12,7 +12,7 @@ import {
   getFilteredRowModel,
   ColumnFiltersState,
 } from '@tanstack/react-table';
-import { ArrowUpDown, Plus, ChevronLeft, Table2, LayoutGrid, Filter, Search } from 'lucide-react'; // Added Search icon
+import { ArrowUpDown, Plus, ChevronLeft, Table2, LayoutGrid, Filter, Search } from 'lucide-react';
 
 import {
   Table,
@@ -47,12 +47,12 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandItem,
-} from "@/components/ui/command"; // Import Command components
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"; // Import Popover components
+} from "@/components/ui/popover";
 
 interface PlayerDatabaseProps {
   players: Player[];
@@ -138,6 +138,10 @@ const columns: ColumnDef<Player>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
+    filterFn: (row, columnId, filterValue) => {
+      const team: string = row.getValue(columnId);
+      return team.toLowerCase().includes(filterValue.toLowerCase());
+    },
   },
   {
     accessorKey: "positions",
@@ -169,6 +173,10 @@ const columns: ColumnDef<Player>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
+    filterFn: (row, columnId, filterValue) => {
+      const nationality: string = row.getValue(columnId);
+      return nationality.toLowerCase().includes(filterValue.toLowerCase());
+    },
   },
   {
     accessorKey: "age",
@@ -287,7 +295,12 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
     return 'table';
   });
   const [isAddPlayerDialogOpen, setIsAddPlayerDialogOpen] = React.useState(false);
-  const [openNameFilter, setOpenNameFilter] = React.useState(false); // State for name filter popover
+
+  // States for Popover open/close
+  const [openNameFilter, setOpenNameFilter] = React.useState(false);
+  const [openTeamFilter, setOpenTeamFilter] = React.useState(false);
+  const [openNationalityFilter, setOpenNationalityFilter] = React.useState(false);
+  const [openPositionFilter, setOpenPositionFilter] = React.useState(false);
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -315,6 +328,25 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
       globalFilter,
     },
   });
+
+  // Get unique values for autocomplete filters
+  const uniqueTeams = React.useMemo(() => {
+    const teams = new Set<string>();
+    players.forEach(player => teams.add(player.team));
+    return Array.from(teams).sort();
+  }, [players]);
+
+  const uniqueNationalities = React.useMemo(() => {
+    const nationalities = new Set<string>();
+    players.forEach(player => nationalities.add(player.nationality));
+    return Array.from(nationalities).sort();
+  }, [players]);
+
+  const uniquePositions = React.useMemo(() => {
+    const positions = new Set<string>();
+    players.forEach(player => player.positions.forEach(pos => positions.add(pos)));
+    return Array.from(positions).sort();
+  }, [players]);
 
   return (
     <div className="min-h-screen bg-background text-foreground p-6">
@@ -422,30 +454,162 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                   </PopoverContent>
                 </Popover>
 
-                <Input
-                  placeholder="Filter by team..."
-                  value={(table.getColumn("team")?.getFilterValue() as string) ?? ""}
-                  onChange={(event) =>
-                    table.getColumn("team")?.setFilterValue(event.target.value)
-                  }
-                  className="bg-input border-border text-foreground"
-                />
-                <Input
-                  placeholder="Filter by nationality..."
-                  value={(table.getColumn("nationality")?.getFilterValue() as string) ?? ""}
-                  onChange={(event) =>
-                    table.getColumn("nationality")?.setFilterValue(event.target.value)
-                  }
-                  className="bg-input border-border text-foreground"
-                />
-                <Input
-                  placeholder="Filter by position (e.g., CDM)..."
-                  value={(table.getColumn("positions")?.getFilterValue() as string) ?? ""}
-                  onChange={(event) =>
-                    table.getColumn("positions")?.setFilterValue(event.target.value)
-                  }
-                  className="bg-input border-border text-foreground"
-                />
+                {/* Team Filter with Autocomplete */}
+                <Popover open={openTeamFilter} onOpenChange={setOpenTeamFilter}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openTeamFilter}
+                      className="w-full justify-between bg-input border-border text-foreground hover:bg-accent"
+                    >
+                      {table.getColumn("team")?.getFilterValue()
+                        ? (table.getColumn("team")?.getFilterValue() as string)
+                        : "Filter by team..."}
+                      <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-popover border-border text-popover-foreground">
+                    <Command>
+                      <CommandInput
+                        placeholder="Search team..."
+                        value={(table.getColumn("team")?.getFilterValue() as string) ?? ""}
+                        onValueChange={(value) => {
+                          table.getColumn("team")?.setFilterValue(value);
+                        }}
+                      />
+                      <CommandList>
+                        <CommandEmpty>No team found.</CommandEmpty>
+                        <CommandGroup>
+                          {uniqueTeams
+                            .filter(team =>
+                              team.toLowerCase().startsWith(
+                                (table.getColumn("team")?.getFilterValue() as string || "").toLowerCase()
+                              )
+                            )
+                            .map((team) => (
+                              <CommandItem
+                                key={team}
+                                value={team}
+                                onSelect={(currentValue) => {
+                                  table.getColumn("team")?.setFilterValue(currentValue);
+                                  setOpenTeamFilter(false);
+                                }}
+                                className="cursor-pointer hover:bg-accent"
+                              >
+                                {team}
+                              </CommandItem>
+                            ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+
+                {/* Nationality Filter with Autocomplete */}
+                <Popover open={openNationalityFilter} onOpenChange={setOpenNationalityFilter}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openNationalityFilter}
+                      className="w-full justify-between bg-input border-border text-foreground hover:bg-accent"
+                    >
+                      {table.getColumn("nationality")?.getFilterValue()
+                        ? (table.getColumn("nationality")?.getFilterValue() as string)
+                        : "Filter by nationality..."}
+                      <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-popover border-border text-popover-foreground">
+                    <Command>
+                      <CommandInput
+                        placeholder="Search nationality..."
+                        value={(table.getColumn("nationality")?.getFilterValue() as string) ?? ""}
+                        onValueChange={(value) => {
+                          table.getColumn("nationality")?.setFilterValue(value);
+                        }}
+                      />
+                      <CommandList>
+                        <CommandEmpty>No nationality found.</CommandEmpty>
+                        <CommandGroup>
+                          {uniqueNationalities
+                            .filter(nationality =>
+                              nationality.toLowerCase().startsWith(
+                                (table.getColumn("nationality")?.getFilterValue() as string || "").toLowerCase()
+                              )
+                            )
+                            .map((nationality) => (
+                              <CommandItem
+                                key={nationality}
+                                value={nationality}
+                                onSelect={(currentValue) => {
+                                  table.getColumn("nationality")?.setFilterValue(currentValue);
+                                  setOpenNationalityFilter(false);
+                                }}
+                                className="cursor-pointer hover:bg-accent"
+                              >
+                                {nationality}
+                              </CommandItem>
+                            ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+
+                {/* Position Filter with Autocomplete */}
+                <Popover open={openPositionFilter} onOpenChange={setOpenPositionFilter}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openPositionFilter}
+                      className="w-full justify-between bg-input border-border text-foreground hover:bg-accent"
+                    >
+                      {table.getColumn("positions")?.getFilterValue()
+                        ? (table.getColumn("positions")?.getFilterValue() as string)
+                        : "Filter by position (e.g., CDM)..."}
+                      <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-popover border-border text-popover-foreground">
+                    <Command>
+                      <CommandInput
+                        placeholder="Search position..."
+                        value={(table.getColumn("positions")?.getFilterValue() as string) ?? ""}
+                        onValueChange={(value) => {
+                          table.getColumn("positions")?.setFilterValue(value);
+                        }}
+                      />
+                      <CommandList>
+                        <CommandEmpty>No position found.</CommandEmpty>
+                        <CommandGroup>
+                          {uniquePositions
+                            .filter(position =>
+                              position.toLowerCase().startsWith(
+                                (table.getColumn("positions")?.getFilterValue() as string || "").toLowerCase()
+                              )
+                            )
+                            .map((position) => (
+                              <CommandItem
+                                key={position}
+                                value={position}
+                                onSelect={(currentValue) => {
+                                  table.getColumn("positions")?.setFilterValue(currentValue);
+                                  setOpenPositionFilter(false);
+                                }}
+                                className="cursor-pointer hover:bg-accent"
+                              >
+                                {position}
+                              </CommandItem>
+                            ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+
                 {/* Global filter for general search */}
                 <Input
                   placeholder="Global search..."
