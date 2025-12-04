@@ -38,12 +38,12 @@ const Index = () => {
           <Card className="bg-card border-border text-card-foreground hover:bg-accent transition-colors duration-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-lg font-medium">Scouting Team</CardTitle>
-              <Users className="h-6 w-6 text-green-400" />
+              <Users className="h-6 w-6 text-blue-400" />
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">Meet our dedicated scouting personnel.</p>
               <Link to="/scouts">
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                   View Scouts
                 </Button>
               </Link>
@@ -53,12 +53,12 @@ const Index = () => {
           <Card className="bg-card border-border text-card-foreground hover:bg-accent transition-colors duration-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-lg font-medium">Shortlists</CardTitle>
-              <ListChecks className="h-6 w-6 text-yellow-400" />
+              <ListChecks className="h-6 w-6 text-blue-400" />
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">Manage your curated player shortlists.</p>
               <Link to="/shortlists">
-                <Button className="w-full bg-yellow-600 hover:bg-yellow-700 text-white">
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                   View Shortlists
                 </Button>
               </Link>
@@ -69,12 +69,12 @@ const Index = () => {
         <Card className="bg-card border-border text-card-foreground hover:bg-accent transition-colors duration-200 col-span-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-lg font-medium">Example Player Profile</CardTitle>
-              <UserRound className="h-6 w-6 text-purple-400" />
+              <UserRound className="h-6 w-6 text-blue-400" />
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">See a detailed player profile in action.</p>
               <Link to="/player/1">
-                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                   View Example Player
                 </Button>
               </Link>
