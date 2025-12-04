@@ -6,6 +6,7 @@ import ScoutAttributeDisplay from './ScoutAttributeDisplay';
 import { Scout } from '@/types/scout';
 import { SCOUT_ATTRIBUTE_CATEGORIES } from '@/types/scout-attributes';
 import { User, Brain, Target } from 'lucide-react'; // Icons for categories
+import ScoutPreferredJobs from './ScoutPreferredJobs'; // Import the new component
 
 interface ScoutAttributesSectionProps {
   scout: Scout;
@@ -39,10 +40,10 @@ const ScoutAttributesSection: React.FC<ScoutAttributesSectionProps> = ({ scout }
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6"> {/* Changed to 3 columns */}
       {renderAttributes("scouting", "Scouting Attributes", Target)}
       {renderAttributes("mental", "Mental Attributes", Brain)}
-      {/* Add other categories here if needed */}
+      <ScoutPreferredJobs preferredJobs={scout.preferredJobs} /> {/* New component */}
     </div>
   );
 };

@@ -31,6 +31,7 @@ export const mockScouts: Scout[] = [
       temperament: 16,
       controversy: 5,
     },
+    preferredJobs: ["Head Scout", "Technical Director", "Director of Football"],
   },
   {
     id: "2",
@@ -62,6 +63,7 @@ export const mockScouts: Scout[] = [
       temperament: 14,
       controversy: 7,
     },
+    preferredJobs: ["European Scout", "Chief Scout", "Recruitment Analyst"],
   },
   {
     id: "3",
@@ -93,6 +95,7 @@ export const mockScouts: Scout[] = [
       temperament: 12,
       controversy: 9,
     },
+    preferredJobs: ["Youth Scout", "Head of Youth Development", "Performance Analyst"],
   },
 ];
 

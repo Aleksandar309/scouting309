@@ -28,6 +28,7 @@ export interface Scout {
     temperament: number;
     controversy: number;
   };
+  preferredJobs: string[]; // NEW: Preferred jobs/roles
 }
 
 export type AssignmentPriority = "P1" | "P2" | "P3";
