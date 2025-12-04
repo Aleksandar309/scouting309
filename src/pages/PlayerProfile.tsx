@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -76,6 +78,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ALL_FOOTBALL_POSITIONS } from "@/utils/positions";
+import { ShadowTeam, ShadowTeamPlayer } from '@/types/shadow-team'; // Import ShadowTeam types
+import AddPlayerToShadowTeamDialog from '@/components/AddPlayerToShadowTeamDialog'; // Import the new dialog
 
 // Define the schema for a single attribute item
 const attributeItemSchema = z.object({
@@ -142,6 +146,8 @@ interface PlayerProfileProps {
   players: Player[];
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
   scouts: Scout[];
+  shadowTeams: ShadowTeam[]; // Receive shadowTeams from App.tsx
+  setShadowTeams: React.Dispatch<React.SetStateAction<ShadowTeam[]>>; // Receive setShadowTeams from App.tsx
 }
 
 // Helper function to assign position type based on rating
@@ -191,7 +197,7 @@ const getDisplayedAttributeRating = (attribute: PlayerAttribute, isEditMode: boo
   return Math.round(sum / allRatings.length);
 };
 
-const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scouts }) => {
+const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scouts, shadowTeams, setShadowTeams }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -217,6 +223,9 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   const [formationsWithFit, setFormationsWithFit] = useState<Array<Formation & { overallFit: number }>>([]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // State for AddPlayerToShadowTeamDialog
+  const [isAddPlayerToTeamDialogOpen, setIsAddPlayerToTeamDialogOpen] = useState(false);
 
   const form = useForm<PlayerFormValues>({
     resolver: zodResolver(formSchema),
@@ -355,6 +364,27 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     }
   };
 
+  const handleAddPlayerToShadowTeam = (teamId: string, positionName: string, playerToAdd: ShadowTeamPlayer) => {
+    setShadowTeams(prev => prev.map(team => {
+      if (team.id === teamId) {
+        const currentPlayersInPosition = team.playersByPosition[positionName] || [];
+        // Prevent adding the same player to the same position
+        if (currentPlayersInPosition.some(p => p.id === playerToAdd.id)) {
+          toast.info(`${playerToAdd.name} is already assigned to ${positionName} in ${team.name}.`);
+          return team;
+        }
+        return {
+          ...team,
+          playersByPosition: {
+            ...team.playersByPosition,
+            [positionName]: [...currentPlayersInPosition, playerToAdd],
+          },
+        };
+      }
+      return team;
+    }));
+  };
+
   const onSubmit = (values: PlayerFormValues) => {
     if (!currentPlayer) return;
 
@@ -449,7 +479,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     fieldArrayName: "technical" | "tactical" | "physical" | "mentalPsychology" | "setPieces" | "hidden"
   ) => (
     <div className="space-y-2">
-      {/* Removed the duplicate h3 element here */}
       {form.watch(fieldArrayName).map((attr: AttributeFormItem, index) => ( // Explicitly type attr
         <div key={attr.name}>
           {isEditMode ? (
@@ -693,6 +722,27 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">New Report</Button>
                   </DialogTrigger>
                   <ScoutReportForm player={player} onReportSubmit={handleAddReport} onClose={() => setIsReportFormOpen(false)} scouts={scouts} />
+                </Dialog>
+                {/* New: Add to Shadow Team Button */}
+                <Dialog open={isAddPlayerToTeamDialogOpen} onOpenChange={setIsAddPlayerToTeamDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="bg-card text-foreground border-border hover:bg-accent"
+                      onClick={() => setIsAddPlayerToTeamDialogOpen(true)}
+                    >
+                      <PlusCircle className="mr-2 h-4 w-4" /> Shadow Team
+                    </Button>
+                  </DialogTrigger>
+                  {isAddPlayerToTeamDialogOpen && (
+                    <AddPlayerToShadowTeamDialog
+                      players={players}
+                      shadowTeams={shadowTeams}
+                      onAddPlayer={handleAddPlayerToShadowTeam}
+                      onClose={() => setIsAddPlayerToTeamDialogOpen(false)}
+                      initialPlayerId={player.id}
+                    />
+                  )}
                 </Dialog>
               </div>
             </div>
@@ -944,7 +994,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                         )}
                       />
                     ) : (
-                      // Removed the Accordion for notes here
                       null
                     )}
                   </CardContent>

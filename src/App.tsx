@@ -107,7 +107,7 @@ const App = () => {
             <ShortlistProvider shortlists={shortlists} setShortlists={setShortlists}>
               <Routes>
                 <Route path="/" element={<Index players={players} scouts={scouts} shortlists={shortlists} />} />
-                <Route path="/player/:id" element={<PlayerProfile players={players} setPlayers={setPlayers} scouts={scouts} />} />
+                <Route path="/player/:id" element={<PlayerProfile players={players} setPlayers={setPlayers} scouts={scouts} shadowTeams={shadowTeams} setShadowTeams={setShadowTeams} />} />
                 <Route path="/players" element={<PlayerDatabase players={players} setPlayers={setPlayers} />} />
                 <Route path="/scouts" element={<Scouts assignments={assignments} setAssignments={setAssignments} scouts={scouts} />} />
                 <Route path="/scouts/:id" element={<ScoutProfile players={players} assignments={assignments} scouts={scouts} setScouts={setScouts} />} />

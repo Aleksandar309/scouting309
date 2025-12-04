@@ -19,6 +19,7 @@ import CreateShadowTeamDialog from '@/components/CreateShadowTeamDialog';
 import ShadowPitch from '@/components/ShadowPitch';
 import { FM_FORMATIONS, Formation } from '@/utils/formations';
 import { toast } from 'sonner';
+import AddPlayerToShadowTeamDialog from '@/components/AddPlayerToShadowTeamDialog'; // Import the new dialog
 
 interface ShadowTeamsProps {
   players: Player[];
@@ -32,6 +33,10 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
   const [pitchColor, setPitchColor] = useState<'green' | 'theme'>('green'); // State for pitch color
+
+  // State for AddPlayerToShadowTeamDialog
+  const [isAddPlayerToTeamDialogOpen, setIsAddPlayerToTeamDialogOpen] = useState(false);
+  const [selectedPositionForAdd, setSelectedPositionForAdd] = useState<string | null>(null);
 
   const currentTeam = selectedTeamId ? shadowTeams.find(team => team.id === selectedTeamId) : null;
 
@@ -74,8 +79,28 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
   };
 
   const handlePositionClick = (positionName: string) => {
-    // This will be expanded in the next phase to open a player selection dialog
-    toast.info(`Clicked on position: ${positionName}. Player selection coming soon!`);
+    if (!currentTeam) {
+      toast.error("Please select a Shadow Team first.");
+      return;
+    }
+    setSelectedPositionForAdd(positionName);
+    setIsAddPlayerToTeamDialogOpen(true);
+  };
+
+  const handleAddPlayerToPosition = (teamId: string, positionName: string, player: ShadowTeamPlayer) => {
+    setShadowTeams(prev => prev.map(team => {
+      if (team.id === teamId) {
+        const currentPlayersInPosition = team.playersByPosition[positionName] || [];
+        return {
+          ...team,
+          playersByPosition: {
+            ...team.playersByPosition,
+            [positionName]: [...currentPlayersInPosition, player],
+          },
+        };
+      }
+      return team;
+    }));
   };
 
   const handlePlayerRemove = (positionName: string, playerId: string) => {
@@ -213,6 +238,23 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
           </Card>
         )}
       </div>
+
+      {/* Add Player To Shadow Team Dialog */}
+      <Dialog open={isAddPlayerToTeamDialogOpen} onOpenChange={setIsAddPlayerToTeamDialogOpen}>
+        {isAddPlayerToTeamDialogOpen && (
+          <AddPlayerToShadowTeamDialog
+            players={players}
+            shadowTeams={shadowTeams}
+            onAddPlayer={handleAddPlayerToPosition}
+            onClose={() => {
+              setIsAddPlayerToTeamDialogOpen(false);
+              setSelectedPositionForAdd(null);
+            }}
+            initialPositionName={selectedPositionForAdd || undefined}
+            initialTeamId={selectedTeamId || undefined}
+          />
+        )}
+      </Dialog>
     </div>
   );
 };
