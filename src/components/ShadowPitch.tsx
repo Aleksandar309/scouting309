@@ -30,7 +30,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   if (!formation) {
     return (
       <div className={cn(
-        "relative w-full aspect-[3/2] max-h-[500px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner flex items-center justify-center",
+        "relative w-full aspect-[3/2] max-h-[800px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner flex items-center justify-center",
         pitchBackgroundClass,
         pitchLineColorClass
       )}>
@@ -54,7 +54,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   return (
     <TooltipProvider>
       <div className={cn(
-        "relative w-full aspect-[3/2] max-h-[500px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner",
+        "relative w-full aspect-[3/2] max-h-[800px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner",
         pitchBackgroundClass,
         pitchLineColorClass
       )}>

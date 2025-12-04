@@ -64,7 +64,7 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
 
   if (!positionsToRender) {
     return (
-      <div className="relative w-full aspect-[3/2] max-h-[300px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner flex items-center justify-center text-muted-foreground">
+      <div className="relative w-full aspect-[3/2] max-h-[600px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner flex items-center justify-center text-muted-foreground">
         No position data available.
       </div>
     );
@@ -73,7 +73,7 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
   return (
     <TooltipProvider>
       {/* Main pitch container - now horizontal, with max height and centered */}
-      <div className="relative w-full aspect-[3/2] max-h-[300px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner">
+      <div className="relative w-full aspect-[3/2] max-h-[600px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner">
         {/* Pitch Lines (simplified) */}
         <div className="absolute inset-0 border-pitch-line border-dashed border-opacity-50"> {/* Use semantic color */}
           {/* Halfway line (now vertical) */}
