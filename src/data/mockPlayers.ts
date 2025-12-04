@@ -64,7 +64,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Vision", rating: 9 },
       { name: "Anticipation", rating: 9 },
       { name: "Marking", rating: 8 },
-      { name: "Command of Area", rating: 6 },
     ],
     physical: [
       { name: "Pace", rating: 8 },
@@ -73,7 +72,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Stamina", rating: 9 },
       { name: "Agility", rating: 8 },
       { name: "Recovery", rating: 9 },
-      { name: "Reflexes", rating: 5 },
       { name: "Balance", rating: 8 },
       { name: "Natural Fitness", rating: 9 },
     ],
@@ -88,7 +86,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Bravery", rating: 8 },
       { name: "Flair", rating: 7 },
       { name: "Teamwork", rating: 9 },
-      { name: "Communication", rating: 8 },
     ],
     setPieces: [
       { name: "Corners", rating: 7 },
@@ -96,8 +93,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Penalties", rating: 9 },
       { name: "Long Throws", rating: 6 },
       { name: "Defending corners", rating: 7 },
-      { name: "Shot Stopping", rating: 5 },
-      { name: "Handling", rating: 5 },
     ],
     hidden: [
       { name: "Consistency", rating: 10 }, // Capped from 15
@@ -200,7 +195,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Vision", rating: 8 },
       { name: "Anticipation", rating: 8 },
       { name: "Marking", rating: 6 },
-      { name: "Command of Area", rating: 5 },
     ],
     physical: [
       { name: "Pace", rating: 9 },
@@ -209,7 +203,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Stamina", rating: 8 },
       { name: "Agility", rating: 9 },
       { name: "Recovery", rating: 8 },
-      { name: "Reflexes", rating: 5 },
       { name: "Balance", rating: 9 },
       { name: "Natural Fitness", rating: 8 },
     ],
@@ -224,7 +217,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Bravery", rating: 7 },
       { name: "Flair", rating: 9 },
       { name: "Teamwork", rating: 7 },
-      { name: "Communication", rating: 6 },
     ],
     setPieces: [
       { name: "Corners", rating: 6 },
@@ -232,8 +224,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Penalties", rating: 7 },
       { name: "Long Throws", rating: 5 },
       { name: "Defending corners", rating: 6 },
-      { name: "Shot Stopping", rating: 5 },
-      { name: "Handling", rating: 5 },
     ],
     hidden: [
       { name: "Consistency", rating: 10 }, // Capped from 14
@@ -325,7 +315,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Vision", rating: 10 },
       { name: "Anticipation", rating: 9 },
       { name: "Marking", rating: 7 },
-      { name: "Command of Area", rating: 6 },
     ],
     physical: [
       { name: "Pace", rating: 8 },
@@ -334,7 +323,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Stamina", rating: 8 },
       { name: "Agility", rating: 9 },
       { name: "Recovery", rating: 8 },
-      { name: "Reflexes", rating: 5 },
       { name: "Balance", rating: 9 },
       { name: "Natural Fitness", rating: 8 },
     ],
@@ -349,7 +337,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Bravery", rating: 7 },
       { name: "Flair", rating: 10 },
       { name: "Teamwork", rating: 8 },
-      { name: "Communication", rating: 7 },
     ],
     setPieces: [
       { name: "Corners", rating: 8 },
@@ -357,8 +344,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Penalties", rating: 8 },
       { name: "Long Throws", rating: 5 },
       { name: "Defending corners", rating: 6 },
-      { name: "Shot Stopping", rating: 5 },
-      { name: "Handling", rating: 5 },
     ],
     hidden: [
       { name: "Consistency", rating: 10 }, // Capped from 18
@@ -448,7 +433,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Vision", rating: 7 },
       { name: "Anticipation", rating: 9 },
       { name: "Marking", rating: 9 },
-      { name: "Command of Area", rating: 7 },
     ],
     physical: [
       { name: "Pace", rating: 7 },
@@ -457,7 +441,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Stamina", rating: 8 },
       { name: "Agility", rating: 7 },
       { name: "Recovery", rating: 8 },
-      { name: "Reflexes", rating: 5 },
       { name: "Balance", rating: 8 },
       { name: "Natural Fitness", rating: 8 },
     ],
@@ -472,7 +455,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Bravery", rating: 8 },
       { name: "Flair", rating: 6 },
       { name: "Teamwork", rating: 8 },
-      { name: "Communication", rating: 7 },
     ],
     setPieces: [
       { name: "Corners", rating: 5 },
@@ -480,8 +462,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Penalties", rating: 5 },
       { name: "Long Throws", rating: 7 },
       { name: "Defending corners", rating: 9 },
-      { name: "Shot Stopping", rating: 5 },
-      { name: "Handling", rating: 5 },
     ],
     hidden: [
       { name: "Consistency", rating: 10 }, // Capped from 15
@@ -571,7 +551,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Vision", rating: 7 },
       { name: "Anticipation", rating: 9 },
       { name: "Marking", rating: 6 },
-      { name: "Command of Area", rating: 5 },
     ],
     physical: [
       { name: "Pace", rating: 7 },
@@ -580,7 +559,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Stamina", rating: 8 },
       { name: "Agility", rating: 7 },
       { name: "Recovery", rating: 8 },
-      { name: "Reflexes", rating: 5 },
       { name: "Balance", rating: 8 },
       { name: "Natural Fitness", rating: 8 },
     ],
@@ -595,7 +573,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Bravery", rating: 8 },
       { name: "Flair", rating: 7 },
       { name: "Teamwork", rating: 8 },
-      { name: "Communication", rating: 6 },
     ],
     setPieces: [
       { name: "Corners", rating: 5 },
@@ -603,8 +580,6 @@ export const initialMockPlayers: Player[] = [
       { name: "Penalties", rating: 8 },
       { name: "Long Throws", rating: 6 },
       { name: "Defending corners", rating: 7 },
-      { name: "Shot Stopping", rating: 5 },
-      { name: "Handling", rating: 5 },
     ],
     hidden: [
       { name: "Consistency", rating: 10 }, // Capped from 16
