@@ -2,7 +2,7 @@ import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, LayoutDashboard, Search, ListChecks } from "lucide-react"; // Removed UserRound as it's no longer needed for the example player card
+import { Users, LayoutDashboard, Search, ListChecks } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import Logo from "@/components/Logo";
 
@@ -19,12 +19,17 @@ const Index = () => {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-          <Card className="bg-card border-border text-card-foreground hover:bg-accent transition-colors duration-200">
+          <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-lg font-medium">Player Database</CardTitle>
               <Search className="h-6 w-6 text-primary" />
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-1 flex flex-col justify-between">
+              <img
+                src="https://images.unsplash.com/photo-1579952962644-85477201214a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Football player"
+                className="h-32 object-cover w-full rounded-md mb-4"
+              />
               <p className="text-sm text-muted-foreground mb-4">Browse and manage all scouted players.</p>
               <Link to="/players">
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
@@ -34,12 +39,17 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-card border-border text-card-foreground hover:bg-accent transition-colors duration-200">
+          <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-lg font-medium">Scouting Team</CardTitle>
               <Users className="h-6 w-6 text-primary" />
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-1 flex flex-col justify-between">
+              <img
+                src="https://images.unsplash.com/photo-1556761175-b413da4b93a0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Scouting team"
+                className="h-32 object-cover w-full rounded-md mb-4"
+              />
               <p className="text-sm text-muted-foreground mb-4">Meet our dedicated scouting personnel.</p>
               <Link to="/scouts">
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
@@ -49,12 +59,17 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-card border-border text-card-foreground hover:bg-accent transition-colors duration-200">
+          <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-lg font-medium">Shortlists</CardTitle>
               <ListChecks className="h-6 w-6 text-primary" />
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-1 flex flex-col justify-between">
+              <img
+                src="https://images.unsplash.com/photo-1517245381794-ce2987e67b95?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Shortlists"
+                className="h-32 object-cover w-full rounded-md mb-4"
+              />
               <p className="text-sm text-muted-foreground mb-4">Manage your curated player shortlists.</p>
               <Link to="/shortlists">
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
@@ -67,12 +82,17 @@ const Index = () => {
 
         {/* New grid for placeholder cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-          <Card className="bg-card border-border text-card-foreground hover:bg-accent transition-colors duration-200">
+          <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-lg font-medium">New Page 1</CardTitle>
               <LayoutDashboard className="h-6 w-6 text-primary" /> {/* Placeholder icon */}
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-1 flex flex-col justify-between">
+              <img
+                src="https://images.unsplash.com/photo-1551288259-cd729247c78b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Generic dashboard"
+                className="h-32 object-cover w-full rounded-md mb-4"
+              />
               <p className="text-sm text-muted-foreground mb-4">Description for New Page 1.</p>
               <Link to="/new-page-1">
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
@@ -82,12 +102,17 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-card border-border text-card-foreground hover:bg-accent transition-colors duration-200">
+          <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-lg font-medium">New Page 2</CardTitle>
               <LayoutDashboard className="h-6 w-6 text-primary" /> {/* Placeholder icon */}
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-1 flex flex-col justify-between">
+              <img
+                src="https://images.unsplash.com/photo-1551288259-cd729247c78b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Generic dashboard"
+                className="h-32 object-cover w-full rounded-md mb-4"
+              />
               <p className="text-sm text-muted-foreground mb-4">Description for New Page 2.</p>
               <Link to="/new-page-2">
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
@@ -97,12 +122,17 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-card border-border text-card-foreground hover:bg-accent transition-colors duration-200">
+          <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-lg font-medium">New Page 3</CardTitle>
               <LayoutDashboard className="h-6 w-6 text-primary" /> {/* Placeholder icon */}
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-1 flex flex-col justify-between">
+              <img
+                src="https://images.unsplash.com/photo-1551288259-cd729247c78b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Generic dashboard"
+                className="h-32 object-cover w-full rounded-md mb-4"
+              />
               <p className="text-sm text-muted-foreground mb-4">Description for New Page 3.</p>
               <Link to="/new-page-3">
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
