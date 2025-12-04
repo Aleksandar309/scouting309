@@ -32,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge"; // Added import for Badge
 import { Scout } from "@/types/scout";
 import { SCOUT_ATTRIBUTE_CATEGORIES } from "@/types/scout-attributes";
 import ScoutAttributeDisplay from "./ScoutAttributeDisplay"; // Reusing for editable display
