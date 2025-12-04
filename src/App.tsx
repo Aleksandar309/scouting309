@@ -12,18 +12,18 @@ import PlayerDatabase from "./pages/PlayerDatabase";
 import Scouts from "./pages/Scouts";
 import ScoutProfile from "./pages/ScoutProfile";
 import ShortlistPage from "./pages/Shortlist";
+import PlaceholderPage from "./pages/PlaceholderPage"; // Import the new placeholder page
 import { ShortlistProvider } from "./context/ShortlistContext";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { useState, useEffect } from "react";
 import { initialMockPlayers } from "./data/mockPlayers";
-import { mockScouts as initialMockScouts, initialMockAssignments } from "./data/mockScouts"; // Renamed import
+import { mockScouts as initialMockScouts, initialMockAssignments } from "./data/mockScouts";
 import { Player } from "./types/player";
-import { Scout, Assignment } from "./types/scout"; // Import Scout type
+import { Scout, Assignment } from "./types/scout";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Initialize players state from localStorage or use initial mock data
   const [players, setPlayers] = useState<Player[]>(() => {
     if (typeof window !== 'undefined') {
       const savedPlayers = localStorage.getItem('players');
@@ -32,7 +32,6 @@ const App = () => {
     return initialMockPlayers;
   });
 
-  // Initialize scouts state from localStorage or use initial mock data
   const [scouts, setScouts] = useState<Scout[]>(() => {
     if (typeof window !== 'undefined') {
       const savedScouts = localStorage.getItem('scouts');
@@ -41,7 +40,6 @@ const App = () => {
     return initialMockScouts;
   });
 
-  // Initialize assignments state from localStorage or use initial mock data
   const [assignments, setAssignments] = useState<Assignment[]>(() => {
     if (typeof window !== 'undefined') {
       const savedAssignments = localStorage.getItem('assignments');
@@ -50,21 +48,18 @@ const App = () => {
     return initialMockAssignments;
   });
 
-  // Save players state to localStorage whenever it changes
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('players', JSON.stringify(players));
     }
   }, [players]);
 
-  // Save scouts state to localStorage whenever it changes
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('scouts', JSON.stringify(scouts));
     }
   }, [scouts]);
 
-  // Save assignments state to localStorage whenever it changes
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('assignments', JSON.stringify(assignments));
@@ -86,6 +81,10 @@ const App = () => {
                 <Route path="/scouts" element={<Scouts assignments={assignments} setAssignments={setAssignments} scouts={scouts} />} />
                 <Route path="/scouts/:id" element={<ScoutProfile players={players} assignments={assignments} scouts={scouts} setScouts={setScouts} />} />
                 <Route path="/shortlists" element={<ShortlistPage />} />
+                {/* New placeholder routes */}
+                <Route path="/new-page-1" element={<PlaceholderPage />} />
+                <Route path="/new-page-2" element={<PlaceholderPage />} />
+                <Route path="/new-page-3" element={<PlaceholderPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </ShortlistProvider>
