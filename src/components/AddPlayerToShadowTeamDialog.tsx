@@ -42,6 +42,7 @@ import { toast } from 'sonner';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Input } from "@/components/ui/input"; // Dodato: Import Input komponenta
 
 const formSchema = z.object({
   teamId: z.string().min(1, { message: "Please select a Shadow Team." }),
