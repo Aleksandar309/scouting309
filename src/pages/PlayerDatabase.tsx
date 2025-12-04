@@ -9,10 +9,10 @@ import {
   useReactTable,
   getSortedRowModel,
   SortingState,
-  getFilteredRowModel, // Import this
-  ColumnFiltersState, // Import this
+  getFilteredRowModel,
+  ColumnFiltersState,
 } from '@tanstack/react-table';
-import { ArrowUpDown, Plus, ChevronLeft, Table2, LayoutGrid } from 'lucide-react';
+import { ArrowUpDown, Plus, ChevronLeft, Table2, LayoutGrid, Filter } from 'lucide-react'; // Added Filter icon
 
 import {
   Table,
@@ -33,7 +33,13 @@ import PlayerCard from '@/components/PlayerCard';
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AddPlayerForm from '@/components/AddPlayerForm';
 import { ALL_ATTRIBUTE_NAMES } from '@/utils/player-attributes';
-import { Input } from '@/components/ui/input'; // Import Input for filters
+import { Input } from '@/components/ui/input';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"; // Import Accordion components
 
 interface PlayerDatabaseProps {
   players: Player[];
@@ -87,7 +93,7 @@ const columns: ColumnDef<Player>[] = [
     accessorKey: "name",
     header: ({ column }) => {
       return (
-        <TableHead className="sticky-column-header"> {/* Updated sticky classes */}
+        <TableHead className="sticky-column-header">
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
@@ -100,7 +106,7 @@ const columns: ColumnDef<Player>[] = [
       );
     },
     cell: ({ row }) => (
-      <TableCell className="sticky-column-cell"> {/* Updated sticky classes */}
+      <TableCell className="sticky-column-cell">
         <Link to={`/player/${row.original.id}`} className="text-blue-400 hover:underline">
           {row.getValue("name")}
         </Link>
@@ -258,20 +264,18 @@ const columns: ColumnDef<Player>[] = [
 
 const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]); // New state for column filters
-  const [globalFilter, setGlobalFilter] = React.useState(''); // New state for global filter
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = React.useState('');
   const navigate = useNavigate();
   const [viewMode, setViewMode] = React.useState<'table' | 'card'>(() => {
-    // Load from localStorage or default to 'table'
     if (typeof window !== 'undefined') {
       return (localStorage.getItem('playerDatabaseViewMode') as 'table' | 'card') || 'table';
     }
     return 'table';
   });
-  const [isAddPlayerDialogOpen, setIsAddPlayerDialogOpen] = React.useState(false); // State for add player dialog
+  const [isAddPlayerDialogOpen, setIsAddPlayerDialogOpen] = React.useState(false);
 
   React.useEffect(() => {
-    // Save to localStorage whenever viewMode changes
     if (typeof window !== 'undefined') {
       localStorage.setItem('playerDatabaseViewMode', viewMode);
     }
@@ -283,18 +287,18 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
   };
 
   const table = useReactTable({
-    data: players, // Use the state variable from props
+    data: players,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters, // Add this
-    onGlobalFilterChange: setGlobalFilter,   // Add this
-    getFilteredRowModel: getFilteredRowModel(), // Add this
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
-      columnFilters, // Add this
-      globalFilter,  // Add this
+      columnFilters,
+      globalFilter,
     },
   });
 
@@ -342,51 +346,59 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
           </div>
         </div>
 
-        {/* Filter Section */}
-        <div className="mb-6 p-4 border border-border rounded-lg bg-card">
-          <h2 className="text-xl font-semibold mb-4 text-foreground">Filter Players</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Input
-              placeholder="Filter by name..."
-              value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-              onChange={(event) =>
-                table.getColumn("name")?.setFilterValue(event.target.value)
-              }
-              className="bg-input border-border text-foreground"
-            />
-            <Input
-              placeholder="Filter by team..."
-              value={(table.getColumn("team")?.getFilterValue() as string) ?? ""}
-              onChange={(event) =>
-                table.getColumn("team")?.setFilterValue(event.target.value)
-              }
-              className="bg-input border-border text-foreground"
-            />
-            <Input
-              placeholder="Filter by nationality..."
-              value={(table.getColumn("nationality")?.getFilterValue() as string) ?? ""}
-              onChange={(event) =>
-                table.getColumn("nationality")?.setFilterValue(event.target.value)
-              }
-              className="bg-input border-border text-foreground"
-            />
-            <Input
-              placeholder="Filter by position (e.g., CDM)..."
-              value={(table.getColumn("positions")?.getFilterValue() as string) ?? ""}
-              onChange={(event) =>
-                table.getColumn("positions")?.setFilterValue(event.target.value)
-              }
-              className="bg-input border-border text-foreground"
-            />
-            {/* Global filter for general search */}
-            <Input
-              placeholder="Global search..."
-              value={globalFilter ?? ""}
-              onChange={(event) => setGlobalFilter(event.target.value)}
-              className="bg-input border-border text-foreground lg:col-span-3"
-            />
-          </div>
-        </div>
+        {/* Filter Section - now collapsible */}
+        <Accordion type="single" collapsible className="w-full mb-6">
+          <AccordionItem value="filters" className="border-none">
+            <AccordionTrigger className="flex items-center justify-between p-4 border border-border rounded-lg bg-card hover:bg-accent transition-colors duration-200">
+              <h2 className="text-xl font-semibold text-foreground flex items-center">
+                <Filter className="mr-2 h-5 w-5" /> Filter Players
+              </h2>
+            </AccordionTrigger>
+            <AccordionContent className="p-4 border border-t-0 border-border rounded-b-lg bg-card">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Input
+                  placeholder="Filter by name..."
+                  value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                  onChange={(event) =>
+                    table.getColumn("name")?.setFilterValue(event.target.value)
+                  }
+                  className="bg-input border-border text-foreground"
+                />
+                <Input
+                  placeholder="Filter by team..."
+                  value={(table.getColumn("team")?.getFilterValue() as string) ?? ""}
+                  onChange={(event) =>
+                    table.getColumn("team")?.setFilterValue(event.target.value)
+                  }
+                  className="bg-input border-border text-foreground"
+                />
+                <Input
+                  placeholder="Filter by nationality..."
+                  value={(table.getColumn("nationality")?.getFilterValue() as string) ?? ""}
+                  onChange={(event) =>
+                    table.getColumn("nationality")?.setFilterValue(event.target.value)
+                  }
+                  className="bg-input border-border text-foreground"
+                />
+                <Input
+                  placeholder="Filter by position (e.g., CDM)..."
+                  value={(table.getColumn("positions")?.getFilterValue() as string) ?? ""}
+                  onChange={(event) =>
+                    table.getColumn("positions")?.setFilterValue(event.target.value)
+                  }
+                  className="bg-input border-border text-foreground"
+                />
+                {/* Global filter for general search */}
+                <Input
+                  placeholder="Global search..."
+                  value={globalFilter ?? ""}
+                  onChange={(event) => setGlobalFilter(event.target.value)}
+                  className="bg-input border-border text-foreground lg:col-span-3"
+                />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
         {viewMode === 'table' ? (
           <div className="rounded-md border border-border bg-card overflow-x-auto">
