@@ -7,7 +7,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Mail, Phone, User, ChevronLeft, PlusCircle, CalendarDays, Briefcase } from 'lucide-react';
 import { Scout, Assignment } from '@/types/scout';
-import { mockScouts, initialMockAssignments } from '@/data/mockScouts';
 import {
   Tabs,
   TabsContent,
@@ -23,9 +22,10 @@ import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/
 interface ScoutsPageProps {
   assignments: Assignment[];
   setAssignments: React.Dispatch<React.SetStateAction<Assignment[]>>;
+  scouts: Scout[]; // Receive scouts from App.tsx
 }
 
-const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments }) => {
+const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, scouts }) => {
   const navigate = useNavigate();
   const [isAssignmentFormOpen, setIsAssignmentFormOpen] = useState(false);
 
@@ -43,15 +43,17 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments }) 
     "Youth Scouts": [],
   };
 
-  mockScouts.forEach(scout => {
+  scouts.forEach(scout => { // Use scouts from props
     if (scout.role === "Head Scout") {
       groupedScouts["Head Scout/Chief"].push(scout);
-    } else if (scout.role === "Senior Scout") { // Updated from European Scout
+    } else if (scout.role === "Senior Scout") {
       groupedScouts["Senior Scouts"].push(scout);
     } else if (scout.role === "Youth Scout") {
       groupedScouts["Youth Scouts"].push(scout);
-    } else if (scout.role === "Scout") { // Handle the new 'Scout' role
+    } else if (scout.role === "Scout") {
       groupedScouts["General Scouts"].push(scout);
+    } else if (scout.role === "Technical Director" || scout.role === "Director of Football") {
+      groupedScouts["Directors, Presidents, Board Members"].push(scout);
     }
     // Add logic for other roles if they exist in mockScouts, e.g., Technical Director, Director of Football
     // For now, they will fall into no category if not explicitly handled.
@@ -78,13 +80,13 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments }) 
           </TabsList>
 
           <TabsContent value="team" className="mt-6">
-            {Object.entries(groupedScouts).map(([category, scouts]) => (
+            {Object.entries(groupedScouts).map(([category, categoryScouts]) => ( // Renamed scouts to categoryScouts to avoid conflict
               // Only render the category if there are scouts in it
-              scouts.length > 0 && (
+              categoryScouts.length > 0 && (
                 <div key={category} className="mb-8">
                   <h2 className="text-2xl font-bold mb-4 text-foreground">{category}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {scouts.map((scout) => (
+                    {categoryScouts.map((scout) => (
                       <Link to={`/scouts/${scout.id}`} key={scout.id}>
                         <Card className="bg-card border-border text-card-foreground shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
                           <CardHeader className="flex flex-row items-center space-x-4 pb-4">
@@ -126,7 +128,7 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments }) 
                     <PlusCircle className="mr-2 h-4 w-4" /> Create New Assignment
                   </Button>
                 </DialogTrigger>
-                <AssignmentForm onAddAssignment={handleAddAssignment} onClose={() => setIsAssignmentFormOpen(false)} scouts={mockScouts} />
+                <AssignmentForm onAddAssignment={handleAddAssignment} onClose={() => setIsAssignmentFormOpen(false)} scouts={scouts} />
               </Dialog>
             </div>
 

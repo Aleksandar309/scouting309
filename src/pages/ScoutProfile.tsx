@@ -5,33 +5,36 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, User, ChevronLeft, CalendarDays, Briefcase, Table2, LayoutGrid } from 'lucide-react';
+import { Mail, Phone, User, ChevronLeft, CalendarDays, Briefcase, Table2, LayoutGrid, Edit } from 'lucide-react';
 import { Scout, Assignment } from '@/types/scout';
-import { mockScouts } from '@/data/mockScouts';
 import { Player } from '@/types/player';
 import {
   SortingState,
-  ColumnFiltersState, // Import ColumnFiltersState
+  ColumnFiltersState,
 } from '@tanstack/react-table';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import PlayerCardGridDisplay from '@/components/PlayerCardGridDisplay';
 import PlayerTableDisplay from '@/components/PlayerTableDisplay';
-import { playerTableColumns } from '@/utils/player-table-columns'; // Import the shared columns
+import { playerTableColumns } from '@/utils/player-table-columns';
 import { format, isPast } from 'date-fns';
 import ScoutAttributesSection from '@/components/ScoutAttributesSection';
 import { ScoutRole } from '@/utils/scout-roles';
-import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/assignment-utils'; // Import assignment utils
-import { Badge } from '@/components/ui/badge'; // Dodato: Import Badge komponenta
+import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/assignment-utils';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog'; // Import Dialog components
+import ScoutEditForm from '@/components/ScoutEditForm'; // Import ScoutEditForm
 
 interface ScoutProfileProps {
   players: Player[];
   assignments: Assignment[];
+  scouts: Scout[]; // Receive scouts from App.tsx
+  setScouts: React.Dispatch<React.SetStateAction<Scout[]>>; // Receive setScouts from App.tsx
 }
 
-const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => {
+const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments, scouts, setScouts }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const scout = mockScouts.find(s => s.id === id);
+  const currentScout = scouts.find(s => s.id === id); // Use scouts from props
 
   const [viewMode, setViewMode] = React.useState<'table' | 'card'>(() => {
     if (typeof window !== 'undefined') {
@@ -40,9 +43,10 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
     return 'table';
   });
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]); // Add columnFilters state
-  const [globalFilter, setGlobalFilter] = React.useState(''); // Add globalFilter state
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = React.useState('');
   const [selectedScoutRole, setSelectedScoutRole] = useState<ScoutRole | null>(null);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false); // State for edit form dialog
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -50,7 +54,7 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
     }
   }, [viewMode]);
 
-  if (!scout) {
+  if (!currentScout) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-6">
         <div className="text-center bg-card p-8 rounded-lg shadow-lg border border-border">
@@ -68,13 +72,20 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
     );
   }
 
+  const handleSaveScout = (updatedScout: Scout) => {
+    setScouts((prevScouts) =>
+      prevScouts.map((s) => (s.id === updatedScout.id ? updatedScout : s))
+    );
+    setIsEditFormOpen(false);
+  };
+
   // Filter players reported by this scout
   const scoutedPlayers = players.filter(player =>
-    player.scoutingReports.some(report => report.scout === scout.name)
+    player.scoutingReports.some(report => report.scout === currentScout.name)
   );
 
   // Filter assignments for this scout
-  const scoutAssignments = assignments.filter(assignment => assignment.assignedTo === scout.id);
+  const scoutAssignments = assignments.filter(assignment => assignment.assignedTo === currentScout.id);
 
   return (
     <div className="min-h-screen bg-background text-foreground p-6">
@@ -89,37 +100,48 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
         </Button>
 
         <Card className="bg-card border-border text-card-foreground shadow-lg mb-8">
-          <CardHeader className="flex flex-row items-center space-x-6 pb-4">
-            <Avatar className="h-24 w-24">
-              <AvatarImage src={scout.avatarUrl} alt={scout.name} />
-              <AvatarFallback className="bg-primary text-primary-foreground text-4xl">{scout.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div>
-              <CardTitle className="text-3xl font-bold">{scout.name}</CardTitle>
-              <p className="text-muted-foreground text-lg">{scout.role}</p>
+          <CardHeader className="flex flex-row items-center justify-between pb-4">
+            <div className="flex items-center space-x-6">
+              <Avatar className="h-24 w-24">
+                <AvatarImage src={currentScout.avatarUrl} alt={currentScout.name} />
+                <AvatarFallback className="bg-primary text-primary-foreground text-4xl">{currentScout.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div>
+                <CardTitle className="text-3xl font-bold">{currentScout.name}</CardTitle>
+                <p className="text-muted-foreground text-lg">{currentScout.role}</p>
+              </div>
             </div>
+            <Dialog open={isEditFormOpen} onOpenChange={setIsEditFormOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="bg-card text-foreground border-border hover:bg-accent">
+                  <Edit className="mr-2 h-4 w-4" /> Edit Profile
+                </Button>
+              </DialogTrigger>
+              <ScoutEditForm scout={currentScout} onSave={handleSaveScout} onClose={() => setIsEditFormOpen(false)} />
+            </Dialog>
           </CardHeader>
           <CardContent className="space-y-4 text-muted-foreground">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center text-base">
-                <Mail className="mr-3 h-5 w-5 text-muted-foreground" /> {scout.email}
+                <Mail className="mr-3 h-5 w-5 text-muted-foreground" /> {currentScout.email}
               </div>
               <div className="flex items-center text-base">
-                <Phone className="mr-3 h-5 w-5 text-muted-foreground" /> {scout.phone}
+                <Phone className="mr-3 h-5 w-5 text-muted-foreground" /> {currentScout.phone}
               </div>
               <div className="flex items-center text-base">
-                <User className="mr-3 h-5 w-5 text-muted-foreground" /> Active Players: {scout.activePlayers}
+                <User className="mr-3 h-5 w-5 text-muted-foreground" /> Active Players: {currentScout.activePlayers}
               </div>
               <div className="flex items-center text-base">
-                <CalendarDays className="mr-3 h-5 w-5 text-muted-foreground" /> Last Report: {scout.lastReportDate}
+                <CalendarDays className="mr-3 h-5 w-5 text-muted-foreground" /> Last Report: {currentScout.lastReportDate}
               </div>
             </div>
             <div className="border-t border-border pt-4 mt-4">
               <h3 className="text-xl font-semibold text-foreground mb-2">Scouting Focus</h3>
               <p className="text-sm">
-                {scout.role === "Head Scout" && "Oversees all scouting operations, focusing on strategic targets and team fit across all regions."}
-                {scout.role === "European Scout" && "Specializes in identifying talent across major European leagues, with an emphasis on technical ability and tactical intelligence."}
-                {scout.role === "Youth Scout" && "Focuses on emerging talents in youth academies and lower leagues, looking for high potential and coachability."}
+                {currentScout.role === "Head Scout" && "Oversees all scouting operations, focusing on strategic targets and team fit across all regions."}
+                {currentScout.role === "European Scout" && "Specializes in identifying talent across major European leagues, with an emphasis on technical ability and tactical intelligence."}
+                {currentScout.role === "Youth Scout" && "Focuses on emerging talents in youth academies and lower leagues, looking for high potential and coachability."}
+                {/* Add more role descriptions as needed */}
               </p>
             </div>
           </CardContent>
@@ -129,22 +151,23 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Scout Attributes</h2>
           <ScoutAttributesSection
-            scout={scout}
+            scout={currentScout}
             selectedScoutRole={selectedScoutRole}
             onRoleSelect={setSelectedScoutRole}
+            // isEditable={isEditFormOpen} // Only editable via the form, not directly here
           />
         </div>
 
         {/* Scout Assignments Section */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Assignments for {scout.name} ({scoutAssignments.length})</h2>
+          <h2 className="text-2xl font-bold mb-4">Assignments for {currentScout.name} ({scoutAssignments.length})</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {scoutAssignments.length === 0 ? (
               <Card className="bg-card border-border text-card-foreground text-center p-8 lg:col-span-2">
                 <CardTitle className="text-xl mb-4">No Assignments Yet!</CardTitle>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    {scout.name} currently has no active assignments.
+                    {currentScout.name} currently has no active assignments.
                   </p>
                 </CardContent>
               </Card>
@@ -178,7 +201,7 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
 
         {/* Scouted Players Section */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Players Scouted by {scout.name} ({scoutedPlayers.length})</h2>
+          <h2 className="text-2xl font-bold">Players Scouted by {currentScout.name} ({scoutedPlayers.length})</h2>
           <ToggleGroup
             type="single"
             value={viewMode}
@@ -201,7 +224,7 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
             <CardTitle className="text-xl mb-4">No Players Scouted Yet!</CardTitle>
             <CardContent>
               <p className="text-muted-foreground">
-                {scout.name} has not filed any reports for players yet.
+                {currentScout.name} has not filed any reports for players yet.
               </p>
             </CardContent>
           </Card>

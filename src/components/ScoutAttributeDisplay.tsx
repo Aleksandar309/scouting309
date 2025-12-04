@@ -11,14 +11,29 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { scoutAttributeDescriptions } from '@/utils/scout-attribute-descriptions'; // Import descriptions
+import { Input } from '@/components/ui/input'; // Import Input for editable mode
 
 interface ScoutAttributeDisplayProps {
   name: string;
   rating: number; // 1-20 scale
   highlightType?: 'primary' | 'secondary' | 'tertiary' | null; // New prop for highlighting
+  isEditable?: boolean; // New prop for edit mode
+  onRatingChange?: (newRating: number) => void; // Callback for rating change
 }
 
-const ScoutAttributeDisplay: React.FC<ScoutAttributeDisplayProps> = ({ name, rating, highlightType }) => {
+const getRatingColorClass = (rating: number): string => {
+  if (rating <= 5) {
+    return "!bg-destructive";
+  } else if (rating <= 10) {
+    return "!bg-yellow-600";
+  } else if (rating <= 15) {
+    return "!bg-green-600";
+  } else { // 16-20
+    return "!bg-blue-600";
+  }
+};
+
+const ScoutAttributeDisplay: React.FC<ScoutAttributeDisplayProps> = ({ name, rating, highlightType, isEditable = false, onRatingChange }) => {
   const { colorClass } = getQualitativeRating(rating);
   const progressValue = (rating / 20) * 100; // Scale 1-20 to 0-100 for Progress component
 
@@ -45,6 +60,15 @@ const ScoutAttributeDisplay: React.FC<ScoutAttributeDisplayProps> = ({ name, rat
 
   const description = scoutAttributeDescriptions[name] || "No description available.";
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newRating = parseInt(e.target.value, 10);
+    if (!isNaN(newRating) && newRating >= 1 && newRating <= 20 && onRatingChange) {
+      onRatingChange(newRating);
+    } else if (e.target.value === "" && onRatingChange) {
+      onRatingChange(0); // Or some other indicator for invalid/empty
+    }
+  };
+
   return (
     <TooltipProvider>
       <Tooltip>
@@ -57,7 +81,21 @@ const ScoutAttributeDisplay: React.FC<ScoutAttributeDisplayProps> = ({ name, rat
           >
             <span className={cn("text-sm w-1/2", highlightType ? "font-semibold text-foreground" : "text-muted-foreground")}>{displayedName}</span>
             <div className="flex items-center w-1/2 space-x-2">
-              <Progress value={progressValue} className="h-2 flex-1 bg-muted" indicatorClassName={colorClass} />
+              {isEditable ? (
+                <Input
+                  type="number"
+                  min="1"
+                  max="20"
+                  value={rating === 0 ? "" : rating}
+                  onChange={handleInputChange}
+                  className="w-full h-6 bg-input border-border text-foreground text-sm text-center"
+                />
+              ) : (
+                <>
+                  <Progress value={progressValue} className="h-2 flex-1 bg-muted" indicatorClassName={colorClass} />
+                  <span className={cn("ml-2 text-sm", highlightType ? "text-text-on-colored-background" : "text-muted-foreground")}>{rating}</span>
+                </>
+              )}
             </div>
           </div>
         </TooltipTrigger>

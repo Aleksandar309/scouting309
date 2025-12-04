@@ -1,3 +1,5 @@
+"use client";
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,10 +14,11 @@ import ScoutProfile from "./pages/ScoutProfile";
 import ShortlistPage from "./pages/Shortlist";
 import { ShortlistProvider } from "./context/ShortlistContext";
 import { ThemeProvider } from "./components/ThemeProvider";
-import { useState, useEffect } from "react"; // Import useEffect
+import { useState, useEffect } from "react";
 import { initialMockPlayers } from "./data/mockPlayers";
-import { mockScouts, initialMockAssignments } from "./data/mockScouts";
-import { Player } from "./types/player"; // Import Player type
+import { mockScouts as initialMockScouts, initialMockAssignments } from "./data/mockScouts"; // Renamed import
+import { Player } from "./types/player";
+import { Scout, Assignment } from "./types/scout"; // Import Scout type
 
 const queryClient = new QueryClient();
 
@@ -29,6 +32,24 @@ const App = () => {
     return initialMockPlayers;
   });
 
+  // Initialize scouts state from localStorage or use initial mock data
+  const [scouts, setScouts] = useState<Scout[]>(() => {
+    if (typeof window !== 'undefined') {
+      const savedScouts = localStorage.getItem('scouts');
+      return savedScouts ? JSON.parse(savedScouts) : initialMockScouts;
+    }
+    return initialMockScouts;
+  });
+
+  // Initialize assignments state from localStorage or use initial mock data
+  const [assignments, setAssignments] = useState<Assignment[]>(() => {
+    if (typeof window !== 'undefined') {
+      const savedAssignments = localStorage.getItem('assignments');
+      return savedAssignments ? JSON.parse(savedAssignments) : initialMockAssignments;
+    }
+    return initialMockAssignments;
+  });
+
   // Save players state to localStorage whenever it changes
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -36,7 +57,19 @@ const App = () => {
     }
   }, [players]);
 
-  const [assignments, setAssignments] = useState(initialMockAssignments);
+  // Save scouts state to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('scouts', JSON.stringify(scouts));
+    }
+  }, [scouts]);
+
+  // Save assignments state to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('assignments', JSON.stringify(assignments));
+    }
+  }, [assignments]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -48,10 +81,10 @@ const App = () => {
             <ShortlistProvider>
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route path="/player/:id" element={<PlayerProfile players={players} setPlayers={setPlayers} scouts={mockScouts} />} />
+                <Route path="/player/:id" element={<PlayerProfile players={players} setPlayers={setPlayers} scouts={scouts} />} />
                 <Route path="/players" element={<PlayerDatabase players={players} setPlayers={setPlayers} />} />
-                <Route path="/scouts" element={<Scouts assignments={assignments} setAssignments={setAssignments} />} />
-                <Route path="/scouts/:id" element={<ScoutProfile players={players} assignments={assignments} />} />
+                <Route path="/scouts" element={<Scouts assignments={assignments} setAssignments={setAssignments} scouts={scouts} />} />
+                <Route path="/scouts/:id" element={<ScoutProfile players={players} assignments={assignments} scouts={scouts} setScouts={setScouts} />} />
                 <Route path="/shortlists" element={<ShortlistPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

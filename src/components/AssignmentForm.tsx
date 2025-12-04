@@ -49,7 +49,7 @@ const formSchema = z.object({
 interface AssignmentFormProps {
   onAddAssignment: (assignment: Assignment) => void;
   onClose: () => void;
-  scouts: Scout[];
+  scouts: Scout[]; // Receive scouts from props
 }
 
 const AssignmentForm: React.FC<AssignmentFormProps> = ({ onAddAssignment, onClose, scouts }) => {
@@ -152,71 +152,71 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({ onAddAssignment, onClos
             name="priority"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-muted-foreground">Priority</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="bg-input border-border text-foreground">
-                      <SelectValue placeholder="Select priority" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent className="bg-popover border-border text-popover-foreground">
-                    <SelectItem value="P1">P1 - High</SelectItem>
-                    <SelectItem value="P2">P2 - Medium</SelectItem>
-                    <SelectItem value="P3">P3 - Low</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="dueDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel className="text-muted-foreground">Due Date</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
+                  <FormLabel className="text-muted-foreground">Priority</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full pl-3 text-left font-normal bg-input border-border text-foreground hover:bg-accent",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
+                      <SelectTrigger className="bg-input border-border text-foreground">
+                        <SelectValue placeholder="Select priority" />
+                      </SelectTrigger>
                     </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-popover border-border text-popover-foreground" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) => date < new Date("1900-01-01")} // Allow past dates for historical assignments
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <DialogFooter className="mt-4">
-            <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              <PlusCircle className="mr-2 h-4 w-4" /> Create Assignment
-            </Button>
-          </DialogFooter>
-        </form>
-      </Form>
-    </DialogContent>
-  );
-};
+                    <SelectContent className="bg-popover border-border text-popover-foreground">
+                      <SelectItem value="P1">P1 - High</SelectItem>
+                      <SelectItem value="P2">P2 - Medium</SelectItem>
+                      <SelectItem value="P3">P3 - Low</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="dueDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel className="text-muted-foreground">Due Date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal bg-input border-border text-foreground hover:bg-accent",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-popover border-border text-popover-foreground" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) => date < new Date("1900-01-01")} // Allow past dates for historical assignments
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <DialogFooter className="mt-4">
+              <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                <PlusCircle className="mr-2 h-4 w-4" /> Create Assignment
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    );
+  };
 
 export default AssignmentForm;

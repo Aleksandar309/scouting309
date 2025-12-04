@@ -13,9 +13,17 @@ interface ScoutAttributesSectionProps {
   scout: Scout;
   selectedScoutRole: ScoutRole | null; // New prop
   onRoleSelect: (role: ScoutRole | null) => void; // New prop
+  isEditable?: boolean; // New prop for edit mode
+  onAttributeChange?: (category: ScoutAttributeCategory, attributeKey: string, newRating: number) => void; // New prop for attribute changes
 }
 
-const ScoutAttributesSection: React.FC<ScoutAttributesSectionProps> = ({ scout, selectedScoutRole, onRoleSelect }) => {
+const ScoutAttributesSection: React.FC<ScoutAttributesSectionProps> = ({
+  scout,
+  selectedScoutRole,
+  onRoleSelect,
+  isEditable = false,
+  onAttributeChange,
+}) => {
   const renderAttributes = (category: ScoutAttributeCategory, title: string, icon: React.ElementType) => {
     const attributes = SCOUT_ATTRIBUTE_CATEGORIES[category];
     const scoutAttributeData = scout[`${category}Attributes` as keyof Scout];
@@ -41,6 +49,8 @@ const ScoutAttributesSection: React.FC<ScoutAttributesSectionProps> = ({ scout, 
                 name={attrName}
                 rating={rating !== undefined ? rating : 0}
                 highlightType={highlightType}
+                isEditable={isEditable}
+                onRatingChange={(newRating) => onAttributeChange && onAttributeChange(category, key, newRating)}
               />
             );
           })}
