@@ -35,7 +35,7 @@ import {
 import { Player, PlayerAttribute, AttributeHistoryEntry, PlayerPosition } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
 import RadarChart from "@/components/RadarChart";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import ScoutReportForm from "@/components/ScoutReportForm";
 import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import PlayerStatistics from '@/components/PlayerStatistics';
@@ -198,6 +198,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   const [isShortlistFormOpen, setIsShortlistFormOpen] = useState(false);
   const [showScoutingProfile, setShowScoutingProfile] = useState(true);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isBioDialogOpen, setIsBioDialogOpen] = useState(false); // New state for biography dialog
 
   const [isRoleDetailsDialogOpen, setIsRoleDetailsDialogOpen] = useState(false);
   const [selectedPositionForRoles, setSelectedPositionForRoles] = useState<string | null>(null);
@@ -784,8 +785,31 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Player Details Card */}
                 <Card className="bg-card border-border text-card-foreground">
-                  <CardHeader>
+                  <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg font-semibold">Player Details</CardTitle>
+                    {!isEditMode && player.details.notes && (
+                      <Dialog open={isBioDialogOpen} onOpenChange={setIsBioDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="bg-muted border-border text-muted-foreground hover:bg-accent">
+                            <User className="mr-2 h-4 w-4" /> Bio
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px] bg-card text-card-foreground border-border">
+                          <DialogHeader>
+                            <DialogTitle className="text-2xl">Player Biography</DialogTitle>
+                            <DialogDescription className="text-muted-foreground">
+                              Detailed notes about {player.name}.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="py-4 text-muted-foreground whitespace-pre-wrap">
+                            {player.details.notes}
+                          </div>
+                          <DialogFooter>
+                            <Button onClick={() => setIsBioDialogOpen(false)} className="bg-primary hover:bg-primary/90 text-primary-foreground">Close</Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    )}
                   </CardHeader>
                   <CardContent className="space-y-3 text-muted-foreground">
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
@@ -919,18 +943,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                         )}
                       />
                     ) : (
-                      player.details.notes && (
-                        <Accordion type="single" collapsible className="w-full mt-4 border-t border-border pt-3">
-                          <AccordionItem value="player-notes" className="border-b-0">
-                            <AccordionTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground">
-                              View Player Biography
-                            </AccordionTrigger>
-                            <AccordionContent className="text-sm text-muted-foreground">
-                              {player.details.notes}
-                            </AccordionContent>
-                          </AccordionItem>
-                        </Accordion>
-                      )
+                      // Removed the Accordion for notes here
+                      null
                     )}
                   </CardContent>
                 </Card>
