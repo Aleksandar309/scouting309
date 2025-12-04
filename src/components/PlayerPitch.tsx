@@ -49,6 +49,7 @@ const positionCoordinates: { [key: string]: { x: string; y: string } } = {
   // RW: { x: "85%", y: "20%" } -> { x: "80%", y: "85%" }
   "RW": { x: "80%", y: "85%" },
   // Central Forwards (CF)
+  "CF": { x: "90%", y: "50%" }, // Added generic CF position
   "CF_CENTRAL": { x: "90%", y: "50%" },
   "CF_LEFT": { x: "90%", y: "35%" },
   "CF_RIGHT": { x: "90%", y: "65%" },
@@ -88,7 +89,7 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
 
         {positionsToRender.map((pos, index) => {
           const coords = positionCoordinates[pos.name] || { x: pos.x, y: pos.y }; // Use provided coords or fallback
-          if (!coords) return null;
+          if (!coords || !coords.x || !coords.y) return null; // Ensure coordinates are defined
 
           let circleClasses = "";
           let displayedName = pos.name; // Default to actual name
