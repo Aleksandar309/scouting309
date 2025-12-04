@@ -102,18 +102,10 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments }) 
 
           <TabsContent value="team" className="mt-6">
             {Object.entries(groupedScouts).map(([category, scouts]) => (
-              <div key={category} className="mb-8">
-                <h2 className="text-2xl font-bold mb-4 text-foreground">{category}</h2>
-                {scouts.length === 0 ? (
-                  <Card className="bg-card border-border text-card-foreground text-center p-8 mb-6">
-                    <CardTitle className="text-xl mb-4">No {category} Found</CardTitle>
-                    <CardContent>
-                      <p className="text-muted-foreground">
-                        There are currently no scouts assigned to this category.
-                      </p>
-                    </CardContent>
-                  </Card>
-                ) : (
+              // Only render the category if there are scouts in it
+              scouts.length > 0 && (
+                <div key={category} className="mb-8">
+                  <h2 className="text-2xl font-bold mb-4 text-foreground">{category}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {scouts.map((scout) => (
                       <Link to={`/scouts/${scout.id}`} key={scout.id}>
@@ -144,8 +136,8 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments }) 
                       </Link>
                     ))}
                   </div>
-                )}
-              </div>
+                </div>
+              )
             ))}
           </TabsContent>
 
