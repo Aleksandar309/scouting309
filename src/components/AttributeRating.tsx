@@ -29,7 +29,7 @@ const getRatingColorClass = (rating: number): string => {
   } else if (rating === 5) {
     return "!bg-amber-400"; // Žuta/Amber
   } else if (rating === 6) {
-    return "!bg-lime-400"; // Svetlo zelena/limeta, bliže 7ici
+    return "!bg-yellow-400"; // Žuta nijansa koja vuče na zelenu (prelaz ka lime-500)
   } else if (rating === 7) {
     return "!bg-lime-500"; // Yellow-Green
   } else if (rating === 8) {
