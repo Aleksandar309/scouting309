@@ -48,7 +48,7 @@
     --chart-axis-label: 215.4 16.3% 46.9%; /* Muted foreground for light theme */
     --pitch-line: 214.3 31.8% 91.4%; /* Border color for light theme */
     --pitch-natural: 142.1 76.2% 36.3%; /* Green for natural position */
-    --pitch-alternative: 48 96% 89.2%; /* Yellow for alternative position */
+    --pitch-alternative: 48 96% 70%; /* Brighter Yellow for alternative position */
     --pitch-tertiary: 210 40% 96.1%; /* Muted for tertiary position */
     --pitch-unsuited: 0 84.2% 60.2%; /* Destructive for unsuited position */
     --role-primary: 217.2 91.2% 59.8%; /* Blue for primary role attribute */
@@ -99,7 +99,7 @@
     --chart-axis-label: 215 20.2% 65.1%; /* Muted foreground for dark theme */
     --pitch-line: 217.2 32.6% 17.5%; /* Border color for dark theme */
     --pitch-natural: 142.1 76.2% 36.3%; /* Green for natural position */
-    --pitch-alternative: 48 96% 89.2%; /* Yellow for alternative position */
+    --pitch-alternative: 48 96% 70%; /* Brighter Yellow for alternative position */
     --pitch-tertiary: 217.2 32.6% 17.5%; /* Muted for tertiary position */
     --pitch-unsuited: 0 62.8% 30.6%; /* Destructive for unsuited position */
     --role-primary: 217.2 91.2% 59.8%; /* Blue for primary role attribute */
