@@ -12,7 +12,8 @@ import PlayerDatabase from "./pages/PlayerDatabase";
 import Scouts from "./pages/Scouts";
 import ScoutProfile from "./pages/ScoutProfile";
 import ShortlistPage from "./pages/Shortlist";
-import PlaceholderPage from "./pages/PlaceholderPage";
+import ShadowTeams from "./pages/ShadowTeams"; // Import the new ShadowTeams page
+import PlaceholderPage from "./pages/PlaceholderPage"; // Keep PlaceholderPage for other routes
 import { ShortlistProvider } from "./context/ShortlistContext";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { useState, useEffect } from "react";
@@ -20,7 +21,8 @@ import { initialMockPlayers } from "./data/mockPlayers";
 import { mockScouts as initialMockScouts, initialMockAssignments } from "./data/mockScouts";
 import { Player } from "./types/player";
 import { Scout, Assignment } from "./types/scout";
-import { Shortlist } from "./types/shortlist"; // Import Shortlist type
+import { Shortlist } from "./types/shortlist";
+import { ShadowTeam } from "./types/shadow-team"; // Import ShadowTeam type
 
 const queryClient = new QueryClient();
 
@@ -49,10 +51,18 @@ const App = () => {
     return initialMockAssignments;
   });
 
-  const [shortlists, setShortlists] = useState<Shortlist[]>(() => { // Moved shortlists state here
+  const [shortlists, setShortlists] = useState<Shortlist[]>(() => {
     if (typeof window !== 'undefined') {
       const savedShortlists = localStorage.getItem('shortlists');
       return savedShortlists ? JSON.parse(savedShortlists) : [];
+    }
+    return [];
+  });
+
+  const [shadowTeams, setShadowTeams] = useState<ShadowTeam[]>(() => { // New state for Shadow Teams
+    if (typeof window !== 'undefined') {
+      const savedShadowTeams = localStorage.getItem('shadowTeams');
+      return savedShadowTeams ? JSON.parse(savedShadowTeams) : [];
     }
     return [];
   });
@@ -75,11 +85,17 @@ const App = () => {
     }
   }, [assignments]);
 
-  useEffect(() => { // New useEffect for shortlists
+  useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('shortlists', JSON.stringify(shortlists));
     }
   }, [shortlists]);
+
+  useEffect(() => { // New useEffect for shadowTeams
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('shadowTeams', JSON.stringify(shadowTeams));
+    }
+  }, [shadowTeams]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -88,15 +104,15 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <ShortlistProvider shortlists={shortlists} setShortlists={setShortlists}> {/* Pass shortlists and setShortlists */}
+            <ShortlistProvider shortlists={shortlists} setShortlists={setShortlists}>
               <Routes>
-                <Route path="/" element={<Index players={players} scouts={scouts} shortlists={shortlists} />} /> {/* Pass data to Index */}
+                <Route path="/" element={<Index players={players} scouts={scouts} shortlists={shortlists} />} />
                 <Route path="/player/:id" element={<PlayerProfile players={players} setPlayers={setPlayers} scouts={scouts} />} />
                 <Route path="/players" element={<PlayerDatabase players={players} setPlayers={setPlayers} />} />
                 <Route path="/scouts" element={<Scouts assignments={assignments} setAssignments={setAssignments} scouts={scouts} />} />
                 <Route path="/scouts/:id" element={<ScoutProfile players={players} assignments={assignments} scouts={scouts} setScouts={setScouts} />} />
                 <Route path="/shortlists" element={<ShortlistPage />} />
-                <Route path="/new-page-1" element={<PlaceholderPage />} />
+                <Route path="/shadow-teams" element={<ShadowTeams players={players} shadowTeams={shadowTeams} setShadowTeams={setShadowTeams} />} /> {/* New route */}
                 <Route path="/new-page-2" element={<PlaceholderPage />} />
                 <Route path="/new-page-3" element={<PlaceholderPage />} />
                 <Route path="*" element={<NotFound />} />

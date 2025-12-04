@@ -102,7 +102,7 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
           <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-lg font-medium">New Page 1</CardTitle>
+              <CardTitle className="text-lg font-medium">Shadow Teams</CardTitle>
               <LayoutDashboard className="h-6 w-6 text-primary" /> {/* Placeholder icon */}
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-between">
@@ -111,10 +111,10 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists }) => {
                 alt="Tactical board"
                 className="h-32 object-cover w-full rounded-md mb-4"
               />
-              <p className="text-sm text-muted-foreground mb-4">Description for New Page 1.</p>
-              <Link to="/new-page-1">
+              <p className="text-sm text-muted-foreground mb-4">Create and manage your dream teams.</p>
+              <Link to="/shadow-teams">
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                  Go to Page 1
+                  Go to Shadow Teams
                 </Button>
               </Link>
             </CardContent>
