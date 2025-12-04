@@ -38,7 +38,7 @@ export interface Player {
     contractExpiry: string;
     wageDemands: string;
     agent: string;
-    notes: string;
+    notes?: string; // Made optional to match Zod schema
   };
   scoutingProfile: {
     currentAbility: number;

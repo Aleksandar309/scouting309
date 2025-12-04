@@ -77,8 +77,8 @@ import {
 } from "@/components/ui/select";
 import { ALL_FOOTBALL_POSITIONS } from "@/utils/positions";
 
-// Zod schema for player attributes
-const attributeSchema = z.array(z.object({
+// Define the schema for a single attribute item
+const attributeItemSchema = z.object({
   name: z.string(),
   rating: z.coerce.number().min(1).max(10, { message: "Rating must be between 1 and 10." }),
   history: z.array(z.object({
@@ -87,7 +87,12 @@ const attributeSchema = z.array(z.object({
     changedBy: z.string(),
     comment: z.string().optional(),
   })).optional(),
-}));
+});
+type AttributeFormItem = z.infer<typeof attributeItemSchema>;
+
+// Define the schema for an array of attributes
+const attributeArraySchema = z.array(attributeItemSchema);
+type AttributeFormArray = z.infer<typeof attributeArraySchema>;
 
 // Zod schema for player positions input (name and rating)
 const playerPositionInputSchema = z.object({
@@ -120,12 +125,12 @@ const formSchema = z.object({
     teamFit: z.coerce.number().min(1).max(10, { message: "Team Fit must be between 1 and 10." }),
   }),
   positionsData: z.array(playerPositionInputSchema).min(1, { message: "At least one position is required." }),
-  technical: attributeSchema,
-  tactical: attributeSchema,
-  physical: attributeSchema,
-  mentalPsychology: attributeSchema,
-  setPieces: attributeSchema,
-  hidden: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
+  technical: attributeArraySchema,
+  tactical: attributeArraySchema,
+  physical: attributeArraySchema,
+  mentalPsychology: attributeArraySchema,
+  setPieces: attributeArraySchema,
+  hidden: attributeArraySchema, // Now consistent with other attributes
   keyStrengths: z.string().optional(),
   areasForDevelopment: z.string().optional(),
   changedByScout: z.string().optional(),
@@ -227,12 +232,12 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       details: currentPlayer.details,
       scoutingProfile: currentPlayer.scoutingProfile,
       positionsData: currentPlayer.positionsData.map(p => ({ name: p.name, rating: p.rating })),
-      technical: currentPlayer.technical,
-      tactical: currentPlayer.tactical,
-      physical: currentPlayer.physical,
-      mentalPsychology: currentPlayer.mentalPsychology,
-      setPieces: currentPlayer.setPieces,
-      hidden: currentPlayer.hidden,
+      technical: currentPlayer.technical as AttributeFormArray,
+      tactical: currentPlayer.tactical as AttributeFormArray,
+      physical: currentPlayer.physical as AttributeFormArray,
+      mentalPsychology: currentPlayer.mentalPsychology as AttributeFormArray,
+      setPieces: currentPlayer.setPieces as AttributeFormArray,
+      hidden: currentPlayer.hidden as AttributeFormArray,
       keyStrengths: currentPlayer.keyStrengths.join('\n'),
       areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
       changedByScout: "",
@@ -260,12 +265,12 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
         details: currentPlayer.details,
         scoutingProfile: currentPlayer.scoutingProfile,
         positionsData: currentPlayer.positionsData.map(p => ({ name: p.name, rating: p.rating })),
-        technical: currentPlayer.technical,
-        tactical: currentPlayer.tactical,
-        physical: currentPlayer.physical,
-        mentalPsychology: currentPlayer.mentalPsychology,
-        setPieces: currentPlayer.setPieces,
-        hidden: currentPlayer.hidden,
+        technical: currentPlayer.technical as AttributeFormArray,
+        tactical: currentPlayer.tactical as AttributeFormArray,
+        physical: currentPlayer.physical as AttributeFormArray,
+        mentalPsychology: currentPlayer.mentalPsychology as AttributeFormArray,
+        setPieces: currentPlayer.setPieces as AttributeFormArray,
+        hidden: currentPlayer.hidden as AttributeFormArray,
         keyStrengths: currentPlayer.keyStrengths.join('\n'),
         areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
         changedByScout: "",
@@ -375,21 +380,10 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       return;
     }
 
-    // Create a temporary player object to pass to updateAttributeHistory
-    const tempPlayer: Player = {
-      ...currentPlayer, // Start with current player's attributes
-      technical: values.technical,
-      tactical: values.tactical,
-      physical: values.physical,
-      mentalPsychology: values.mentalPsychology,
-      setPieces: values.setPieces,
-      hidden: values.hidden,
-    } as Player; // Cast to Player to satisfy type checking for attribute arrays
-
     // Function to compare and update attribute history
     const updateAttributeHistory = (
       currentAttrs: PlayerAttribute[],
-      newAttrs: PlayerAttribute[],
+      newAttrs: AttributeFormArray, // Changed parameter type
       category: FmAttributeCategory
     ): PlayerAttribute[] => {
       return newAttrs.map(newAttr => {
@@ -413,6 +407,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     const updatedPlayer: Player = {
       ...player,
       ...values,
+      details: values.details as Player['details'], // Explicitly cast
+      scoutingProfile: values.scoutingProfile as Player['scoutingProfile'], // Explicitly cast
       positions: generalPositions,
       positionsData: processedPositionsData,
       keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
@@ -462,7 +458,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     <Input
                       type="number"
                       min="1"
-                      max={fieldArrayName === "hidden" ? "10" : "10"}
+                      max="10"
                       className="bg-input border-border text-foreground text-sm text-center h-8"
                       {...field}
                       onChange={(e) => {
@@ -654,12 +650,12 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                           details: currentPlayer.details,
                           scoutingProfile: currentPlayer.scoutingProfile,
                           positionsData: currentPlayer.positionsData.map(p => ({ name: p.name, rating: p.rating })),
-                          technical: currentPlayer.technical,
-                          tactical: currentPlayer.tactical,
-                          physical: currentPlayer.physical,
-                          mentalPsychology: currentPlayer.mentalPsychology,
-                          setPieces: currentPlayer.setPieces,
-                          hidden: currentPlayer.hidden,
+                          technical: currentPlayer.technical as AttributeFormArray,
+                          tactical: currentPlayer.tactical as AttributeFormArray,
+                          physical: currentPlayer.physical as AttributeFormArray,
+                          mentalPsychology: currentPlayer.mentalPsychology as AttributeFormArray,
+                          setPieces: currentPlayer.setPieces as AttributeFormArray,
+                          hidden: currentPlayer.hidden as AttributeFormArray,
                           keyStrengths: currentPlayer.keyStrengths.join('\n'),
                           areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
                           changedByScout: "",

@@ -39,7 +39,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ALL_FOOTBALL_POSITIONS } from "@/utils/positions"; // Import the new positions list
+import { ALL_FOOTBALL_POSITIONS } from "@/utils/positions";
 
 // Zod schema for player positions (now with rating)
 const playerPositionInputSchema = z.object({
@@ -47,8 +47,8 @@ const playerPositionInputSchema = z.object({
   rating: z.coerce.number().min(0).max(10, { message: "Rating must be between 0 and 10." }),
 });
 
-// Zod schema for player attributes
-const attributeSchema = z.array(z.object({
+// Define the schema for a single attribute item
+const attributeItemSchema = z.object({
   name: z.string(),
   rating: z.coerce.number().min(1).max(10, { message: "Rating must be between 1 and 10." }),
   history: z.array(z.object({
@@ -57,7 +57,12 @@ const attributeSchema = z.array(z.object({
     changedBy: z.string(),
     comment: z.string().optional(),
   })).optional(),
-}));
+});
+type AttributeFormItem = z.infer<typeof attributeItemSchema>;
+
+// Define the schema for an array of attributes
+const attributeArraySchema = z.array(attributeItemSchema);
+type AttributeFormArray = z.infer<typeof attributeArraySchema>;
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -82,12 +87,12 @@ const formSchema = z.object({
     potentialAbility: z.coerce.number().min(1).max(10, { message: "Potential Ability must be between 1 and 10." }),
     teamFit: z.coerce.number().min(1).max(10, { message: "Team Fit must be between 1 and 10." }),
   }),
-  technical: attributeSchema,
-  tactical: attributeSchema,
-  physical: attributeSchema,
-  mentalPsychology: attributeSchema,
-  setPieces: attributeSchema,
-  hidden: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })), // Changed max to 10
+  technical: attributeArraySchema,
+  tactical: attributeArraySchema,
+  physical: attributeArraySchema,
+  mentalPsychology: attributeArraySchema,
+  setPieces: attributeArraySchema,
+  hidden: attributeArraySchema, // Now consistent with other attributes
   keyStrengths: z.string().optional(),
   areasForDevelopment: z.string().optional(),
   priorityTarget: z.boolean().default(false),
@@ -135,12 +140,12 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
         potentialAbility: 7,
         teamFit: 5,
       },
-      technical: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.technical),
-      tactical: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.tactical),
-      physical: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.physical),
-      mentalPsychology: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.mentalPsychology),
-      setPieces: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.setPieces),
-      hidden: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.hidden, 5), // Default hidden rating to 5, max 10
+      technical: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.technical) as AttributeFormArray,
+      tactical: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.tactical) as AttributeFormArray,
+      physical: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.physical) as AttributeFormArray,
+      mentalPsychology: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.mentalPsychology) as AttributeFormArray,
+      setPieces: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.setPieces) as AttributeFormArray,
+      hidden: createDefaultPlayerAttributes(CATEGORIZED_ATTRIBUTES.hidden, 5) as AttributeFormArray, // Default hidden rating to 5, max 10
       keyStrengths: "",
       areasForDevelopment: "",
       priorityTarget: false,
@@ -188,14 +193,14 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
       footed: values.footed,
       lastEdited: new Date().toISOString(),
       avatarUrl: values.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${values.name.charAt(0)}`,
-      details: values.details,
-      scoutingProfile: values.scoutingProfile,
-      technical: values.technical,
-      tactical: values.tactical,
-      physical: values.physical,
-      mentalPsychology: values.mentalPsychology,
-      setPieces: values.setPieces,
-      hidden: values.hidden,
+      details: values.details as Player['details'], // Explicitly cast
+      scoutingProfile: values.scoutingProfile as Player['scoutingProfile'], // Explicitly cast
+      technical: values.technical as PlayerAttribute[], // Explicitly cast
+      tactical: values.tactical as PlayerAttribute[], // Explicitly cast
+      physical: values.physical as PlayerAttribute[], // Explicitly cast
+      mentalPsychology: values.mentalPsychology as PlayerAttribute[], // Explicitly cast
+      setPieces: values.setPieces as PlayerAttribute[], // Explicitly cast
+      hidden: values.hidden as PlayerAttribute[], // Explicitly cast
       keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
       areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
       scoutingReports: [],
@@ -224,7 +229,7 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
                 <Input
                   type="number"
                   min="1"
-                  max={fieldArrayName === "hidden" ? "10" : "10"} // Max 10 for hidden
+                  max="10" // Max 10 for all attributes
                   className="bg-input border-border text-foreground text-sm text-center h-8"
                   {...field}
                   onChange={(e) => {
