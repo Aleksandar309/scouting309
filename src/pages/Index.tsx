@@ -89,8 +89,8 @@ const Index = () => {
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-between">
               <img
-                src="https://images.unsplash.com/photo-1551288259-cd729247c78b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="Generic dashboard"
+                src="https://images.unsplash.com/photo-1550592704-f53113076484?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Tactical board"
                 className="h-32 object-cover w-full rounded-md mb-4"
               />
               <p className="text-sm text-muted-foreground mb-4">Description for New Page 1.</p>
@@ -109,8 +109,8 @@ const Index = () => {
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-between">
               <img
-                src="https://images.unsplash.com/photo-1551288259-cd729247c78b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="Generic dashboard"
+                src="https://images.unsplash.com/photo-1541701494587-d5e827190468?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Stadium lights"
                 className="h-32 object-cover w-full rounded-md mb-4"
               />
               <p className="text-sm text-muted-foreground mb-4">Description for New Page 2.</p>
@@ -129,8 +129,8 @@ const Index = () => {
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-between">
               <img
-                src="https://images.unsplash.com/photo-1551288259-cd729247c78b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="Generic dashboard"
+                src="https://images.unsplash.com/photo-1518611012118-696072cab595?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Football pitch lines"
                 className="h-32 object-cover w-full rounded-md mb-4"
               />
               <p className="text-sm text-muted-foreground mb-4">Description for New Page 3.</p>
