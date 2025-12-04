@@ -66,18 +66,22 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments }) 
     "Directors, Presidents, Board Members": [],
     "Head Scout/Chief": [],
     "Senior Scouts": [],
+    "General Scouts": [], // New category for general scouts
     "Youth Scouts": [],
   };
 
   mockScouts.forEach(scout => {
     if (scout.role === "Head Scout") {
       groupedScouts["Head Scout/Chief"].push(scout);
-    } else if (scout.role === "European Scout") { // Assuming European Scout is a Senior Scout
+    } else if (scout.role === "Senior Scout") { // Updated from European Scout
       groupedScouts["Senior Scouts"].push(scout);
     } else if (scout.role === "Youth Scout") {
       groupedScouts["Youth Scouts"].push(scout);
+    } else if (scout.role === "Scout") { // Handle the new 'Scout' role
+      groupedScouts["General Scouts"].push(scout);
     }
-    // Add logic for other roles if they exist in mockScouts
+    // Add logic for other roles if they exist in mockScouts, e.g., Technical Director, Director of Football
+    // For now, they will fall into no category if not explicitly handled.
   });
 
   return (

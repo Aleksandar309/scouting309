@@ -1,3 +1,5 @@
+"use client";
+
 import { Scout, Assignment } from '@/types/scout';
 
 export const mockScouts: Scout[] = [
@@ -36,7 +38,7 @@ export const mockScouts: Scout[] = [
   {
     id: "2",
     name: "Mia Scout",
-    role: "European Scout",
+    role: "Senior Scout", // Changed from European Scout
     email: "mia.scout@brighton.com",
     phone: "+44 7987 654321",
     activePlayers: 8,
@@ -63,7 +65,7 @@ export const mockScouts: Scout[] = [
       temperament: 14,
       controversy: 7,
     },
-    preferredJobs: ["European Scout", "Chief Scout", "Recruitment Analyst"],
+    preferredJobs: ["Senior Scout", "Scout", "Recruitment Analyst"], // Updated preferred jobs
   },
   {
     id: "3",

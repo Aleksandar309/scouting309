@@ -1,3 +1,5 @@
+"use client";
+
 import { ScoutAttributeCategory } from '@/types/scout-attributes';
 
 export interface ScoutRoleAttribute {
@@ -15,9 +17,21 @@ export interface ScoutRole {
 
 export const SCOUT_ROLES: ScoutRole[] = [
   {
+    id: "general-scout",
+    name: "Scout",
+    description: "A general scout focused on identifying players and assessing their current and potential abilities across various regions.",
+    attributes: [
+      { name: "Judging Player Ability", category: "scouting", weight: 3 },
+      { name: "Judging Player Potential", category: "scouting", weight: 3 },
+      { name: "Adaptability", category: "mental", weight: 2 },
+      { name: "Determination", category: "mental", weight: 2 },
+      { name: "Analysing Data", category: "scouting", weight: 1 },
+    ],
+  },
+  {
     id: "head-scout",
     name: "Head Scout",
-    description: "Oversees all scouting operations, focusing on strategic targets and team fit across all regions.",
+    description: "Oversees all scouting operations, focusing on strategic targets, team fit, and managing scouting personnel.",
     attributes: [
       { name: "Judging Player Ability", category: "scouting", weight: 3 },
       { name: "Judging Player Potential", category: "scouting", weight: 3 },
@@ -25,22 +39,56 @@ export const SCOUT_ROLES: ScoutRole[] = [
       { name: "Tactical Knowledge", category: "scouting", weight: 2 },
       { name: "People Management", category: "mental", weight: 3 },
       { name: "Authority", category: "mental", weight: 2 },
-      { name: "Determination", category: "mental", weight: 2 },
-      { name: "Professionalism", category: "mental", weight: 1 },
+      { name: "Determination", category: "mental", weight: 3 }, // Increased weight as per request
+      { name: "Pressure", category: "mental", weight: 2 }, // Added as per request
+      { name: "Professionalism", category: "mental", weight: 2 },
     ],
   },
   {
-    id: "european-scout",
-    name: "European Scout",
-    description: "Specializes in identifying talent across major European leagues, with an emphasis on technical ability and tactical intelligence.",
+    id: "technical-director",
+    name: "Technical Director",
+    description: "Responsible for the overall football philosophy, player development pathways, and recruitment strategy, working closely with coaching staff.",
+    attributes: [
+      { name: "Tactical Knowledge", category: "scouting", weight: 3 },
+      { name: "Judging Staff Ability", category: "scouting", weight: 3 },
+      { name: "People Management", category: "mental", weight: 3 },
+      { name: "Analysing Data", category: "scouting", weight: 2 },
+      { name: "Negotiating", category: "scouting", weight: 2 },
+      { name: "Determination", category: "mental", weight: 2 },
+      { name: "Ambition", category: "mental", weight: 2 },
+      { name: "Professionalism", category: "mental", weight: 2 },
+      { name: "Authority", category: "mental", weight: 2 },
+    ],
+  },
+  {
+    id: "director-of-football",
+    name: "Director of Football",
+    description: "Manages all footballing aspects of the club, including transfers, contracts, and long-term strategic planning.",
+    attributes: [
+      { name: "Negotiating", category: "scouting", weight: 3 },
+      { name: "People Management", category: "mental", weight: 3 },
+      { name: "Judging Player Ability", category: "scouting", weight: 2 },
+      { name: "Judging Player Potential", category: "scouting", weight: 2 },
+      { name: "Tactical Knowledge", category: "scouting", weight: 2 },
+      { name: "Determination", category: "mental", weight: 3 },
+      { name: "Ambition", category: "mental", weight: 3 },
+      { name: "Authority", category: "mental", weight: 3 },
+      { name: "Professionalism", category: "mental", weight: 2 },
+      { name: "Adaptability", category: "mental", weight: 2 },
+    ],
+  },
+  {
+    id: "senior-scout",
+    name: "Senior Scout",
+    description: "An experienced scout identifying talent in specific regions or leagues, focusing on detailed player assessment.",
     attributes: [
       { name: "Judging Player Ability", category: "scouting", weight: 3 },
       { name: "Judging Player Potential", category: "scouting", weight: 3 },
       { name: "Tactical Knowledge", category: "scouting", weight: 2 },
-      { name: "Analysing Data", category: "scouting", weight: 1 },
+      { name: "Analysing Data", category: "scouting", weight: 2 },
       { name: "Adaptability", category: "mental", weight: 3 },
       { name: "Pressure", category: "mental", weight: 2 },
-      { name: "Professionalism", category: "mental", weight: 1 },
+      { name: "Professionalism", category: "mental", weight: 2 },
     ],
   },
   {
@@ -54,20 +102,6 @@ export const SCOUT_ROLES: ScoutRole[] = [
       { name: "Motivating", category: "mental", weight: 2 },
       { name: "Determination", category: "mental", weight: 1 },
       { name: "Adaptability", category: "mental", weight: 1 },
-    ],
-  },
-  {
-    id: "technical-director",
-    name: "Technical Director",
-    description: "Responsible for the overall football philosophy, player development pathways, and recruitment strategy.",
-    attributes: [
-      { name: "Tactical Knowledge", category: "scouting", weight: 3 },
-      { name: "Judging Staff Ability", category: "scouting", weight: 3 },
-      { name: "Analysing Data", category: "scouting", weight: 2 },
-      { name: "People Management", category: "mental", weight: 3 },
-      { name: "Authority", category: "mental", weight: 3 },
-      { name: "Ambition", category: "mental", weight: 2 },
-      { name: "Professionalism", category: "mental", weight: 2 },
     ],
   },
   {
