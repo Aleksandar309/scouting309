@@ -124,6 +124,34 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
     toast.success("Player removed from position.");
   };
 
+  // New handler for when a player is dragged and dropped
+  const handlePlayerDragStop = (
+    positionName: string,
+    playerId: string,
+    newX: number,
+    newY: number
+  ) => {
+    if (!currentTeam) return;
+
+    setShadowTeams(prev => prev.map(team => {
+      if (team.id === currentTeam.id) {
+        const updatedPlayersInPosition = (team.playersByPosition[positionName] || []).map(
+          player => player.id === playerId
+            ? { ...player, customX: newX, customY: newY }
+            : player
+        );
+        return {
+          ...team,
+          playersByPosition: {
+            ...team.playersByPosition,
+            [positionName]: updatedPlayersInPosition,
+          },
+        };
+      }
+      return team;
+    }));
+  };
+
   const handleExportToPDF = () => {
     toast.info("PDF Export functionality coming soon!");
   };
@@ -223,6 +251,7 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
                 playersByPosition={currentTeam.playersByPosition}
                 onPositionClick={handlePositionClick}
                 onPlayerRemove={handlePlayerRemove}
+                onPlayerDragStop={handlePlayerDragStop} // Pass the new handler
                 pitchColor={pitchColor}
               />
             </CardContent>
