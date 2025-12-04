@@ -18,12 +18,18 @@ interface AttributeRatingProps {
 }
 
 const getRatingColorClass = (rating: number): string => {
-  if (rating >= 1 && rating <= 3) {
-    return "!bg-red-500";
-  } else if (rating >= 4 && rating <= 5) {
-    return "!bg-orange-500";
+  if (rating === 1) {
+    return "!bg-red-800"; // Tamno crvena
+  } else if (rating === 2) {
+    return "!bg-red-600"; // Crvena
+  } else if (rating === 3) {
+    return "!bg-red-400"; // Svetlo crvena, vuče na narandžastu
+  } else if (rating === 4) {
+    return "!bg-orange-500"; // Narandžasta
+  } else if (rating === 5) {
+    return "!bg-amber-400"; // Žuta/Amber
   } else if (rating === 6) {
-    return "!bg-yellow-500";
+    return "!bg-lime-400"; // Svetlo zelena/limeta
   } else if (rating === 7) {
     return "!bg-lime-500"; // Yellow-Green
   } else if (rating === 8) {
