@@ -75,6 +75,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ALL_FOOTBALL_POSITIONS } from "@/utils/positions"; // Import the new positions list
 
 // Zod schema for player attributes
 const attributeSchema = z.array(z.object({
@@ -939,9 +940,20 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                               render={({ field }) => (
                                 <FormItem className="flex-1">
                                   <FormLabel className="sr-only">Position Name</FormLabel>
-                                  <FormControl>
-                                    <Input className="bg-input border-border text-foreground" placeholder="e.g., ST" {...field} />
-                                  </FormControl>
+                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                      <SelectTrigger className="bg-input border-border text-foreground">
+                                        <SelectValue placeholder="Select Position" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent className="bg-popover border-border text-popover-foreground">
+                                      {ALL_FOOTBALL_POSITIONS.map((pos) => (
+                                        <SelectItem key={pos} value={pos}>
+                                          {pos}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
                                   <FormMessage />
                                 </FormItem>
                               )}

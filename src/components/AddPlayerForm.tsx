@@ -32,6 +32,14 @@ import { cn } from "@/lib/utils";
 import { Player, PlayerAttribute, PlayerPosition } from "@/types/player";
 import { CATEGORIZED_ATTRIBUTES, createDefaultPlayerAttributes } from "@/utils/player-attributes";
 import AttributeRating from "./AttributeRating";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ALL_FOOTBALL_POSITIONS } from "@/utils/positions"; // Import the new positions list
 
 // Zod schema for player positions (now with rating)
 const playerPositionInputSchema = z.object({
@@ -341,9 +349,20 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onAddPlayer, onClose }) =
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormLabel className={cn(index !== 0 && "sr-only")}>Position Name</FormLabel>
-                        <FormControl>
-                          <Input className="bg-input border-border text-foreground" placeholder="e.g., ST" {...field} />
-                        </FormControl>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="bg-input border-border text-foreground">
+                              <SelectValue placeholder="Select Position" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="bg-popover border-border text-popover-foreground">
+                            {ALL_FOOTBALL_POSITIONS.map((pos) => (
+                              <SelectItem key={pos} value={pos}>
+                                {pos}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
