@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Mail, Phone, User, ChevronLeft, CalendarDays, Briefcase, ArrowUpDown, Table2, LayoutGrid, Plus } from 'lucide-react';
-import { Scout } from '@/types/scout';
+import { Scout, Assignment } from '@/types/scout';
 import { mockScouts } from '@/data/mockScouts';
 import { Player } from '@/types/player';
 import {
@@ -32,9 +32,11 @@ import PlayerCard from '@/components/PlayerCard';
 import { ALL_ATTRIBUTE_NAMES } from '@/utils/player-attributes';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import AddToShortlistDialog from '@/components/AddToShortlistDialog';
+import { format, isPast } from 'date-fns';
 
 interface ScoutProfileProps {
   players: Player[]; // Receive all players as prop
+  assignments: Assignment[]; // Receive all assignments as prop
 }
 
 // Helper function to find an attribute's rating across all categories
@@ -249,7 +251,7 @@ const columns: ColumnDef<Player>[] = [
 ];
 
 
-const ScoutProfile: React.FC<ScoutProfileProps> = ({ players }) => {
+const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const scout = mockScouts.find(s => s.id === id);
@@ -291,6 +293,9 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players }) => {
     player.scoutingReports.some(report => report.scout === scout.name)
   );
 
+  // Filter assignments for this scout
+  const scoutAssignments = assignments.filter(assignment => assignment.assignedTo === scout.id);
+
   const table = useReactTable({
     data: scoutedPlayers,
     columns,
@@ -301,6 +306,34 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players }) => {
       sorting,
     },
   });
+
+  const getPriorityBadgeClass = (priority: Assignment["priority"]) => {
+    switch (priority) {
+      case "P1": return "bg-red-600 text-white";
+      case "P2": return "bg-yellow-600 text-white";
+      case "P3": return "bg-blue-600 text-white";
+      default: return "bg-gray-500 text-white";
+    }
+  };
+
+  const getStatusBadgeClass = (status: Assignment["status"]) => {
+    switch (status) {
+      case "Pending": return "bg-gray-500 text-white";
+      case "In Progress": return "bg-blue-500 text-white";
+      case "Completed": return "bg-green-600 text-white";
+      case "Overdue": return "bg-destructive text-destructive-foreground";
+      default: return "bg-gray-500 text-white";
+    }
+  };
+
+  const getDueDateStatus = (dueDate: string, status: Assignment["status"]) => {
+    if (status === "Completed") return null;
+    const date = new Date(dueDate);
+    if (isPast(date) && status !== "Completed") {
+      return <Badge variant="destructive" className="bg-destructive text-destructive-foreground ml-2">Overdue</Badge>;
+    }
+    return null;
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground p-6">
@@ -350,6 +383,44 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players }) => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Scout Assignments Section */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Assignments for {scout.name} ({scoutAssignments.length})</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {scoutAssignments.length === 0 ? (
+              <Card className="bg-card border-border text-card-foreground text-center p-8 lg:col-span-2">
+                <CardTitle className="text-xl mb-4">No Assignments Yet!</CardTitle>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    {scout.name} currently has no active assignments.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              scoutAssignments.map((assignment) => (
+                <Card key={assignment.id} className="bg-card border-border text-card-foreground shadow-sm">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-xl font-semibold">{assignment.title}</CardTitle>
+                      <Badge className={getPriorityBadgeClass(assignment.priority)}>{assignment.priority}</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-muted-foreground text-sm">
+                    <p>{assignment.description}</p>
+                    <div className="flex items-center justify-between pt-2 border-t border-border">
+                      <span className="flex items-center">
+                        <CalendarDays className="h-4 w-4 mr-1" /> Due: {format(new Date(assignment.dueDate), 'MMM dd, yyyy')}
+                        {getDueDateStatus(assignment.dueDate, assignment.status)}
+                      </span>
+                      <Badge className={getStatusBadgeClass(assignment.status)}>{assignment.status}</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        </div>
 
         {/* Scouted Players Section */}
         <div className="flex justify-between items-center mb-6">
