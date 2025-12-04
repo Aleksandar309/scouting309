@@ -386,7 +386,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       newAttrs: AttributeFormArray, // Changed parameter type
       category: FmAttributeCategory
     ): PlayerAttribute[] => {
-      return newAttrs.map(newAttr => {
+      return newAttrs.map((newAttr: AttributeFormItem) => { // Explicitly type newAttr
         const currentAttr = currentAttrs.find(attr => attr.name === newAttr.name);
         if (currentAttr && currentAttr.rating !== newAttr.rating) {
           const newHistoryEntry: AttributeHistoryEntry = {
@@ -396,11 +396,16 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
             comment: `Rating changed from ${currentAttr.rating} to ${newAttr.rating}.`,
           };
           return {
-            ...newAttr,
+            name: newAttr.name, // Explicitly assign name
+            rating: newAttr.rating, // Explicitly assign rating
             history: [...(currentAttr.history || []), newHistoryEntry],
           };
         }
-        return { ...newAttr, history: currentAttr?.history || [] };
+        return {
+          name: newAttr.name, // Explicitly assign name
+          rating: newAttr.rating, // Explicitly assign rating
+          history: currentAttr?.history || [],
+        };
       });
     };
 
@@ -445,7 +450,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   ) => (
     <div className="space-y-2">
       {/* Removed the duplicate h3 element here */}
-      {form.watch(fieldArrayName).map((attr, index) => (
+      {form.watch(fieldArrayName).map((attr: AttributeFormItem, index) => ( // Explicitly type attr
         <div key={attr.name}>
           {isEditMode ? (
             <FormField
