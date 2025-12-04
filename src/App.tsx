@@ -13,7 +13,7 @@ import Scouts from "./pages/Scouts";
 import ScoutProfile from "./pages/ScoutProfile";
 import ShortlistPage from "./pages/Shortlist";
 import ShadowTeams from "./pages/ShadowTeams"; // Import the new ShadowTeams page
-import PlaceholderPage from "./pages/PlaceholderPage"; // Keep PlaceholderPage for other routes
+import PlaceholderPage from "./pages/PlaceholderPage"; // Import the new generic PlaceholderPage
 import { ShortlistProvider } from "./context/ShortlistContext";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { useState, useEffect } from "react";
