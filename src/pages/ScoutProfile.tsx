@@ -21,6 +21,7 @@ import { format, isPast } from 'date-fns';
 import ScoutAttributesSection from '@/components/ScoutAttributesSection';
 import { ScoutRole } from '@/utils/scout-roles';
 import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/assignment-utils'; // Import assignment utils
+import { Badge } from '@/components/ui/badge'; // Dodato: Import Badge komponenta
 
 interface ScoutProfileProps {
   players: Player[];
@@ -155,6 +156,9 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments }) => 
                       <CardTitle className="text-xl font-semibold">{assignment.title}</CardTitle>
                       <Badge className={getPriorityBadgeClass(assignment.priority)}>{assignment.priority}</Badge>
                     </div>
+                    <p className="text-sm text-muted-foreground flex items-center mt-1">
+                      <Briefcase className="h-4 w-4 mr-1" /> Assigned to: <Link to={`/scouts/${assignment.assignedTo}`} className="text-blue-400 hover:underline ml-1">{assignment.assignedToName}</Link>
+                    </p>
                   </CardHeader>
                   <CardContent className="space-y-2 text-muted-foreground text-sm">
                     <p>{assignment.description}</p>
