@@ -40,10 +40,10 @@ const ScoutAttributesSection: React.FC<ScoutAttributesSectionProps> = ({ scout }
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6"> {/* Changed to 3 columns */}
-      {renderAttributes("scouting", "Scouting Attributes", Target)}
-      {renderAttributes("mental", "Mental Attributes", Brain)}
-      <ScoutPreferredJobs preferredJobs={scout.preferredJobs} /> {/* New component */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <ScoutPreferredJobs preferredJobs={scout.preferredJobs} /> {/* Preferred Jobs first */}
+      {renderAttributes("scouting", "Scouting Attributes", Target)} {/* Scouting Attributes second */}
+      {renderAttributes("mental", "Mental Attributes", Brain)} {/* Mental Attributes third */}
     </div>
   );
 };
