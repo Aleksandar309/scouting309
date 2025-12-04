@@ -25,9 +25,14 @@ export const getStatusBadgeClass = (status: Assignment["status"]) => {
 };
 
 export const getDueDateStatus = (dueDate: string, status: Assignment["status"]) => {
-  if (status === "Completed") return null;
+  // If the status is already 'Completed', it's not overdue.
+  if (status === "Completed") {
+    return null;
+  }
+
   const date = new Date(dueDate);
-  if (isPast(date) && status !== "Completed") {
+  // If the date is in the past AND the status is not 'Completed', then it's overdue.
+  if (isPast(date)) { // Removed `&& status !== "Completed"` as it's redundant after the first check
     return <Badge variant="destructive" className="bg-destructive text-destructive-foreground ml-2">Overdue</Badge>;
   }
   return null;

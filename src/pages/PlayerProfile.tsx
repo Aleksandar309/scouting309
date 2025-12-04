@@ -361,7 +361,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       const type = assignPositionType(posInput.rating);
       if (type) {
         processedPositionsData.push({
-          name: posInput.name.toUpperCase(),
+          name: posInput.name.toUpperCase(), // Standardize position names
           type: type,
           rating: posInput.rating,
         });
@@ -374,16 +374,16 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       return;
     }
 
-    const updatedPlayer: Player = {
-      ...player,
-      ...values,
-      positions: generalPositions,
-      positionsData: processedPositionsData,
-      keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
-      areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
-      avatarUrl: values.avatarUrl,
-      lastEdited: new Date().toISOString(),
-    };
+    // Create a temporary player object to pass to updateAttributeHistory
+    const tempPlayer: Player = {
+      ...currentPlayer, // Start with current player's attributes
+      technical: values.technical,
+      tactical: values.tactical,
+      physical: values.physical,
+      mentalPsychology: values.mentalPsychology,
+      setPieces: values.setPieces,
+      hidden: values.hidden,
+    } as Player; // Cast to Player to satisfy type checking for attribute arrays
 
     // Function to compare and update attribute history
     const updateAttributeHistory = (
@@ -409,13 +409,22 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       });
     };
 
-    updatedPlayer.technical = updateAttributeHistory(currentPlayer.technical, values.technical, "technical");
-    updatedPlayer.tactical = updateAttributeHistory(currentPlayer.tactical, values.tactical, "tactical");
-    updatedPlayer.physical = updateAttributeHistory(currentPlayer.physical, values.physical, "physical");
-    updatedPlayer.mentalPsychology = updateAttributeHistory(currentPlayer.mentalPsychology, values.mentalPsychology, "mentalPsychology");
-    updatedPlayer.setPieces = updateAttributeHistory(currentPlayer.setPieces, values.setPieces, "setPieces");
-    updatedPlayer.hidden = updateAttributeHistory(currentPlayer.hidden, values.hidden, "hidden");
-
+    const updatedPlayer: Player = {
+      ...player,
+      ...values,
+      positions: generalPositions,
+      positionsData: processedPositionsData,
+      keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
+      areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
+      avatarUrl: values.avatarUrl,
+      lastEdited: new Date().toISOString(),
+      technical: updateAttributeHistory(currentPlayer.technical, values.technical, "technical"),
+      tactical: updateAttributeHistory(currentPlayer.tactical, values.tactical, "tactical"),
+      physical: updateAttributeHistory(currentPlayer.physical, values.physical, "physical"),
+      mentalPsychology: updateAttributeHistory(currentPlayer.mentalPsychology, values.mentalPsychology, "mentalPsychology"),
+      setPieces: updateAttributeHistory(currentPlayer.setPieces, values.setPieces, "setPieces"),
+      hidden: updateAttributeHistory(currentPlayer.hidden, values.hidden, "hidden"),
+    };
 
     setPlayers((prevPlayers) =>
       prevPlayers.map((p) => (p.id === updatedPlayer.id ? updatedPlayer : p))

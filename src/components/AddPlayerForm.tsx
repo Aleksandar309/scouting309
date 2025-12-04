@@ -47,6 +47,18 @@ const playerPositionInputSchema = z.object({
   rating: z.coerce.number().min(0).max(10, { message: "Rating must be between 0 and 10." }),
 });
 
+// Zod schema for player attributes
+const attributeSchema = z.array(z.object({
+  name: z.string(),
+  rating: z.coerce.number().min(1).max(10, { message: "Rating must be between 1 and 10." }),
+  history: z.array(z.object({
+    date: z.string(),
+    rating: z.number(),
+    changedBy: z.string(),
+    comment: z.string().optional(),
+  })).optional(),
+}));
+
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   team: z.string().min(2, { message: "Team must be at least 2 characters." }),
@@ -70,11 +82,11 @@ const formSchema = z.object({
     potentialAbility: z.coerce.number().min(1).max(10, { message: "Potential Ability must be between 1 and 10." }),
     teamFit: z.coerce.number().min(1).max(10, { message: "Team Fit must be between 1 and 10." }),
   }),
-  technical: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
-  tactical: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
-  physical: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
-  mentalPsychology: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
-  setPieces: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })),
+  technical: attributeSchema,
+  tactical: attributeSchema,
+  physical: attributeSchema,
+  mentalPsychology: attributeSchema,
+  setPieces: attributeSchema,
   hidden: z.array(z.object({ name: z.string(), rating: z.coerce.number().min(1).max(10) })), // Changed max to 10
   keyStrengths: z.string().optional(),
   areasForDevelopment: z.string().optional(),
