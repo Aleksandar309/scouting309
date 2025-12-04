@@ -16,6 +16,31 @@ interface ShadowPitchProps {
   pitchColor: 'green' | 'theme';
 }
 
+// Transformed for vertical pitch (defense bottom, attack top)
+const positionCoordinates: { [key: string]: { x: string; y: string } } = {
+  "GK": { x: "50%", y: "10%" },
+  "CB": { x: "50%", y: "22%" },
+  "LCB": { x: "30%", y: "22%" },
+  "RCB": { x: "70%", y: "22%" },
+  "LB": { x: "10%", y: "30%" },
+  "RB": { x: "90%", y: "30%" },
+  "DM": { x: "50%", y: "40%" },
+  "LDM": { x: "30%", y: "40%" },
+  "RDM": { x: "70%", y: "40%" },
+  "LCM": { x: "30%", y: "50%" },
+  "RCM": { x: "70%", y: "50%" },
+  "CM": { x: "50%", y: "50%" },
+  "LWB": { x: "10%", y: "45%" },
+  "RWB": { x: "90%", y: "45%" },
+  "AM": { x: "50%", y: "70%" },
+  "LW": { x: "15%", y: "80%" },
+  "RW": { x: "85%", y: "80%" },
+  "CF": { x: "50%", y: "90%" }, // Generic CF
+  "CF_CENTRAL": { x: "50%", y: "90%" },
+  "CF_LEFT": { x: "35%", y: "90%" },
+  "CF_RIGHT": { x: "65%", y: "90%" },
+};
+
 const ShadowPitch: React.FC<ShadowPitchProps> = ({
   formation,
   playersByPosition,
@@ -30,7 +55,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   if (!formation) {
     return (
       <div className={cn(
-        "relative w-full aspect-[3/2] max-h-[800px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner flex items-center justify-center",
+        "relative w-full aspect-[2/3] max-h-[800px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner flex items-center justify-center",
         pitchBackgroundClass,
         pitchLineColorClass
       )}>
@@ -54,19 +79,21 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   return (
     <TooltipProvider>
       <div className={cn(
-        "relative w-full aspect-[3/2] max-h-[800px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner",
+        "relative w-full aspect-[2/3] max-h-[800px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner",
         pitchBackgroundClass,
         pitchLineColorClass
       )}>
         {/* Pitch Lines */}
         <div className={cn("absolute inset-0 border-dashed border-opacity-50", pitchLineColorClass)}>
-          {/* Halfway line (vertical) */}
-          <div className={cn("absolute left-1/2 top-0 bottom-0 w-0.5 bg-opacity-50 transform -translate-x-1/2", pitchLineColorClass)}></div>
+          {/* Halfway line (now horizontal) */}
+          <div className={cn("absolute top-1/2 left-0 right-0 h-0.5 bg-opacity-50 transform -translate-y-1/2", pitchLineColorClass)}></div>
           {/* Center circle */}
           <div className={cn("absolute top-1/2 left-1/2 w-20 h-20 border-2 rounded-full transform -translate-x-1/2 -translate-y-1/2", pitchLineColorClass)}></div>
           {/* Penalty boxes */}
-          <div className={cn("absolute left-0 top-1/2 h-[70%] w-[20%] border-r-2 border-t-2 border-b-2 transform -translate-y-1/2 rounded-l-lg", pitchLineColorClass)}></div>
-          <div className={cn("absolute right-0 top-1/2 h-[70%] w-[20%] border-l-2 border-t-2 border-b-2 transform -translate-y-1/2 rounded-r-lg", pitchLineColorClass)}></div>
+          {/* Bottom Penalty Box (defense) */}
+          <div className={cn("absolute bottom-0 left-1/2 w-[70%] h-[20%] border-t-2 border-l-2 border-r-2 transform -translate-x-1/2 rounded-b-lg", pitchLineColorClass)}></div>
+          {/* Top Penalty Box (attack) */}
+          <div className={cn("absolute top-0 left-1/2 w-[70%] h-[20%] border-b-2 border-l-2 border-r-2 transform -translate-x-1/2 rounded-t-lg", pitchLineColorClass)}></div>
         </div>
 
         {formation.positions.map((formPos: FormationPosition) => {

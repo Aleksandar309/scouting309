@@ -13,50 +13,29 @@ interface PlayerPitchProps {
 }
 
 // Simplified mapping of common football positions to relative coordinates (percentage)
-// Adjusted for a horizontal pitch orientation (rotated 90 degrees clockwise from vertical)
+// Transformed for vertical pitch (defense bottom, attack top)
 const positionCoordinates: { [key: string]: { x: string; y: string } } = {
-  // Original (vertical) -> Transformed (horizontal)
-  // GK: { x: "50%", y: "90%" } -> { x: "10%", y: "50%" }
-  "GK": { x: "10%", y: "50%" },
-  // CB: { x: "50%", y: "78%" } -> { x: "22%", y: "50%" }
-  "CB": { x: "22%", y: "50%" },
-  // LCB: { x: "30%", y: "78%" } -> { x: "22%", y: "30%" }
-  "LCB": { x: "22%", y: "30%" },
-  // RCB: { x: "70%", y: "78%" } -> { x: "22%", y: "70%" }
-  "RCB": { x: "22%", y: "70%" },
-  // LB: { x: "10%", y: "70%" } -> { x: "30%", y: "10%" }
-  "LB": { x: "30%", y: "10%" },
-  // RB: { x: "90%", y: "70%" } -> { x: "30%", y: "90%" }
-  "RB": { x: "30%", y: "90%" },
-  // DM: { x: "50%", y: "60%" } -> { x: "40%", y: "50%" }
-  "DM": { x: "40%", y: "50%" },
-  // LDM (for 4-2-3-1):
-  "LDM": { x: "40%", y: "30%" },
-  // RDM (for 4-2-3-1):
-  "RDM": { x: "40%", y: "70%" },
-  // LCM: { x: "30%", y: "50%" } -> { x: "50%", y: "30%" }
-  "LCM": { x: "50%", y: "30%" },
-  // RCM: { x: "70%", y: "50%" } -> { x: "50%", y: "70%" }
-  "RCM": { x: "50%", y: "70%" },
-  // CM: { x: "50%", y: "50%" } -> { x: "50%", y: "50%" }
+  "GK": { x: "50%", y: "10%" },
+  "CB": { x: "50%", y: "22%" },
+  "LCB": { x: "30%", y: "22%" },
+  "RCB": { x: "70%", y: "22%" },
+  "LB": { x: "10%", y: "30%" },
+  "RB": { x: "90%", y: "30%" },
+  "DM": { x: "50%", y: "40%" },
+  "LDM": { x: "30%", y: "40%" },
+  "RDM": { x: "70%", y: "40%" },
+  "LCM": { x: "30%", y: "50%" },
+  "RCM": { x: "70%", y: "50%" },
   "CM": { x: "50%", y: "50%" },
-  // LM: { x: "10%", y: "40%" } -> { x: "60%", y: "10%" }
-  // RM: { x: "90%", y: "40%" } -> { x: "60%", y: "90%" }
-  // AM: { x: "50%", y: "30%" } -> { x: "70%", y: "50%" }
-  "AM": { x: "70%", y: "50%" },
-  // LW: { x: "15%", y: "20%" } -> { x: "80%", y: "15%" }
-  "LW": { x: "80%", y: "15%" },
-  // RW: { x: "85%", y: "20%" } -> { x: "80%", y: "85%" }
-  "RW": { x: "80%", y: "85%" },
-  // Central Forwards (CF)
-  "CF": { x: "90%", y: "50%" }, // Added generic CF position
-  "CF_CENTRAL": { x: "90%", y: "50%" },
-  "CF_LEFT": { x: "90%", y: "35%" },
-  "CF_RIGHT": { x: "90%", y: "65%" },
-  // LWB (for 3-4-3, 3-5-2):
-  "LWB": { x: "45%", y: "10%" },
-  // RWB (for 3-4-3, 3-5-2):
-  "RWB": { x: "45%", y: "90%" },
+  "LWB": { x: "10%", y: "45%" },
+  "RWB": { x: "90%", y: "45%" },
+  "AM": { x: "50%", y: "70%" },
+  "LW": { x: "15%", y: "80%" },
+  "RW": { x: "85%", y: "80%" },
+  "CF": { x: "50%", y: "90%" }, // Generic CF
+  "CF_CENTRAL": { x: "50%", y: "90%" },
+  "CF_LEFT": { x: "35%", y: "90%" },
+  "CF_RIGHT": { x: "65%", y: "90%" },
 };
 
 const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPositions, onPositionClick }) => {
@@ -64,7 +43,7 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
 
   if (!positionsToRender) {
     return (
-      <div className="relative w-full aspect-[3/2] max-h-[600px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner flex items-center justify-center text-muted-foreground">
+      <div className="relative w-full aspect-[2/3] max-h-[600px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner flex items-center justify-center text-muted-foreground">
         No position data available.
       </div>
     );
@@ -72,19 +51,19 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
 
   return (
     <TooltipProvider>
-      {/* Main pitch container - now horizontal, with max height and centered */}
-      <div className="relative w-full aspect-[3/2] max-h-[600px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner">
+      {/* Main pitch container - now vertical, with max height and centered */}
+      <div className="relative w-full aspect-[2/3] max-h-[600px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner">
         {/* Pitch Lines (simplified) */}
         <div className="absolute inset-0 border-pitch-line border-dashed border-opacity-50"> {/* Use semantic color */}
-          {/* Halfway line (now vertical) */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-pitch-line bg-opacity-50 transform -translate-x-1/2"></div> {/* Use semantic color */}
+          {/* Halfway line (now horizontal) */}
+          <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-pitch-line bg-opacity-50 transform -translate-y-1/2"></div> {/* Use semantic color */}
           {/* Center circle */}
           <div className="absolute top-1/2 left-1/2 w-20 h-20 border-2 border-pitch-line border-opacity-50 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div> {/* Use semantic color */}
-          {/* Penalty boxes (now on left/right sides) */}
-          {/* Left Penalty Box */}
-          <div className="absolute left-0 top-1/2 h-[70%] w-[20%] border-r-2 border-t-2 border-b-2 border-pitch-line border-opacity-50 transform -translate-y-1/2 rounded-l-lg"></div> {/* Use semantic color */}
-          {/* Right Penalty Box */}
-          <div className="absolute right-0 top-1/2 h-[70%] w-[20%] border-l-2 border-t-2 border-b-2 border-pitch-line border-opacity-50 transform -translate-y-1/2 rounded-r-lg"></div> {/* Use semantic color */}
+          {/* Penalty boxes (now on top/bottom sides) */}
+          {/* Bottom Penalty Box (defense) */}
+          <div className="absolute bottom-0 left-1/2 w-[70%] h-[20%] border-t-2 border-l-2 border-r-2 border-pitch-line border-opacity-50 transform -translate-x-1/2 rounded-b-lg"></div> {/* Use semantic color */}
+          {/* Top Penalty Box (attack) */}
+          <div className="absolute top-0 left-1/2 w-[70%] h-[20%] border-b-2 border-l-2 border-r-2 border-pitch-line border-opacity-50 transform -translate-x-1/2 rounded-t-lg"></div> {/* Use semantic color */}
         </div>
 
         {positionsToRender.map((pos, index) => {
