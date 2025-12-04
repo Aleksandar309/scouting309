@@ -29,8 +29,8 @@ export interface Player {
   age: number;
   value: string;
   footed: string;
-  leftFootRating: number; // NEW: Rating for left foot (1-10)
-  rightFootRating: number; // NEW: Rating for right foot (1-10)
+  // leftFootRating: number; // REMOVED
+  // rightFootRating: number; // REMOVED
   lastEdited?: string; // NEW: Optional field for last edited timestamp
   avatarUrl?: string; // NEW: Optional field for player avatar image URL
   details: {

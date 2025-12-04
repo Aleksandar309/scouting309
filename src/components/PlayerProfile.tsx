@@ -31,7 +31,7 @@ import {
   History,
   Trash2,
   PlusCircle,
-  Foot, // Import Foot icon
+  // Foot, // Removed Foot icon
 } from "lucide-react";
 import { Player, PlayerAttribute, AttributeHistoryEntry, PlayerPosition } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
@@ -109,8 +109,8 @@ const formSchema = z.object({
   age: z.coerce.number().min(1, { message: "Age must be at least 1." }),
   value: z.string().min(2, { message: "Value must be specified." }),
   footed: z.string().min(2, { message: "Footed must be specified." }),
-  leftFootRating: z.coerce.number().min(1).max(10, { message: "Left Foot Rating must be between 1 and 10." }), // New field
-  rightFootRating: z.coerce.number().min(1).max(10, { message: "Right Foot Rating must be between 1 and 10." }), // New field
+  // leftFootRating: z.coerce.number().min(1).max(10, { message: "Left Foot Rating must be between 1 and 10." }), // Removed field
+  // rightFootRating: z.coerce.number().min(1).max(10, { message: "Right Foot Rating must be between 1 and 10." }), // Removed field
   lastEdited: z.string().optional(),
   avatarUrl: z.string().optional(),
   details: z.object({
@@ -230,8 +230,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       age: currentPlayer.age,
       value: currentPlayer.value,
       footed: currentPlayer.footed,
-      leftFootRating: currentPlayer.leftFootRating, // Set default
-      rightFootRating: currentPlayer.rightFootRating, // Set default
+      // leftFootRating: currentPlayer.leftFootRating, // Removed default
+      // rightFootRating: currentPlayer.rightFootRating, // Removed default
       lastEdited: currentPlayer.lastEdited || '',
       avatarUrl: currentPlayer.avatarUrl || '',
       details: currentPlayer.details,
@@ -265,8 +265,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
         age: currentPlayer.age,
         value: currentPlayer.value,
         footed: currentPlayer.footed,
-        leftFootRating: currentPlayer.leftFootRating,
-        rightFootRating: currentPlayer.rightFootRating,
+        // leftFootRating: currentPlayer.leftFootRating,
+        // rightFootRating: currentPlayer.rightFootRating,
         lastEdited: currentPlayer.lastEdited || '',
         avatarUrl: currentPlayer.avatarUrl || '',
         details: currentPlayer.details,
@@ -427,6 +427,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
       avatarUrl: values.avatarUrl,
       lastEdited: new Date().toISOString(),
+      // leftFootRating: values.leftFootRating, // Removed
+      // rightFootRating: values.rightFootRating, // Removed
       technical: updateAttributeHistory(currentPlayer.technical, values.technical, "technical"),
       tactical: updateAttributeHistory(currentPlayer.tactical, values.tactical, "tactical"),
       physical: updateAttributeHistory(currentPlayer.physical, values.physical, "physical"),
@@ -657,8 +659,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                           age: currentPlayer.age,
                           value: currentPlayer.value,
                           footed: currentPlayer.footed,
-                          leftFootRating: currentPlayer.leftFootRating,
-                          rightFootRating: currentPlayer.rightFootRating,
+                          // leftFootRating: currentPlayer.leftFootRating,
+                          // rightFootRating: currentPlayer.rightFootRating,
                           lastEdited: currentPlayer.lastEdited || '',
                           avatarUrl: currentPlayer.avatarUrl || '',
                           details: currentPlayer.details,
@@ -1078,8 +1080,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   )}
                 </Card>
 
-                {/* Footedness Ratings Card */}
-                <Card className="bg-card border-border text-card-foreground">
+                {/* Removed Footedness Ratings Card */}
+                {/* <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><Foot className="mr-2 h-5 w-5" /> Footedness</CardTitle>
                   </CardHeader>
@@ -1125,7 +1127,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                       </div>
                     </div>
                   </CardContent>
-                </Card>
+                </Card> */}
 
                 {/* Technical Attributes Card */}
                 <Card className="bg-card border-border text-card-foreground">
