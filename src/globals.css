@@ -68,8 +68,8 @@
     --popover: 220 15% 15%; /* Još svetlija za popovere */
     --popover-foreground: 210 20% 90%;
 
-    --primary: 210 20% 90%; /* Pozadina primarnog dugmeta, svetao tekst */
-    --primary-foreground: 220 15% 10%; /* Tekst primarnog dugmeta, taman */
+    --primary: 217.2 91.2% 59.8%; /* Ažurirano: Vibrantna plava za primarne elemente */
+    --primary-foreground: 0 0% 100%; /* Ažurirano: Bela za tekst na primarnim elementima */
 
     --secondary: 220 10% 20%; /* Sekundarni elementi, malo svetlija siva */
     --secondary-foreground: 210 20% 90%;
