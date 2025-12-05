@@ -66,62 +66,62 @@
   }
 
   .dark {
-    --background: 220 15% 10%; /* Dublja, manje zasićena plavo-siva */
-    --foreground: 210 20% 90%; /* Svetlija, blago desaturisana bela */
+    --background: 240 10% 3.9%; /* Very dark grey, almost black */
+    --foreground: 0 0% 98%; /* Near white */
 
-    --card: 220 15% 12%; /* Malo svetlija od pozadine za kartice */
-    --card-foreground: 210 20% 90%;
+    --card: 240 10% 6%; /* Slightly lighter than background for cards */
+    --card-foreground: 0 0% 98%;
 
-    --popover: 220 15% 15%; /* Još svetlija za popovere */
-    --popover-foreground: 210 20% 90%;
+    --popover: 240 10% 9%; /* Lighter for popovers */
+    --popover-foreground: 0 0% 98%;
 
-    --brand: 180 70% 40%; /* Slightly lighter teal for dark theme */
+    --brand: 180 70% 50%; /* Brighter teal for dark theme */
     --brand-foreground: 0 0% 100%;
 
-    --primary: var(--brand); /* Use brand color as primary */
-    --primary-foreground: var(--brand-foreground); /* Use brand foreground */
+    --primary: var(--brand);
+    --primary-foreground: var(--brand-foreground);
 
-    --secondary: 220 10% 20%; /* Sekundarni elementi, malo svetlija siva */
-    --secondary-foreground: 210 20% 90%;
+    --secondary: 240 10% 12%; /* Darker secondary */
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 220 10% 20%;
-    --muted-foreground: 210 10% 60%; /* Muted tekst, svetlija siva */
+    --muted: 240 10% 12%;
+    --muted-foreground: 240 5% 64.9%; /* Lighter muted text */
 
-    --accent: 220 10% 25%; /* Akcenat za hover stanja */
-    --accent-foreground: 210 20% 90%;
+    --accent: 240 10% 18%; /* More distinct accent for hover */
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 70% 40%; /* Tamnija crvena za destruktivne akcije */
-    --destructive-foreground: 210 20% 90%;
+    --destructive: 0 62.8% 30.6%; /* Darker, more subtle destructive red */
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 220 10% 25%;
-    --input: 220 15% 15%;
-    --ring: 210 20% 90%;
-    --sidebar-background: 220 15% 10%; /* Prilagođeno novoj tamnoj pozadini */
-    --sidebar-foreground: 210 20% 90%;
-    --sidebar-primary: var(--brand); /* Use brand color as sidebar primary */
+    --border: 240 10% 18%;
+    --input: 240 10% 12%;
+    --ring: 0 0% 98%;
+    --sidebar-background: 240 10% 3.9%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: var(--brand);
     --sidebar-primary-foreground: var(--brand-foreground);
-    --sidebar-accent: 220 10% 25%;
-    --sidebar-accent-foreground: 210 20% 90%;
-    --sidebar-border: 220 10% 25%;
+    --sidebar-accent: 240 10% 18%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 10% 18%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* New semantic colors for charts, pitch, and role highlights - Dark theme */
-    --chart-grid: 220 10% 25%;
-    --chart-axis-label: 210 10% 60%;
-    --pitch-line: 220 10% 25%;
-    --pitch-natural: 142.1 76.2% 36.3%;
-    --pitch-alternative: 48 96% 70%;
-    --pitch-tertiary: 210 10% 60%;
-    --pitch-unsuited: 0 70% 40%;
-    --role-primary: var(--brand); /* Use brand color for role primary */
-    --role-secondary: 262.1 83.3% 57.8%; /* Keep purple for secondary */
-    --role-tertiary: 210 10% 60%;
+    --chart-grid: 240 10% 18%;
+    --chart-axis-label: 240 5% 64.9%;
+    --pitch-line: 240 10% 18%;
+    --pitch-natural: 142.1 76.2% 36.3%; /* Keep green */
+    --pitch-alternative: 48 96% 70%; /* Keep yellow */
+    --pitch-tertiary: 240 5% 64.9%; /* Muted foreground for tertiary position */
+    --pitch-unsuited: 0 62.8% 30.6%; /* Destructive for unsuited position */
+    --role-primary: var(--brand);
+    --role-secondary: 262.1 83.3% 57.8%; /* Keep purple */
+    --role-tertiary: 240 5% 64.9%;
     --text-on-colored-background: 0 0% 100%;
-    --table-row-hover: 217.2 91.2% 20%; /* Dodato: Tamno plava za hover redova tabele u tamnoj temi */
+    --table-row-hover: 240 10% 15%; /* Darker hover for table rows */
 
     /* Shadow Pitch specific colors */
-    --pitch-background-green: 120 60% 20%; /* Even darker green for dark theme pitch */
-    --pitch-background-theme: var(--background); /* Use app background for theme pitch */
+    --pitch-background-green: 120 60% 15%; /* Darker green for dark theme pitch */
+    --pitch-background-theme: var(--background);
   }
 }
 

@@ -182,7 +182,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
               {/* Player content (Avatar, remove button) */}
               <Avatar className="h-8 w-8">
                 <AvatarImage src={player.avatarUrl} alt={player.name} />
-                <AvatarFallback className="bg-gray-600 text-white text-xs">{player.name.charAt(0)}</AvatarFallback>
+                <AvatarFallback className="bg-muted text-muted-foreground text-xs">{player.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <button
                 className="absolute -top-1 -right-1 bg-destructive rounded-full h-4 w-4 flex items-center justify-center text-white text-xs"

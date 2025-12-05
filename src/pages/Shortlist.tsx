@@ -91,7 +91,7 @@ const ShortlistPage: React.FC = () => {
                                 <TableCell>
                                   <div className="flex flex-wrap gap-1">
                                     {player.positions.map((pos) => (
-                                      <Badge key={pos} variant="secondary" className="bg-secondary text-secondary-foreground text-base"> {/* Povećana veličina teksta */}
+                                      <Badge key={pos} variant="secondary" className="bg-muted text-muted-foreground text-base"> {/* Povećana veličina teksta */}
                                         {pos}
                                       </Badge>
                                     ))}

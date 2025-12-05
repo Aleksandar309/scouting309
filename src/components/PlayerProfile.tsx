@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,7 +33,6 @@ import {
   History,
   Trash2,
   PlusCircle,
-  // Foot, // Removed Foot icon
 } from "lucide-react";
 import { Player, PlayerAttribute, AttributeHistoryEntry, PlayerPosition } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
@@ -77,6 +78,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ALL_FOOTBALL_POSITIONS } from "@/utils/positions";
+import { ShadowTeam, ShadowTeamPlayer } from '@/types/shadow-team'; // Import ShadowTeam types
+import AddPlayerToShadowTeamDialog from '@/components/AddPlayerToShadowTeamDialog'; // Import the new dialog
 
 // Define the schema for a single attribute item
 const attributeItemSchema = z.object({
@@ -109,8 +112,6 @@ const formSchema = z.object({
   age: z.coerce.number().min(1, { message: "Age must be at least 1." }),
   value: z.string().min(2, { message: "Value must be specified." }),
   footed: z.string().min(2, { message: "Footed must be specified." }),
-  // leftFootRating: z.coerce.number().min(1).max(10, { message: "Left Foot Rating must be between 1 and 10." }), // Removed field
-  // rightFootRating: z.coerce.number().min(1).max(10, { message: "Right Foot Rating must be between 1 and 10." }), // Removed field
   lastEdited: z.string().optional(),
   avatarUrl: z.string().optional(),
   details: z.object({
@@ -145,6 +146,8 @@ interface PlayerProfileProps {
   players: Player[];
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
   scouts: Scout[];
+  shadowTeams: ShadowTeam[]; // Receive shadowTeams from App.tsx
+  setShadowTeams: React.Dispatch<React.SetStateAction<ShadowTeam[]>>; // Receive setShadowTeams from App.tsx
 }
 
 // Helper function to assign position type based on rating
@@ -194,7 +197,7 @@ const getDisplayedAttributeRating = (attribute: PlayerAttribute, isEditMode: boo
   return Math.round(sum / allRatings.length);
 };
 
-const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scouts }) => {
+const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scouts, shadowTeams, setShadowTeams }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -221,6 +224,9 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // State for AddPlayerToShadowTeamDialog
+  const [isAddPlayerToTeamDialogOpen, setIsAddPlayerToTeamDialogOpen] = useState(false);
+
   const form = useForm<PlayerFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: currentPlayer ? {
@@ -230,8 +236,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       age: currentPlayer.age,
       value: currentPlayer.value,
       footed: currentPlayer.footed,
-      // leftFootRating: currentPlayer.leftFootRating, // Removed default
-      // rightFootRating: currentPlayer.rightFootRating, // Removed default
       lastEdited: currentPlayer.lastEdited || '',
       avatarUrl: currentPlayer.avatarUrl || '',
       details: currentPlayer.details,
@@ -265,8 +269,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
         age: currentPlayer.age,
         value: currentPlayer.value,
         footed: currentPlayer.footed,
-        // leftFootRating: currentPlayer.leftFootRating,
-        // rightFootRating: currentPlayer.rightFootRating,
         lastEdited: currentPlayer.lastEdited || '',
         avatarUrl: currentPlayer.avatarUrl || '',
         details: currentPlayer.details,
@@ -362,6 +364,27 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     }
   };
 
+  const handleAddPlayerToShadowTeam = (teamId: string, positionName: string, playerToAdd: ShadowTeamPlayer) => {
+    setShadowTeams(prev => prev.map(team => {
+      if (team.id === teamId) {
+        const currentPlayersInPosition = team.playersByPosition[positionName] || [];
+        // Prevent adding the same player to the same position
+        if (currentPlayersInPosition.some(p => p.id === playerToAdd.id)) {
+          toast.info(`${playerToAdd.name} je već dodan na poziciju ${positionName} u timu ${team.name}.`);
+          return team;
+        }
+        return {
+          ...team,
+          playersByPosition: {
+            ...team.playersByPosition,
+            [positionName]: [...currentPlayersInPosition, playerToAdd],
+          },
+        };
+      }
+      return team;
+    }));
+  };
+
   const onSubmit = (values: PlayerFormValues) => {
     if (!currentPlayer) return;
 
@@ -427,8 +450,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
       avatarUrl: values.avatarUrl,
       lastEdited: new Date().toISOString(),
-      // leftFootRating: values.leftFootRating, // Removed
-      // rightFootRating: values.rightFootRating, // Removed
       technical: updateAttributeHistory(currentPlayer.technical, values.technical, "technical"),
       tactical: updateAttributeHistory(currentPlayer.tactical, values.tactical, "tactical"),
       physical: updateAttributeHistory(currentPlayer.physical, values.physical, "physical"),
@@ -458,7 +479,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     fieldArrayName: "technical" | "tactical" | "physical" | "mentalPsychology" | "setPieces" | "hidden"
   ) => (
     <div className="space-y-2">
-      {/* Removed the duplicate h3 element here */}
       {form.watch(fieldArrayName).map((attr: AttributeFormItem, index) => ( // Explicitly type attr
         <div key={attr.name}>
           {isEditMode ? (
@@ -546,7 +566,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
                 {/* Avatar/Initial Display */}
-                <div className="relative w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mr-4 overflow-hidden bg-blue-600">
+                <div className="relative w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mr-4 overflow-hidden bg-primary">
                   {isEditMode ? (
                     <>
                       <input
@@ -645,7 +665,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                         </FormItem>
                       )}
                     />
-                    <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white">
+                    <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
                       <Save className="mr-2 h-4 w-4" /> Save
                     </Button>
                     <Button
@@ -659,8 +679,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                           age: currentPlayer.age,
                           value: currentPlayer.value,
                           footed: currentPlayer.footed,
-                          // leftFootRating: currentPlayer.leftFootRating,
-                          // rightFootRating: currentPlayer.rightFootRating,
                           lastEdited: currentPlayer.lastEdited || '',
                           avatarUrl: currentPlayer.avatarUrl || '',
                           details: currentPlayer.details,
@@ -693,7 +711,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                 )}
                 <Dialog open={isShortlistFormOpen} onOpenChange={setIsShortlistFormOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-green-600 hover:bg-green-700 text-white">
+                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
                       <Plus className="mr-2 h-4 w-4" /> Shortlist
                     </Button>
                   </DialogTrigger>
@@ -701,9 +719,30 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                 </Dialog>
                 <Dialog open={isReportFormOpen} onOpenChange={setIsReportFormOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">New Report</Button>
+                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">New Report</Button>
                   </DialogTrigger>
                   <ScoutReportForm player={player} onReportSubmit={handleAddReport} onClose={() => setIsReportFormOpen(false)} scouts={scouts} />
+                </Dialog>
+                {/* New: Add to Shadow Team Button */}
+                <Dialog open={isAddPlayerToTeamDialogOpen} onOpenChange={setIsAddPlayerToTeamDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="bg-card text-foreground border-border hover:bg-accent"
+                      onClick={() => setIsAddPlayerToTeamDialogOpen(true)}
+                    >
+                      <PlusCircle className="mr-2 h-4 w-4" /> Shadow Team
+                    </Button>
+                  </DialogTrigger>
+                  {isAddPlayerToTeamDialogOpen && (
+                    <AddPlayerToShadowTeamDialog
+                      players={players}
+                      shadowTeams={shadowTeams}
+                      onAddPlayer={handleAddPlayerToShadowTeam}
+                      onClose={() => setIsAddPlayerToTeamDialogOpen(false)}
+                      initialPlayerId={player.id}
+                    />
+                  )}
                 </Dialog>
               </div>
             </div>
@@ -955,7 +994,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                         )}
                       />
                     ) : (
-                      // Removed the Accordion for notes here
                       null
                     )}
                   </CardContent>
@@ -1079,55 +1117,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     <PlayerStatistics />
                   )}
                 </Card>
-
-                {/* Removed Footedness Ratings Card */}
-                {/* <Card className="bg-card border-border text-card-foreground">
-                  <CardHeader>
-                    <CardTitle className="text-lg font-semibold flex items-center"><Foot className="mr-2 h-5 w-5" /> Footedness</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3 text-muted-foreground">
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                      <div className="flex items-center">
-                        <span className="font-medium text-foreground">Left Foot:</span>
-                        {isEditMode ? (
-                          <FormField
-                            control={form.control}
-                            name="leftFootRating"
-                            render={({ field }) => (
-                              <FormItem className="inline-block ml-2">
-                                <FormControl>
-                                  <Input type="number" min="1" max="10" className="bg-input border-border text-foreground h-6 w-16" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        ) : (
-                          <span className="ml-2 text-foreground">{player.leftFootRating}/10</span>
-                        )}
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-medium text-foreground">Right Foot:</span>
-                        {isEditMode ? (
-                          <FormField
-                            control={form.control}
-                            name="rightFootRating"
-                            render={({ field }) => (
-                              <FormItem className="inline-block ml-2">
-                                <FormControl>
-                                  <Input type="number" min="1" max="10" className="bg-input border-border text-foreground h-6 w-16" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        ) : (
-                          <span className="ml-2 text-foreground">{player.rightFootRating}/10</span>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card> */}
 
                 {/* Technical Attributes Card */}
                 <Card className="bg-card border-border text-card-foreground">
@@ -1323,7 +1312,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                               <p className="font-medium text-foreground">{report.title}</p>
                               <p className="text-xs text-muted-foreground">{report.date} • {report.scout}</p>
                             </div>
-                            <Badge className="bg-blue-500 text-white">{report.rating}</Badge>
+                            <Badge className="bg-primary text-primary-foreground">{report.rating}</Badge>
                           </AccordionTrigger>
                           <AccordionContent className="p-4 bg-muted rounded-b-md text-muted-foreground space-y-2">
                             {report.keyStrengths && (
@@ -1344,7 +1333,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                               {report.potentialAbility !== undefined && <p className="text-sm">Potential Ability: {report.potentialAbility}</p>}
                               {report.teamFit !== undefined && <p className="text-sm">Team Fit: {report.teamFit}</p>}
                             </div>
-                            <Button variant="ghost" size="sm" className="text-blue-400 hover:text-blue-300 mt-2">
+                            <Button variant="ghost" size="sm" className="text-primary hover:text-primary/90 mt-2">
                               Sign Immediately <ArrowRight className="ml-1 h-4 w-4" />
                             </Button>
                           </AccordionContent>
