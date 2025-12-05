@@ -76,7 +76,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   if (!formation) {
     return (
       <div className={cn(
-        "relative w-full aspect-[2/3] max-w-[520px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner flex items-center justify-center",
+        "relative w-full aspect-[3/2] max-w-[700px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner flex items-center justify-center",
         pitchBackgroundClass,
         pitchLineColorClass
       )}>
@@ -202,57 +202,57 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
       <div
         ref={pitchRef}
         className={cn(
-          "relative w-full aspect-[2/3] max-w-[520px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner",
+          "relative w-full aspect-[3/2] max-w-[700px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner",
           pitchBackgroundClass,
           pitchLineColorClass
         )}
       >
         {/* Pitch Lines */}
         <div className="absolute inset-0">
-          {/* Halfway line (horizontal) */}
-          <div className={cn("absolute left-0 right-0 top-1/2 h-0.5 w-full", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+          {/* Halfway line (vertical) */}
+          <div className={cn("absolute top-0 bottom-0 left-1/2 w-0.5 h-full", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
           {/* Center circle */}
           <div className={cn("absolute top-1/2 left-1/2 w-20 h-20 border-2 border-solid rounded-full transform -translate-x-1/2 -translate-y-1/2", pitchLineColorClass)}></div>
 
-          {/* Bottom Penalty Box (Defense) */}
-          <div className="absolute bottom-0 left-1/2 w-[70%] h-[20%] transform -translate-x-1/2">
-            {/* 18-yard line */}
-            <div className={cn("absolute top-0 left-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
-            {/* Left vertical line */}
-            <div className={cn("absolute top-0 left-0 h-full w-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
-            {/* Right vertical line */}
+          {/* Left Penalty Box (Defense) */}
+          <div className="absolute left-0 top-1/2 h-[70%] w-[20%] transform -translate-y-1/2">
+            {/* 18-yard line (vertical) */}
             <div className={cn("absolute top-0 right-0 h-full w-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            {/* Top horizontal line */}
+            <div className={cn("absolute top-0 left-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            {/* Bottom horizontal line */}
+            <div className={cn("absolute bottom-0 left-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
             {/* Penalty spot */}
-            <div className={cn("absolute top-[30%] left-1/2 w-1.5 h-1.5 rounded-full transform -translate-x-1/2 -translate-y-1/2", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            <div className={cn("absolute left-[30%] top-1/2 w-1.5 h-1.5 rounded-full transform -translate-x-1/2 -translate-y-1/2", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
             {/* Penalty arc (semi-circle) */}
-            <div className={cn("absolute top-[30%] left-1/2 h-12 w-24 border-2 border-solid rounded-t-full transform -translate-x-1/2 -translate-y-1/2", pitchLineColorClass)}></div>
+            <div className={cn("absolute left-[30%] top-1/2 w-12 h-24 border-2 border-solid rounded-r-full transform -translate-x-1/2 -translate-y-1/2", pitchLineColorClass)}></div>
 
             {/* 6-yard box (Goal Area) */}
-            <div className="absolute bottom-0 left-1/2 w-[30%] h-[10%] transform -translate-x-1/2">
+            <div className="absolute left-0 top-1/2 h-[30%] w-[10%] transform -translate-y-1/2">
+              <div className={cn("absolute top-0 right-0 h-full w-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
               <div className={cn("absolute top-0 left-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
-              <div className={cn("absolute top-0 left-0 h-full w-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
-              <div className={cn("absolute bottom-0 left-0 h-0.5 w-full", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+              <div className={cn("absolute bottom-0 left-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
             </div>
           </div>
 
-          {/* Top Penalty Box (Attack) */}
-          <div className="absolute top-0 left-1/2 w-[70%] h-[20%] transform -translate-x-1/2">
-            {/* 18-yard line */}
-            <div className={cn("absolute bottom-0 left-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
-            {/* Left vertical line */}
+          {/* Right Penalty Box (Attack) */}
+          <div className="absolute right-0 top-1/2 h-[70%] w-[20%] transform -translate-y-1/2">
+            {/* 18-yard line (vertical) */}
             <div className={cn("absolute top-0 left-0 h-full w-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
-            {/* Right vertical line */}
-            <div className={cn("absolute top-0 right-0 h-full w-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            {/* Top horizontal line */}
+            <div className={cn("absolute top-0 right-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            {/* Bottom horizontal line */}
+            <div className={cn("absolute bottom-0 right-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
             {/* Penalty spot */}
-            <div className={cn("absolute bottom-[30%] left-1/2 w-1.5 h-1.5 rounded-full transform -translate-x-1/2 -translate-y-1/2", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            <div className={cn("absolute right-[30%] top-1/2 w-1.5 h-1.5 rounded-full transform -translate-x-1/2 -translate-y-1/2", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
             {/* Penalty arc (semi-circle) */}
-            <div className={cn("absolute bottom-[30%] left-1/2 h-12 w-24 border-2 border-solid rounded-b-full transform -translate-x-1/2 -translate-y-1/2", pitchLineColorClass)}></div>
+            <div className={cn("absolute right-[30%] top-1/2 w-12 h-24 border-2 border-solid rounded-l-full transform -translate-x-1/2 -translate-y-1/2", pitchLineColorClass)}></div>
 
             {/* 6-yard box (Goal Area) */}
-            <div className="absolute top-0 left-1/2 w-[30%] h-[10%] transform -translate-x-1/2">
-              <div className={cn("absolute bottom-0 left-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+            <div className="absolute right-0 top-1/2 h-[30%] w-[10%] transform -translate-y-1/2">
               <div className={cn("absolute top-0 left-0 h-full w-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
-              <div className={cn("absolute top-0 right-0 h-full w-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+              <div className={cn("absolute top-0 right-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
+              <div className={cn("absolute bottom-0 right-0 w-full h-0.5", pitchLineColorClass, pitchColor === 'green' ? 'bg-white' : 'bg-pitch-line')}></div>
             </div>
           </div>
         </div>

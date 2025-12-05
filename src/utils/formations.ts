@@ -99,11 +99,11 @@ export const FM_FORMATIONS: Formation[] = [
       { name: "RCB", ...VERTICAL_PITCH_COORDINATES["RCB"] },
       { name: "RB", ...VERTICAL_PITCH_COORDINATES["RB"] },
       { name: "DM", ...VERTICAL_PITCH_COORDINATES["DM"] },
-      { name: "LCM", x: "38%", y: "50%" }, // Narrower CMs
-      { name: "RCM", x: "62%", y: "50%" }, // Narrower CMs
+      { name: "LCM", x: "50%", y: "38%" }, // Narrower CMs
+      { name: "RCM", x: "50%", y: "62%" }, // Narrower CMs
       { name: "AM", ...VERTICAL_PITCH_COORDINATES["AM"] },
-      { name: "CF_LEFT", x: "40%", y: "10%" }, // Two strikers
-      { name: "CF_RIGHT", x: "60%", y: "10%" }, // Two strikers
+      { name: "CF_LEFT", x: "90%", y: "40%" }, // Two strikers
+      { name: "CF_RIGHT", x: "90%", y: "60%" }, // Two strikers
     ],
   },
   {
