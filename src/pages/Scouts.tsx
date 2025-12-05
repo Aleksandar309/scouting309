@@ -36,7 +36,7 @@ interface ScoutsPageProps {
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>; // Added setTasks prop
 }
 
-const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, scouts, players, tasks, setTasks }) => {
+const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, scouts, setScouts, players, tasks, setTasks }) => {
   const navigate = useNavigate();
   const [isAssignmentFormOpen, setIsAssignmentFormOpen] = useState(false);
   const [isAddScoutFormOpen, setIsAddScoutFormOpen] = useState(false); // New state for AddScoutForm
