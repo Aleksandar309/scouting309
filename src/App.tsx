@@ -12,7 +12,7 @@ import PlayerDatabase from "./pages/PlayerDatabase";
 import Scouts from "./pages/Scouts";
 import ScoutProfile from "./pages/ScoutProfile";
 import ShortlistPage from "./pages/Shortlist";
-import ShadowTeams from "./pages/ShadowTeams"; // Import the new ShadowTeams page
+import ShadowTeams from "./pages/ShadowTeams";
 import Tasks from "./pages/Tasks"; // Import the new Tasks page
 import PlaceholderPage from "./pages/PlaceholderPage"; // Keep PlaceholderPage for other routes
 import { ShortlistProvider } from "./context/ShortlistContext";
@@ -20,12 +20,12 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import { useState, useEffect } from "react";
 import { initialMockPlayers } from "./data/mockPlayers";
 import { mockScouts as initialMockScouts, initialMockAssignments } from "./data/mockScouts";
-import { initialMockTasks } from "./data/mockTasks"; // Import initial mock tasks
+import { initialMockTasks } from "./data/mockTasks";
 import { Player } from "./types/player";
 import { Scout, Assignment } from "./types/scout";
 import { Shortlist } from "./types/shortlist";
-import { ShadowTeam } from "./types/shadow-team"; // Import ShadowTeam type
-import { Task } from "./types/task"; // Import Task type
+import { ShadowTeam } from "./types/shadow-team";
+import { Task } from "./types/task";
 
 const queryClient = new QueryClient();
 
@@ -70,7 +70,7 @@ const App = () => {
     return [];
   });
 
-  const [tasks, setTasks] = useState<Task[]>(() => { // New state for Tasks
+  const [tasks, setTasks] = useState<Task[]>(() => {
     if (typeof window !== 'undefined') {
       const savedTasks = localStorage.getItem('tasks');
       return savedTasks ? JSON.parse(savedTasks) : initialMockTasks;
@@ -108,7 +108,7 @@ const App = () => {
     }
   }, [shadowTeams]);
 
-  useEffect(() => { // New useEffect for tasks
+  useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('tasks', JSON.stringify(tasks));
     }
@@ -131,6 +131,7 @@ const App = () => {
                 <Route path="/shortlists" element={<ShortlistPage />} />
                 <Route path="/shadow-teams" element={<ShadowTeams players={players} shadowTeams={shadowTeams} setShadowTeams={setShadowTeams} />} />
                 <Route path="/tasks" element={<Tasks tasks={tasks} setTasks={setTasks} scouts={scouts} />} /> {/* New route for Tasks */}
+                {/* Removed the old /new-page-2 route as it's now /tasks */}
                 <Route path="/new-page-3" element={<PlaceholderPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
