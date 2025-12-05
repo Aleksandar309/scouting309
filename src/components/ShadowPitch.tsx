@@ -9,6 +9,7 @@ import { PlusCircle, MinusCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Draggable from 'react-draggable'; // Import Draggable
 import { VERTICAL_PITCH_COORDINATES } from '@/utils/pitch-coordinates'; // Import centralized coordinates
+import { Button } from '@/components/ui/button'; // Import Button component
 
 interface ShadowPitchProps {
   formation: Formation | null;
@@ -121,15 +122,17 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
               transform: "translate(-50%, -50%)",
             }}
           >
-            <button
+            <Button
+              variant="ghost" // Changed to ghost variant
+              size="icon" // Changed to icon size
               className={cn(
-                "w-8 h-8 rounded-full flex items-center justify-center text-xl font-bold transition-all duration-200", // Reduced button size (from w-10 h-10 to w-8 h-8)
-                pitchColor === 'green' ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                "w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 border border-dashed", // Smaller size, dashed border
+                pitchColor === 'green' ? 'border-white text-white hover:bg-white/20' : 'border-muted-foreground text-muted-foreground hover:bg-accent'
               )}
               onClick={() => onPositionClick(formPos.name)}
             >
-              <PlusCircle className="h-5 w-5" /> {/* Reduced icon size (from h-6 w-6 to h-5 w-5) */}
-            </button>
+              <PlusCircle className="h-4 w-4" /> {/* Reduced icon size */}
+            </Button>
           </div>
         );
       } else {
