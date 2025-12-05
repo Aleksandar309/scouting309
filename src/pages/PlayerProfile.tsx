@@ -370,7 +370,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
         const currentPlayersInPosition = team.playersByPosition[positionName] || [];
         // Prevent adding the same player to the same position
         if (currentPlayersInPosition.some(p => p.id === playerToAdd.id)) {
-          toast.info(`${playerToAdd.name} is already assigned to ${positionName} in ${team.name}.`);
+          toast.info(`${playerToAdd.name} je već dodan na poziciju ${positionName} u timu ${team.name}.`);
           return team;
         }
         return {
@@ -715,7 +715,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                       <Plus className="mr-2 h-4 w-4" /> Shortlist
                     </Button>
                   </DialogTrigger>
-                  <AddToShortlistDialog player={player} onClose={() => setIsShortlistFormOpen(false)} />
+                  <AddToShortlistDialog allPlayers={players} initialPlayerId={player.id} onClose={() => setIsShortlistFormOpen(false)} />
                 </Dialog>
                 <Dialog open={isReportFormOpen} onOpenChange={setIsReportFormOpen}>
                   <DialogTrigger asChild>

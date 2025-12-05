@@ -224,7 +224,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       const progressValue = Math.min(Math.max(rating * 10, 0), 100);
       return (
         <div className="flex items-center w-full">
-          <Progress value={progressValue} className="h-2 w-full bg-muted" indicatorClassName="bg-primary" />
+          <Progress value={progressValue} className="h-2 bg-muted" indicatorClassName="bg-primary" />
           <span className="ml-2 text-sm text-foreground">{rating}</span>
         </div>
       );
@@ -252,7 +252,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       const progressValue = Math.min(Math.max(rating * 10, 0), 100);
       return (
         <div className="flex items-center w-full">
-          <Progress value={progressValue} className="h-2 w-full bg-muted" indicatorClassName="bg-green-500" />
+          <Progress value={progressValue} className="h-2 bg-muted" indicatorClassName="bg-green-500" />
           <span className="ml-2 text-sm text-foreground">{rating}</span>
         </div>
       );
@@ -289,7 +289,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
               <Plus className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <AddToShortlistDialog player={player} onClose={() => setIsShortlistDialogOpen(false)} />
+          <AddToShortlistDialog allPlayers={[]} initialPlayerId={player.id} onClose={() => setIsShortlistDialogOpen(false)} />
         </Dialog>
       );
     },

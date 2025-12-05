@@ -24,6 +24,7 @@ import {
 import { Player } from '@/types/player'; // Import Player type
 import { POSITION_ORDER } from '@/utils/position-order'; // Import position order
 import CreateShortlistDialog from '@/components/CreateShortlistDialog'; // Import the new dialog
+import AddToShortlistDialog from '@/components/AddToShortlistDialog'; // Import the refactored dialog
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'; // Import Dialog components
 
 interface ShortlistPageProps {
@@ -34,6 +35,8 @@ const ShortlistPage: React.FC<ShortlistPageProps> = ({ players }) => {
   const { shortlists, removePlayerFromShortlist, deleteShortlist } = useShortlists();
   const navigate = useNavigate();
   const [isCreateShortlistDialogOpen, setIsCreateShortlistDialogOpen] = useState(false);
+  const [isAddToShortlistDialogOpen, setIsAddToShortlistDialogOpen] = useState(false); // State for AddToShortlistDialog
+  const [selectedShortlistIdForAdd, setSelectedShortlistIdForAdd] = useState<string | undefined>(undefined); // To pass to AddToShortlistDialog
   const [sortOrder, setSortOrder] = useState<'position' | 'date'>('position'); // State for sorting players within a shortlist
 
   // Sort shortlists by creation date (newest first)
@@ -142,6 +145,31 @@ const ShortlistPage: React.FC<ShortlistPageProps> = ({ players }) => {
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="p-4 bg-muted rounded-b-md text-muted-foreground">
+                    <div className="flex justify-end mb-4">
+                      <Dialog open={isAddToShortlistDialogOpen && selectedShortlistIdForAdd === shortlist.id} onOpenChange={setIsAddToShortlistDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                            onClick={() => {
+                              setSelectedShortlistIdForAdd(shortlist.id);
+                              setIsAddToShortlistDialogOpen(true);
+                            }}
+                          >
+                            <PlusCircle className="mr-2 h-4 w-4" /> Add Player
+                          </Button>
+                        </DialogTrigger>
+                        {isAddToShortlistDialogOpen && selectedShortlistIdForAdd === shortlist.id && (
+                          <AddToShortlistDialog
+                            allPlayers={players}
+                            onClose={() => {
+                              setIsAddToShortlistDialogOpen(false);
+                              setSelectedShortlistIdForAdd(undefined);
+                            }}
+                            initialShortlistId={shortlist.id}
+                          />
+                        )}
+                      </Dialog>
+                    </div>
                     {shortlist.players.length === 0 ? (
                       <p className="text-center text-muted-foreground py-4">No players in this shortlist yet.</p>
                     ) : (
