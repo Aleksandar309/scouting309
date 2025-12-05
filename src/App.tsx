@@ -37,7 +37,7 @@ function App() {
 
     const storedScouts = localStorage.getItem("scouts");
     if (storedScouts) {
-      setScouts(JSON.parse(storedScored));
+      setScouts(JSON.parse(storedScouts));
     } else {
       setScouts(mockScouts); // Use imported mock data
     }
