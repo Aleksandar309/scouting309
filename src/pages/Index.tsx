@@ -8,6 +8,7 @@ import Logo from "@/components/Logo";
 import { Player } from "@/types/player"; // Import Player type
 import { Scout } from "@/types/scout"; // Import Scout type
 import { Shortlist } from "@/types/shortlist"; // Import Shortlist type
+import { ShadowTeam } from "@/types/shadow-team"; // Import ShadowTeam type
 import {
   Tooltip,
   TooltipContent,
@@ -19,9 +20,10 @@ interface IndexProps {
   players: Player[];
   scouts: Scout[];
   shortlists: Shortlist[];
+  shadowTeams: ShadowTeam[]; // Add shadowTeams to props
 }
 
-const Index: React.FC<IndexProps> = ({ players, scouts, shortlists }) => {
+const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams }) => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-6">
       <div className="absolute top-4 right-4">
@@ -106,11 +108,18 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists }) => {
               <LayoutDashboard className="h-6 w-6 text-primary" /> {/* Placeholder icon */}
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-between">
-              <img
-                src="https://images.unsplash.com/photo-1550592704-f53113076484?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="Tactical board"
-                className="h-32 object-cover w-full rounded-md mb-4"
-              />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="h-32 flex items-center justify-center w-full rounded-md mb-4 bg-muted text-primary text-6xl font-bold">
+                      {shadowTeams.length} {/* Display the count here */}
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-popover border-border text-popover-foreground">
+                    <p>Total number of shadow teams you have created.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <p className="text-sm text-muted-foreground mb-4">Create and manage your dream teams.</p>
               <Link to="/shadow-teams">
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
