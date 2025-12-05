@@ -56,7 +56,8 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   const textColorClass = pitchColor === 'green' ? 'text-white' : 'text-foreground';
 
   const pitchRef = useRef<HTMLDivElement>(null);
-  const [pitchDimensions, setPitchDimensions] = useState<{ width: number; height: number } | null>(null); // Initialize with null
+  // Initialize pitchDimensions with default values instead of null
+  const [pitchDimensions, setPitchDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
 
   // Map to store refs for each draggable player
   const playerNodeRefs = useRef(new Map<string, React.RefObject<HTMLDivElement>>());
@@ -73,7 +74,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
 
     updateDimensions(); // Set initial dimensions
     window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('change', updateDimensions); // Changed 'resize' to 'change'
   }, []);
 
   // Effect to manage player refs in the map
@@ -162,71 +163,72 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
         </div>
       );
     } else {
-      // Only render draggable players if pitchDimensions are known
-      if (pitchDimensions && pitchDimensions.width > 0 && pitchDimensions.height > 0) {
-        const initialCenterX = getPixelCoordinate(formPos.x, pitchDimensions.width);
-        const initialCenterY = getPixelCoordinate(formPos.y, pitchDimensions.height);
+      // Players will now always be pushed to pitchElements,
+      // and their initial position will be (0,0) if pitchDimensions are {width:0, height:0}
+      // and then update once dimensions are available.
 
-        playersInPosition.forEach((player, playerIndex) => {
-          const nodeRef = playerNodeRefs.current.get(player.id); // Get ref from map
-          if (!nodeRef) return; // Should not happen if useEffect is correct
+      const initialCenterX = getPixelCoordinate(formPos.x, pitchDimensions.width);
+      const initialCenterY = getPixelCoordinate(formPos.y, pitchDimensions.height);
 
-          const playerDotColor = player.dotColor || (pitchColor === 'green' ? 'bg-blue-500' : 'bg-primary');
+      playersInPosition.forEach((player, playerIndex) => {
+        const nodeRef = playerNodeRefs.current.get(player.id); // Get ref from map
+        if (!nodeRef) return; // Should not happen if useEffect is correct
 
-          // Calculate initial top-left pixel coordinates for Draggable
-          // If customX/Y are not set, use the formation position's center, adjusted for dot size
-          let defaultX = player.customX;
-          let defaultY = player.customY;
+        const playerDotColor = player.dotColor || (pitchColor === 'green' ? 'bg-blue-500' : 'bg-primary');
 
-          if (defaultX === undefined || defaultY === undefined) {
-            defaultX = initialCenterX - (playerDotSize / 2); // Subtract half of dot width
-            defaultY = initialCenterY - (playerDotSize / 2); // Subtract half of dot height
-          }
+        // Calculate initial top-left pixel coordinates for Draggable
+        // If customX/Y are not set, use the formation position's center, adjusted for dot size
+        let defaultX = player.customX;
+        let defaultY = player.customY;
 
-          // Apply stacking offset to the Draggable's position
-          const offset = getPlayerOffset(playerIndex, playersInPosition.length);
-          const finalX = (defaultX || 0) + offset.x;
-          const finalY = (defaultY || 0) + offset.y;
+        if (defaultX === undefined || defaultY === undefined) {
+          defaultX = initialCenterX - (playerDotSize / 2); // Subtract half of dot width
+          defaultY = initialCenterY - (playerDotSize / 2); // Subtract half of dot height
+        }
 
-          pitchElements.push(
-            <Draggable
-              key={player.id}
-              nodeRef={nodeRef} // Use the ref from the map
-              position={{ x: finalX, y: finalY }} // Use calculated pixel position
-              onStop={(e, data) => onPlayerDragStop(formPos.name, player.id, data.x, data.y)}
-              bounds="parent" // Constrain dragging to the parent element (the pitch)
+        // Apply stacking offset to the Draggable's position
+        const offset = getPlayerOffset(playerIndex, playersInPosition.length);
+        const finalX = (defaultX || 0) + offset.x;
+        const finalY = (defaultY || 0) + offset.y;
+
+        pitchElements.push(
+          <Draggable
+            key={player.id}
+            nodeRef={nodeRef} // Use the ref from the map
+            position={{ x: finalX, y: finalY }} // Use calculated pixel position
+            onStop={(e, data) => onPlayerDragStop(formPos.name, player.id, data.x, data.y)}
+            bounds="parent" // Constrain dragging to the parent element (the pitch)
+          >
+            <div
+              ref={nodeRef} // Assign the ref to the draggable div
+              className={cn(
+                "absolute rounded-full flex flex-col items-center justify-center cursor-grab active:cursor-grabbing transition-all duration-200",
+                playerDotColor
+              )}
+              style={{
+                width: `${playerDotSize}px`,
+                height: `${playerDotSize}px`,
+                zIndex: 10 + playerIndex,
+              }}
             >
-              <div
-                ref={nodeRef} // Assign the ref to the draggable div
-                className={cn(
-                  "absolute rounded-full flex flex-col items-center justify-center cursor-grab active:cursor-grabbing transition-all duration-200",
-                  playerDotColor
-                )}
-                style={{
-                  width: `${playerDotSize}px`,
-                  height: `${playerDotSize}px`,
-                  zIndex: 10 + playerIndex,
+              {/* Player content (Avatar, remove button) */}
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={player.avatarUrl} alt={player.name} />
+                <AvatarFallback className="bg-primary text-primary-foreground text-xs">{player.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <button
+                className="absolute -top-1 -right-1 bg-destructive rounded-full h-4 w-4 flex items-center justify-center text-white text-xs"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPlayerRemove(formPos.name, player.id);
                 }}
               >
-                {/* Player content (Avatar, remove button) */}
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={player.avatarUrl} alt={player.name} />
-                  <AvatarFallback className="bg-primary text-primary-foreground text-xs">{player.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <button
-                  className="absolute -top-1 -right-1 bg-destructive rounded-full h-4 w-4 flex items-center justify-center text-white text-xs"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onPlayerRemove(formPos.name, player.id);
-                  }}
-                >
-                  <MinusCircle className="h-3 w-3" />
-                </button>
-              </div>
-            </Draggable>
-          );
-        });
-      }
+                <MinusCircle className="h-3 w-3" />
+              </button>
+            </div>
+          </Draggable>
+        );
+      });
     }
   });
 
