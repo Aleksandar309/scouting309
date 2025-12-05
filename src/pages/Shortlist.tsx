@@ -35,8 +35,6 @@ const ShortlistPage: React.FC<ShortlistPageProps> = ({ players }) => {
   const { shortlists, removePlayerFromShortlist, deleteShortlist } = useShortlists();
   const navigate = useNavigate();
   const [isCreateShortlistDialogOpen, setIsCreateShortlistDialogOpen] = useState(false);
-  const [isAddToShortlistDialogOpen, setIsAddToShortlistDialogOpen] = useState(false); // State for AddToShortlistDialog
-  const [selectedShortlistIdForAdd, setSelectedShortlistIdForAdd] = useState<string | undefined>(undefined); // To pass to AddToShortlistDialog
   const [sortOrder, setSortOrder] = useState<'position' | 'date'>('position'); // State for sorting players within a shortlist
 
   // Sort shortlists by creation date (newest first)
@@ -131,6 +129,26 @@ const ShortlistPage: React.FC<ShortlistPageProps> = ({ players }) => {
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge variant="secondary" className="bg-muted text-muted-foreground">{shortlist.players.length} players</Badge>
+                      
+                      {/* Add Player Button */}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => e.stopPropagation()} // Prevent accordion from toggling
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground p-2 h-auto"
+                          >
+                            <PlusCircle className="h-4 w-4" />
+                          </Button>
+                        </DialogTrigger>
+                        <AddToShortlistDialog
+                          allPlayers={players}
+                          onClose={() => {}} // Dialog handles its own close
+                          initialShortlistId={shortlist.id}
+                        />
+                      </Dialog>
+
                       <Button
                         variant="destructive"
                         size="sm"
@@ -145,31 +163,6 @@ const ShortlistPage: React.FC<ShortlistPageProps> = ({ players }) => {
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="p-4 bg-muted rounded-b-md text-muted-foreground">
-                    <div className="flex justify-end mb-4">
-                      <Dialog open={isAddToShortlistDialogOpen && selectedShortlistIdForAdd === shortlist.id} onOpenChange={setIsAddToShortlistDialogOpen}>
-                        <DialogTrigger asChild>
-                          <Button
-                            className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                            onClick={() => {
-                              setSelectedShortlistIdForAdd(shortlist.id);
-                              setIsAddToShortlistDialogOpen(true);
-                            }}
-                          >
-                            <PlusCircle className="mr-2 h-4 w-4" /> Add Player
-                          </Button>
-                        </DialogTrigger>
-                        {isAddToShortlistDialogOpen && selectedShortlistIdForAdd === shortlist.id && (
-                          <AddToShortlistDialog
-                            allPlayers={players}
-                            onClose={() => {
-                              setIsAddToShortlistDialogOpen(false);
-                              setSelectedShortlistIdForAdd(undefined);
-                            }}
-                            initialShortlistId={shortlist.id}
-                          />
-                        )}
-                      </Dialog>
-                    </div>
                     {shortlist.players.length === 0 ? (
                       <p className="text-center text-muted-foreground py-4">No players in this shortlist yet.</p>
                     ) : (
