@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Player } from "@/types/player";
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import AddPlayerForm from '@/components/AddPlayerForm';
 import {
   Accordion,
@@ -131,7 +130,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                 <LayoutGrid className="h-4 w-4 mr-2" /> Card View
               </ToggleGroupItem>
             </ToggleGroup>
-            <ThemeToggle />
+            {/* ThemeToggle removed from here */}
           </div>
         </div>
 
