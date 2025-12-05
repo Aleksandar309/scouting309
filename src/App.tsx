@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import PlayerDatabase from "./pages/PlayerDatabase"; // Ispravljen uvoz
 import Scouts from "./pages/Scouts";
-import Shortlists from "./pages/Shortlists";
+import ShortlistPage from "./pages/Shortlist"; // Corrected import from Shortlists to ShortlistPage
 import ShadowTeams from "./pages/ShadowTeams";
 import Tasks from "./pages/Tasks";
 import Forum from "./pages/Forum"; // Import the new Forum page
@@ -98,7 +98,7 @@ function App() {
         <Route path="/" element={<Index players={players} scouts={scouts} shortlists={shortlists} shadowTeams={shadowTeams} tasks={tasks} />} />
         <Route path="/players" element={<PlayerDatabase players={players} setPlayers={setPlayers} scouts={scouts} />} /> {/* Ispravljena ruta */}
         <Route path="/scouts" element={<Scouts scouts={scouts} setScouts={setScouts} players={players} tasks={tasks} setTasks={setTasks} />} />
-        <Route path="/shortlists" element={<Shortlists shortlists={shortlists} setShortlists={setShortlists} players={players} />} />
+        <Route path="/shortlists" element={<ShortlistPage shortlists={shortlists} setShortlists={setShortlists} players={players} />} />
         <Route path="/shadow-teams" element={<ShadowTeams shadowTeams={shadowTeams} setShadowTeams={setShadowTeams} players={players} />} />
         <Route path="/tasks" element={<Tasks tasks={tasks} setTasks={setTasks} scouts={scouts} />} />
         <Route path="/forum" element={<Forum />} />
