@@ -39,23 +39,21 @@ const TasksPage: React.FC<TasksPageProps> = ({ tasks, setTasks, scouts }) => {
     // toast.success("Task marked as complete!");
   };
 
-  // Sort tasks: Overdue first, then P1, P2, P3, then by due date
+  // Sort tasks: Overdue first, then Completed last, then by creation date (newest first)
   const sortedTasks = [...tasks].sort((a, b) => {
     const aOverdue = a.status !== "Completed" && isPast(new Date(a.dueDate));
     const bOverdue = b.status !== "Completed" && isPast(new Date(b.dueDate));
 
+    // 1. Overdue tasks first
     if (aOverdue && !bOverdue) return -1;
     if (!aOverdue && bOverdue) return 1;
 
-    const priorityOrder = { "P1": 1, "P2": 2, "P3": 3 };
-    const aPriority = priorityOrder[a.priority];
-    const bPriority = priorityOrder[b.priority];
+    // 2. Completed tasks last
+    if (a.status === "Completed" && b.status !== "Completed") return 1;
+    if (a.status !== "Completed" && b.status === "Completed") return -1;
 
-    if (aPriority !== bPriority) {
-      return aPriority - bPriority;
-    }
-
-    return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+    // 3. Then by creation date (newest first)
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 
   return (

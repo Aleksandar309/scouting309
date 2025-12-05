@@ -84,8 +84,24 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments, scout
     player.scoutingReports.some(report => report.scout === currentScout.name)
   );
 
-  // Filter assignments for this scout
-  const scoutAssignments = assignments.filter(assignment => assignment.assignedTo === currentScout.id);
+  // Filter and sort assignments for this scout
+  const scoutAssignments = assignments
+    .filter(assignment => assignment.assignedTo === currentScout.id)
+    .sort((a, b) => {
+      const aOverdue = a.status !== "Completed" && isPast(new Date(a.dueDate));
+      const bOverdue = b.status !== "Completed" && isPast(new Date(b.dueDate));
+
+      // 1. Overdue tasks first
+      if (aOverdue && !bOverdue) return -1;
+      if (!aOverdue && bOverdue) return 1;
+
+      // 2. Completed tasks last
+      if (a.status === "Completed" && b.status !== "Completed") return 1;
+      if (a.status !== "Completed" && b.status === "Completed") return -1;
+
+      // 3. Then by creation date (newest first)
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
 
   return (
     <div className="min-h-screen bg-background text-foreground p-6">

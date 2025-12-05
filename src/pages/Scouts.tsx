@@ -59,6 +59,23 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
     // For now, they will fall into no category if not explicitly handled.
   });
 
+  // Sort assignments: Overdue first, then Completed last, then by creation date (newest first)
+  const sortedAssignments = [...assignments].sort((a, b) => {
+    const aOverdue = a.status !== "Completed" && isPast(new Date(a.dueDate));
+    const bOverdue = b.status !== "Completed" && isPast(new Date(b.dueDate));
+
+    // 1. Overdue tasks first
+    if (aOverdue && !bOverdue) return -1;
+    if (!aOverdue && bOverdue) return 1;
+
+    // 2. Completed tasks last
+    if (a.status === "Completed" && b.status !== "Completed") return 1;
+    if (a.status !== "Completed" && b.status === "Completed") return -1;
+
+    // 3. Then by creation date (newest first)
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
   return (
     <div className="min-h-screen bg-background text-foreground p-6">
       <div className="max-w-7xl mx-auto">
@@ -133,7 +150,7 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {assignments.length === 0 ? (
+              {sortedAssignments.length === 0 ? (
                 <Card className="bg-card border-border text-card-foreground text-center p-8 lg:col-span-2">
                   <CardTitle className="text-xl mb-4">No Assignments Yet!</CardTitle>
                   <CardContent>
@@ -143,7 +160,7 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
                   </CardContent>
                 </Card>
               ) : (
-                assignments.map((assignment) => (
+                sortedAssignments.map((assignment) => (
                   <Card key={assignment.id} className="bg-card border-border text-card-foreground shadow-sm">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
