@@ -13,16 +13,19 @@ import Scouts from "./pages/Scouts";
 import ScoutProfile from "./pages/ScoutProfile";
 import ShortlistPage from "./pages/Shortlist";
 import ShadowTeams from "./pages/ShadowTeams"; // Import the new ShadowTeams page
-import PlaceholderPage from "./pages/PlaceholderPage"; // Import the new generic PlaceholderPage
+import Tasks from "./pages/Tasks"; // Import the new Tasks page
+import PlaceholderPage from "./pages/PlaceholderPage"; // Keep PlaceholderPage for other routes
 import { ShortlistProvider } from "./context/ShortlistContext";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { useState, useEffect } from "react";
 import { initialMockPlayers } from "./data/mockPlayers";
 import { mockScouts as initialMockScouts, initialMockAssignments } from "./data/mockScouts";
+import { initialMockTasks } from "./data/mockTasks"; // Import initial mock tasks
 import { Player } from "./types/player";
 import { Scout, Assignment } from "./types/scout";
 import { Shortlist } from "./types/shortlist";
 import { ShadowTeam } from "./types/shadow-team"; // Import ShadowTeam type
+import { Task } from "./types/task"; // Import Task type
 
 const queryClient = new QueryClient();
 
@@ -59,12 +62,20 @@ const App = () => {
     return [];
   });
 
-  const [shadowTeams, setShadowTeams] = useState<ShadowTeam[]>(() => { // New state for Shadow Teams
+  const [shadowTeams, setShadowTeams] = useState<ShadowTeam[]>(() => {
     if (typeof window !== 'undefined') {
       const savedShadowTeams = localStorage.getItem('shadowTeams');
       return savedShadowTeams ? JSON.parse(savedShadowTeams) : [];
     }
     return [];
+  });
+
+  const [tasks, setTasks] = useState<Task[]>(() => { // New state for Tasks
+    if (typeof window !== 'undefined') {
+      const savedTasks = localStorage.getItem('tasks');
+      return savedTasks ? JSON.parse(savedTasks) : initialMockTasks;
+    }
+    return initialMockTasks;
   });
 
   useEffect(() => {
@@ -91,11 +102,17 @@ const App = () => {
     }
   }, [shortlists]);
 
-  useEffect(() => { // New useEffect for shadowTeams
+  useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('shadowTeams', JSON.stringify(shadowTeams));
     }
   }, [shadowTeams]);
+
+  useEffect(() => { // New useEffect for tasks
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+  }, [tasks]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -106,14 +123,14 @@ const App = () => {
           <BrowserRouter>
             <ShortlistProvider shortlists={shortlists} setShortlists={setShortlists}>
               <Routes>
-                <Route path="/" element={<Index players={players} scouts={scouts} shortlists={shortlists} shadowTeams={shadowTeams} />} />
+                <Route path="/" element={<Index players={players} scouts={scouts} shortlists={shortlists} shadowTeams={shadowTeams} tasks={tasks} />} />
                 <Route path="/player/:id" element={<PlayerProfile players={players} setPlayers={setPlayers} scouts={scouts} shadowTeams={shadowTeams} setShadowTeams={setShadowTeams} />} />
                 <Route path="/players" element={<PlayerDatabase players={players} setPlayers={setPlayers} />} />
                 <Route path="/scouts" element={<Scouts assignments={assignments} setAssignments={setAssignments} scouts={scouts} />} />
                 <Route path="/scouts/:id" element={<ScoutProfile players={players} assignments={assignments} scouts={scouts} setScouts={setScouts} />} />
                 <Route path="/shortlists" element={<ShortlistPage />} />
-                <Route path="/shadow-teams" element={<ShadowTeams players={players} shadowTeams={shadowTeams} setShadowTeams={setShadowTeams} />} /> {/* New route */}
-                <Route path="/new-page-2" element={<PlaceholderPage />} />
+                <Route path="/shadow-teams" element={<ShadowTeams players={players} shadowTeams={shadowTeams} setShadowTeams={setShadowTeams} />} />
+                <Route path="/tasks" element={<Tasks tasks={tasks} setTasks={setTasks} scouts={scouts} />} /> {/* New route for Tasks */}
                 <Route path="/new-page-3" element={<PlaceholderPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

@@ -2,13 +2,14 @@ import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, LayoutDashboard, Search, ListChecks } from "lucide-react";
+import { Users, LayoutDashboard, Search, ListChecks, ClipboardList } from "lucide-react"; // Import ClipboardList icon
 import { ThemeToggle } from "@/components/ThemeToggle";
 import Logo from "@/components/Logo";
 import { Player } from "@/types/player"; // Import Player type
 import { Scout } from "@/types/scout"; // Import Scout type
 import { Shortlist } from "@/types/shortlist"; // Import Shortlist type
 import { ShadowTeam } from "@/types/shadow-team"; // Import ShadowTeam type
+import { Task } from "@/types/task"; // Import Task type
 import {
   Tooltip,
   TooltipContent,
@@ -20,10 +21,11 @@ interface IndexProps {
   players: Player[];
   scouts: Scout[];
   shortlists: Shortlist[];
-  shadowTeams: ShadowTeam[]; // Add shadowTeams to props
+  shadowTeams: ShadowTeam[];
+  tasks: Task[]; // Add tasks to props
 }
 
-const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams }) => {
+const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams, tasks }) => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-6">
       <div className="absolute top-4 right-4">
@@ -112,7 +114,7 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams 
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className="h-32 flex items-center justify-center w-full rounded-md mb-4 bg-muted text-primary text-6xl font-bold">
-                      {shadowTeams.length} {/* Display the count here */}
+                      {shadowTeams.length}
                     </div>
                   </TooltipTrigger>
                   <TooltipContent className="bg-popover border-border text-popover-foreground">
@@ -131,19 +133,26 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams 
 
           <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-lg font-medium">New Page 2</CardTitle>
-              <LayoutDashboard className="h-6 w-6 text-primary" /> {/* Placeholder icon */}
+              <CardTitle className="text-lg font-medium">Scouting Tasks</CardTitle>
+              <ClipboardList className="h-6 w-6 text-primary" /> {/* New icon for tasks */}
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-between">
-              <img
-                src="https://images.unsplash.com/photo-1541701494587-d5e827190468?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="Stadium lights"
-                className="h-32 object-cover w-full rounded-md mb-4"
-              />
-              <p className="text-sm text-muted-foreground mb-4">Description for New Page 2.</p>
-              <Link to="/new-page-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="h-32 flex items-center justify-center w-full rounded-md mb-4 bg-muted text-primary text-6xl font-bold">
+                      {tasks.length}
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-popover border-border text-popover-foreground">
+                    <p>Total number of scouting tasks.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <p className="text-sm text-muted-foreground mb-4">Manage scouting assignments and missions.</p>
+              <Link to="/tasks">
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                  Go to Page 2
+                  View Tasks
                 </Button>
               </Link>
             </CardContent>
