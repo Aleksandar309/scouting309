@@ -24,6 +24,7 @@ import { scoutTableColumns } from '@/utils/scout-table-columns'; // Import scout
 import { SortingState, ColumnFiltersState } from '@tanstack/react-table'; // Import for table state
 import { Player } from '@/types/player'; // Import Player type
 import { Task } from '@/types/task'; // Import Task type
+import AddScoutForm from '@/components/AddScoutForm'; // Import AddScoutForm
 
 interface ScoutsPageProps {
   assignments: Assignment[];
@@ -38,6 +39,7 @@ interface ScoutsPageProps {
 const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, scouts, players, tasks, setTasks }) => {
   const navigate = useNavigate();
   const [isAssignmentFormOpen, setIsAssignmentFormOpen] = useState(false);
+  const [isAddScoutFormOpen, setIsAddScoutFormOpen] = useState(false); // New state for AddScoutForm
   const [viewMode, setViewMode] = React.useState<'list' | 'card'>(() => {
     if (typeof window !== 'undefined') {
       return (localStorage.getItem('scoutViewMode') as 'list' | 'card') || 'list'; // Default to list
@@ -57,6 +59,11 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
   const handleAddAssignment = (newAssignment: Assignment) => {
     setAssignments((prevAssignments) => [...prevAssignments, newAssignment]);
     setIsAssignmentFormOpen(false);
+  };
+
+  const handleAddScout = (newScout: Scout) => {
+    setScouts((prevScouts) => [...prevScouts, newScout]);
+    setIsAddScoutFormOpen(false);
   };
 
   const groupedScouts: { [key: string]: Scout[] } = {
@@ -115,7 +122,16 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
           </TabsList>
 
           <TabsContent value="team" className="mt-6">
-            <div className="flex justify-end mb-4">
+            <div className="flex justify-between items-center mb-4"> {/* Added flex container */}
+              <Dialog open={isAddScoutFormOpen} onOpenChange={setIsAddScoutFormOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add New Scout
+                  </Button>
+                </DialogTrigger>
+                <AddScoutForm onAddScout={handleAddScout} onClose={() => setIsAddScoutFormOpen(false)} />
+              </Dialog>
+
               <ToggleGroup
                 type="single"
                 value={viewMode}
