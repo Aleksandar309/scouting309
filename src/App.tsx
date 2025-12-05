@@ -13,6 +13,7 @@ import { Scout } from "./types/scout";
 import { Shortlist } from "./types/shortlist";
 import { ShadowTeam } from "./types/shadow-team";
 import { Task } from "./types/task";
+import { ShortlistProvider } from "./context/ShortlistContext"; // Import ShortlistProvider
 
 function App() {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -94,16 +95,18 @@ function App() {
 
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Index players={players} scouts={scouts} shortlists={shortlists} shadowTeams={shadowTeams} tasks={tasks} />} />
-        <Route path="/players" element={<PlayerDatabase players={players} setPlayers={setPlayers} scouts={scouts} />} /> {/* Ispravljena ruta */}
-        <Route path="/scouts" element={<Scouts scouts={scouts} setScouts={setScouts} players={players} tasks={tasks} setTasks={setTasks} />} />
-        <Route path="/shortlists" element={<ShortlistPage shortlists={shortlists} setShortlists={setShortlists} players={players} />} />
-        <Route path="/shadow-teams" element={<ShadowTeams shadowTeams={shadowTeams} setShadowTeams={setShadowTeams} players={players} />} />
-        <Route path="/tasks" element={<Tasks tasks={tasks} setTasks={setTasks} scouts={scouts} />} />
-        <Route path="/forum" element={<Forum />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <ShortlistProvider shortlists={shortlists} setShortlists={setShortlists}>
+        <Routes>
+          <Route path="/" element={<Index players={players} scouts={scouts} shortlists={shortlists} shadowTeams={shadowTeams} tasks={tasks} />} />
+          <Route path="/players" element={<PlayerDatabase players={players} setPlayers={setPlayers} scouts={scouts} />} /> {/* Ispravljena ruta */}
+          <Route path="/scouts" element={<Scouts scouts={scouts} setScouts={setScouts} players={players} tasks={tasks} setTasks={setTasks} />} />
+          <Route path="/shortlists" element={<ShortlistPage shortlists={shortlists} setShortlists={setShortlists} players={players} />} />
+          <Route path="/shadow-teams" element={<ShadowTeams shadowTeams={shadowTeams} setShadowTeams={setShadowTeams} players={players} />} />
+          <Route path="/tasks" element={<Tasks tasks={tasks} setTasks={setTasks} scouts={scouts} />} />
+          <Route path="/forum" element={<Forum />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </ShortlistProvider>
     </Router>
   );
 }
