@@ -41,8 +41,8 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams,
           <Link to="/players" className="block">
             <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium">Player Database</CardTitle>
-                <Search className="h-6 w-6 text-primary" />
+                <CardTitle className="text-lg font-medium text-center w-full">Player Database</CardTitle> {/* Added text-center and w-full */}
+                <Search className="h-6 w-6 text-primary absolute right-6 top-6" /> {/* Adjusted icon position */}
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-between">
                 <TooltipProvider>
@@ -68,8 +68,8 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams,
           <Link to="/scouts" className="block">
             <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium">Scouting Team</CardTitle>
-                <Users className="h-6 w-6 text-primary" />
+                <CardTitle className="text-lg font-medium text-center w-full">Scouting Team</CardTitle> {/* Added text-center and w-full */}
+                <Users className="h-6 w-6 text-primary absolute right-6 top-6" /> {/* Adjusted icon position */}
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-between">
                 <div className="h-32 flex items-center justify-center w-full rounded-md mb-4 bg-muted text-primary text-6xl font-bold">
@@ -86,8 +86,8 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams,
           <Link to="/shortlists" className="block">
             <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium">Shortlists</CardTitle>
-                <ListChecks className="h-6 w-6 text-primary" />
+                <CardTitle className="text-lg font-medium text-center w-full">Shortlists</CardTitle> {/* Added text-center and w-full */}
+                <ListChecks className="h-6 w-6 text-primary absolute right-6 top-6" /> {/* Adjusted icon position */}
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-between">
                 <div className="h-32 flex items-center justify-center w-full rounded-md mb-4 bg-muted text-primary text-6xl font-bold">
@@ -107,8 +107,8 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams,
           <Link to="/shadow-teams" className="block">
             <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium">Shadow Teams</CardTitle>
-                <LayoutDashboard className="h-6 w-6 text-primary" /> {/* Placeholder icon */}
+                <CardTitle className="text-lg font-medium text-center w-full">Shadow Teams</CardTitle> {/* Added text-center and w-full */}
+                <LayoutDashboard className="h-6 w-6 text-primary absolute right-6 top-6" /> {/* Adjusted icon position */}
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-between">
                 <TooltipProvider>
@@ -134,8 +134,8 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams,
           <Link to="/tasks" className="block">
             <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium">Scouting Tasks</CardTitle>
-                <ClipboardList className="h-6 w-6 text-primary" /> {/* New icon for tasks */}
+                <CardTitle className="text-lg font-medium text-center w-full">Scouting Tasks</CardTitle> {/* Added text-center and w-full */}
+                <ClipboardList className="h-6 w-6 text-primary absolute right-6 top-6" /> {/* Adjusted icon position */}
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-between">
                 <TooltipProvider>
@@ -161,8 +161,8 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams,
           <Link to="/forum" className="block">
             <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium">Forum</CardTitle>
-                <MessageSquare className="h-6 w-6 text-primary" /> {/* Icon for Forum */}
+                <CardTitle className="text-lg font-medium text-center w-full">Forum</CardTitle> {/* Added text-center and w-full */}
+                <MessageSquare className="h-6 w-6 text-primary absolute right-6 top-6" /> {/* Adjusted icon position */}
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-between">
                 <div className="h-32 flex items-center justify-center w-full rounded-md mb-4 bg-muted text-primary text-6xl font-bold">
