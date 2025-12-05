@@ -2,7 +2,7 @@ import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, LayoutDashboard, Search, ListChecks, ClipboardList } from "lucide-react"; // Import ClipboardList icon
+import { Users, LayoutDashboard, Search, ListChecks, ClipboardList, MessageSquare } from "lucide-react"; // Import MessageSquare icon
 import { ThemeToggle } from "@/components/ThemeToggle";
 import Logo from "@/components/Logo";
 import { Player } from "@/types/player"; // Import Player type
@@ -160,19 +160,17 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams,
 
           <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-lg font-medium">New Page 3</CardTitle>
-              <LayoutDashboard className="h-6 w-6 text-primary" /> {/* Placeholder icon */}
+              <CardTitle className="text-lg font-medium">Forum</CardTitle>
+              <MessageSquare className="h-6 w-6 text-primary" /> {/* Icon for Forum */}
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-between">
-              <img
-                src="https://images.unsplash.com/photo-1518611012118-696072cab595?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="Football pitch lines"
-                className="h-32 object-cover w-full rounded-md mb-4"
-              />
-              <p className="text-sm text-muted-foreground mb-4">Description for New Page 3.</p>
-              <Link to="/new-page-3">
+              <div className="h-32 flex items-center justify-center w-full rounded-md mb-4 bg-muted text-primary text-6xl font-bold">
+                <MessageSquare className="h-16 w-16" />
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">Mesto za diskusiju za sve članove zajednice.</p>
+              <Link to="/forum">
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                  Go to Page 3
+                  Idi na Forum
                 </Button>
               </Link>
             </CardContent>
