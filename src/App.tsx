@@ -127,7 +127,7 @@ const App = () => {
                 <Route path="/player/:id" element={<PlayerProfile players={players} setPlayers={setPlayers} scouts={scouts} shadowTeams={shadowTeams} setShadowTeams={setShadowTeams} />} />
                 <Route path="/players" element={<PlayerDatabase players={players} setPlayers={setPlayers} />} />
                 <Route path="/scouts" element={<Scouts assignments={assignments} setAssignments={setAssignments} scouts={scouts} />} />
-                <Route path="/scouts/:id" element={<ScoutProfile players={players} assignments={assignments} scouts={scouts} setScouts={setScouts} />} />
+                <Route path="/scouts/:id" element={<ScoutProfile players={players} assignments={assignments} scouts={scouts} setScouts={setScouts} tasks={tasks} setTasks={setTasks} />} />
                 <Route path="/shortlists" element={<ShortlistPage />} />
                 <Route path="/shadow-teams" element={<ShadowTeams players={players} shadowTeams={shadowTeams} setShadowTeams={setShadowTeams} />} />
                 <Route path="/tasks" element={<Tasks tasks={tasks} setTasks={setTasks} scouts={scouts} />} /> {/* New route for Tasks */}

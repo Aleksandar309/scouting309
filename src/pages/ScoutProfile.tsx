@@ -5,7 +5,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, User, ChevronLeft, CalendarDays, Briefcase, Table2, LayoutGrid, Edit } from 'lucide-react';
+import { Mail, Phone, User, ChevronLeft, CalendarDays, Briefcase, Table2, LayoutGrid, Edit, PlusCircle } from 'lucide-react';
 import { Scout, Assignment } from '@/types/scout';
 import { Player } from '@/types/player';
 import {
@@ -23,15 +23,19 @@ import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog'; // Import Dialog components
 import ScoutEditForm from '@/components/ScoutEditForm'; // Import ScoutEditForm
+import TaskForm from '@/components/TaskForm'; // Import TaskForm
+import { Task } from '@/types/task'; // Import Task type
 
 interface ScoutProfileProps {
   players: Player[];
   assignments: Assignment[];
   scouts: Scout[]; // Receive scouts from App.tsx
   setScouts: React.Dispatch<React.SetStateAction<Scout[]>>; // Receive setScouts from App.tsx
+  tasks: Task[]; // New: Receive tasks from App.tsx
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>; // New: Receive setTasks from App.tsx
 }
 
-const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments, scouts, setScouts }) => {
+const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments, scouts, setScouts, tasks, setTasks }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const currentScout = scouts.find(s => s.id === id); // Use scouts from props
@@ -47,6 +51,7 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments, scout
   const [globalFilter, setGlobalFilter] = React.useState('');
   const [selectedScoutRole, setSelectedScoutRole] = useState<ScoutRole | null>(null);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false); // State for edit form dialog
+  const [isTaskFormOpen, setIsTaskFormOpen] = useState(false); // New state for task form dialog
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -77,6 +82,11 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments, scout
       prevScouts.map((s) => (s.id === updatedScout.id ? updatedScout : s))
     );
     setIsEditFormOpen(false);
+  };
+
+  const handleAddTask = (newTask: Task) => {
+    setTasks((prevTasks) => [...prevTasks, newTask]);
+    setIsTaskFormOpen(false);
   };
 
   // Filter players reported by this scout
@@ -127,14 +137,24 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments, scout
                 <p className="text-muted-foreground text-lg">{currentScout.role}</p>
               </div>
             </div>
-            <Dialog open={isEditFormOpen} onOpenChange={setIsEditFormOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="bg-card text-foreground border-border hover:bg-accent">
-                  <Edit className="mr-2 h-4 w-4" /> Edit Profile
-                </Button>
-              </DialogTrigger>
-              <ScoutEditForm scout={currentScout} onSave={handleSaveScout} onClose={() => setIsEditFormOpen(false)} />
-            </Dialog>
+            <div className="flex space-x-2"> {/* Container for buttons */}
+              <Dialog open={isEditFormOpen} onOpenChange={setIsEditFormOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="bg-card text-foreground border-border hover:bg-accent">
+                    <Edit className="mr-2 h-4 w-4" /> Edit Profile
+                  </Button>
+                </DialogTrigger>
+                <ScoutEditForm scout={currentScout} onSave={handleSaveScout} onClose={() => setIsEditFormOpen(false)} />
+              </Dialog>
+              <Dialog open={isTaskFormOpen} onOpenChange={setIsTaskFormOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                    <PlusCircle className="mr-2 h-4 w-4" /> Create New Task
+                  </Button>
+                </DialogTrigger>
+                <TaskForm onAddTask={handleAddTask} onClose={() => setIsTaskFormOpen(false)} scouts={scouts} />
+              </Dialog>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4 text-muted-foreground">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
