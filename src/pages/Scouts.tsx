@@ -11,7 +11,7 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
-  TabsContent, // Added import for TabsContent
+  TabsContent,
 } from "@/components/ui/tabs";
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import AssignmentForm from '@/components/AssignmentForm';
@@ -124,10 +124,10 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
                 }}
                 className="bg-muted rounded-md p-1 border border-border"
               >
-                <ToggleGroupItem value="list" aria-label="Toggle list view" className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground text-muted-foreground hover:bg-accent">
+                <ToggleGroupItem value="list" aria-label="Toggle list view" className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground text-muted-foreground hover:bg-accent py-1">
                   <Table2 className="h-4 w-4 mr-2" /> List View
                 </ToggleGroupItem>
-                <ToggleGroupItem value="card" aria-label="Toggle card view" className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground text-muted-foreground hover:bg-accent">
+                <ToggleGroupItem value="card" aria-label="Toggle card view" className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground text-muted-foreground hover:bg-accent py-1">
                   <LayoutGrid className="h-4 w-4 mr-2" /> Card View
                 </ToggleGroupItem>
               </ToggleGroup>
