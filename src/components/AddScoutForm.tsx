@@ -71,7 +71,7 @@ const formSchema = z.object({
     temperament: z.coerce.number().min(1).max(10),
     controversy: z.coerce.number().min(1).max(10),
   }),
-  preferredJobs: z.array(z.string()).optional(),
+  preferredJobs: z.array(z.object({ id: z.string(), value: z.string() })).optional(), // Updated schema for field array
   newPreferredJob: z.string().optional(), // Temporary field for adding new jobs
 });
 
@@ -135,7 +135,7 @@ const AddScoutForm: React.FC<AddScoutFormProps> = ({ onAddScout, onClose }) => {
       avatarUrl: values.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${values.name.charAt(0)}`,
       scoutingAttributes: values.scoutingAttributes,
       mentalAttributes: values.mentalAttributes,
-      preferredJobs: values.preferredJobs || [],
+      preferredJobs: values.preferredJobs ? values.preferredJobs.map(job => job.value) : [], // Correctly map to string[]
     };
     onAddScout(newScout);
     toast.success(`Scout ${newScout.name} added successfully!`);
