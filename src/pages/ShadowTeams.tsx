@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, PlusCircle, Settings, Download } from "lucide-react";
+import { ChevronLeft, PlusCircle, Settings, Download, ZoomIn, ZoomOut, RefreshCcw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Player } from "@/types/player";
 import { ShadowTeam, ShadowTeamPlayer } from "@/types/shadow-team";
@@ -33,6 +33,7 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
   const [pitchColor, setPitchColor] = useState<'green' | 'theme'>('green'); // State for pitch color
+  const [zoomLevel, setZoomLevel] = useState(1); // New state for zoom level
 
   // State for AddPlayerToShadowTeamDialog
   const [isAddPlayerToTeamDialogOpen, setIsAddPlayerToTeamDialogOpen] = useState(false);
@@ -47,6 +48,7 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
     } else {
       setSelectedFormation(null);
     }
+    setZoomLevel(1); // Reset zoom when team changes
   }, [currentTeam]);
 
   const handleCreateTeam = (newTeamData: Omit<ShadowTeam, 'id' | 'playersByPosition'>) => {
@@ -156,9 +158,21 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
     toast.info("PDF Export functionality coming soon!");
   };
 
+  const handleZoomIn = () => {
+    setZoomLevel(prev => Math.min(prev + 0.1, 2)); // Max 2x zoom
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel(prev => Math.max(prev - 0.1, 0.5)); // Min 0.5x zoom
+  };
+
+  const handleResetZoom = () => {
+    setZoomLevel(1);
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground p-6">
-      <div className="max-w-7xl w-full mx-auto">
+      <div className="w-full mx-auto"> {/* Removed max-w-7xl */}
         {/* Back Button */}
         <Button
           variant="ghost"
@@ -219,6 +233,32 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-2xl font-bold">{currentTeam.name}</CardTitle>
               <div className="flex items-center space-x-2">
+                {/* Zoom Controls */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleZoomIn}
+                  className="bg-muted border-border text-muted-foreground hover:bg-accent"
+                >
+                  <ZoomIn className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleZoomOut}
+                  className="bg-muted border-border text-muted-foreground hover:bg-accent"
+                >
+                  <ZoomOut className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleResetZoom}
+                  className="bg-muted border-border text-muted-foreground hover:bg-accent"
+                >
+                  <RefreshCcw className="h-4 w-4" />
+                </Button>
+
                 <Button
                   variant="outline"
                   size="sm"
@@ -245,14 +285,16 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="p-4">
+            <CardContent className="p-4 overflow-auto"> {/* Added overflow-auto here */}
               <ShadowPitch
                 formation={selectedFormation}
                 playersByPosition={currentTeam.playersByPosition}
                 onPositionClick={handlePositionClick}
                 onPlayerRemove={handlePlayerRemove}
-                onPlayerDragStop={handlePlayerDragStop} // Pass the new handler
+                onPlayerDragStop={handlePlayerDragStop}
                 pitchColor={pitchColor}
+                zoomLevel={zoomLevel} // Pass zoom level
+                setZoomLevel={setZoomLevel} // Pass setZoomLevel for scroll
               />
             </CardContent>
           </Card>
