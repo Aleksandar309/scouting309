@@ -5,6 +5,7 @@ import { PlayerPosition } from '@/types/player';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from '@/lib/utils';
 import { PlayerFormationFitPosition } from '@/types/formation';
+import { VERTICAL_PITCH_COORDINATES } from '@/utils/pitch-coordinates'; // Import centralized coordinates
 
 interface PlayerPitchProps {
   positionsData?: PlayerPosition[]; // Player's individual positions (optional)
@@ -12,38 +13,12 @@ interface PlayerPitchProps {
   onPositionClick: (positionType: string) => void;
 }
 
-// Simplified mapping of common football positions to relative coordinates (percentage)
-// Transformed for horizontal pitch (defense left, attack right)
-const positionCoordinates: { [key: string]: { x: string; y: string } } = {
-  "GK": { x: "10%", y: "50%" }, // Golman na levoj strani
-  "CB": { x: "22%", y: "50%" },
-  "LCB": { x: "22%", y: "30%" },
-  "RCB": { x: "22%", y: "70%" },
-  "LB": { x: "30%", y: "10%" },
-  "RB": { x: "30%", y: "90%" },
-  "DM": { x: "40%", y: "50%" },
-  "LDM": { x: "40%", y: "30%" },
-  "RDM": { x: "40%", y: "70%" },
-  "LCM": { x: "50%", y: "30%" },
-  "RCM": { x: "50%", y: "70%" },
-  "CM": { x: "50%", y: "50%" },
-  "LWB": { x: "45%", y: "10%" },
-  "RWB": { x: "45%", y: "90%" },
-  "AM": { x: "70%", y: "50%" },
-  "LW": { x: "80%", y: "15%" },
-  "RW": { x: "80%", y: "85%" },
-  "CF": { x: "90%", y: "50%" }, // Generic CF
-  "CF_CENTRAL": { x: "90%", y: "50%" },
-  "CF_LEFT": { x: "90%", y: "35%" },
-  "CF_RIGHT": { x: "90%", y: "65%" },
-};
-
 const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPositions, onPositionClick }) => {
   const positionsToRender = formationPositions || positionsData;
 
   if (!positionsToRender) {
     return (
-      <div className="relative w-full aspect-[3/2] max-w-[800px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner flex items-center justify-center text-muted-foreground">
+      <div className="relative w-full aspect-[2/3] max-w-[520px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner flex items-center justify-center text-muted-foreground">
         No position data available.
       </div>
     );
@@ -52,61 +27,61 @@ const PlayerPitch: React.FC<PlayerPitchProps> = ({ positionsData, formationPosit
   return (
     <TooltipProvider>
       {/* Main pitch container - now wider than tall, with max width and centered */}
-      <div className="relative w-full aspect-[3/2] max-w-[800px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner">
+      <div className="relative w-full aspect-[2/3] max-w-[520px] mx-auto bg-background border-2 border-border rounded-lg overflow-hidden shadow-inner">
         {/* Pitch Lines */}
         <div className="absolute inset-0">
           {/* Outer border (already on parent div) */}
 
-          {/* Halfway line (vertical) */}
-          <div className="absolute top-0 bottom-0 left-1/2 w-0.5 h-full bg-pitch-line"></div>
+          {/* Halfway line (horizontal) */}
+          <div className="absolute left-0 right-0 top-1/2 h-0.5 w-full bg-pitch-line"></div>
           {/* Center circle */}
           <div className="absolute top-1/2 left-1/2 w-20 h-20 border-2 border-solid border-pitch-line rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
 
-          {/* Left Penalty Box (Defense) */}
-          <div className="absolute left-0 top-1/2 h-[70%] w-[20%] transform -translate-y-1/2">
+          {/* Bottom Penalty Box (Defense) */}
+          <div className="absolute bottom-0 left-1/2 w-[70%] h-[20%] transform -translate-x-1/2">
             {/* 18-yard line */}
-            <div className="absolute right-0 top-0 h-full w-0.5 bg-pitch-line"></div>
-            {/* Top horizontal line */}
-            <div className="absolute top-0 left-0 h-0.5 w-full bg-pitch-line"></div>
-            {/* Bottom horizontal line */}
-            <div className="absolute bottom-0 left-0 h-0.5 w-full bg-pitch-line"></div>
+            <div className="absolute top-0 left-0 w-full h-0.5 bg-pitch-line"></div>
+            {/* Left vertical line */}
+            <div className="absolute top-0 left-0 h-full w-0.5 bg-pitch-line"></div>
+            {/* Right vertical line */}
+            <div className="absolute top-0 right-0 h-full w-0.5 bg-pitch-line"></div>
             {/* Penalty spot */}
-            <div className="absolute left-[30%] top-1/2 w-1.5 h-1.5 bg-pitch-line rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute top-[30%] left-1/2 w-1.5 h-1.5 bg-pitch-line rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
             {/* Penalty arc (semi-circle) */}
-            <div className="absolute left-[30%] top-1/2 h-24 w-12 border-2 border-solid border-pitch-line rounded-r-full transform -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute top-[30%] left-1/2 h-12 w-24 border-2 border-solid border-pitch-line rounded-t-full transform -translate-x-1/2 -translate-y-1/2"></div>
 
             {/* 6-yard box (Goal Area) */}
-            <div className="absolute left-0 top-1/2 h-[30%] w-[10%] transform -translate-y-1/2">
-              <div className="absolute right-0 top-0 h-full w-0.5 bg-pitch-line"></div>
-              <div className="absolute top-0 left-0 h-0.5 w-full bg-pitch-line"></div>
+            <div className="absolute bottom-0 left-1/2 w-[30%] h-[10%] transform -translate-x-1/2">
+              <div className="absolute top-0 left-0 w-full h-0.5 bg-pitch-line"></div>
+              <div className="absolute top-0 left-0 h-full w-0.5 bg-pitch-line"></div>
               <div className="absolute bottom-0 left-0 h-0.5 w-full bg-pitch-line"></div>
             </div>
           </div>
 
-          {/* Right Penalty Box (Attack) */}
-          <div className="absolute right-0 top-1/2 h-[70%] w-[20%] transform -translate-y-1/2">
+          {/* Top Penalty Box (Attack) */}
+          <div className="absolute top-0 left-1/2 w-[70%] h-[20%] transform -translate-x-1/2">
             {/* 18-yard line */}
-            <div className="absolute left-0 top-0 h-full w-0.5 bg-pitch-line"></div>
-            {/* Top horizontal line */}
-            <div className="absolute top-0 left-0 h-0.5 w-full bg-pitch-line"></div>
-            {/* Bottom horizontal line */}
-            <div className="absolute bottom-0 left-0 h-0.5 w-full bg-pitch-line"></div>
+            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-pitch-line"></div>
+            {/* Left vertical line */}
+            <div className="absolute top-0 left-0 h-full w-0.5 bg-pitch-line"></div>
+            {/* Right vertical line */}
+            <div className="absolute top-0 right-0 h-full w-0.5 bg-pitch-line"></div>
             {/* Penalty spot */}
-            <div className="absolute right-[30%] top-1/2 w-1.5 h-1.5 bg-pitch-line rounded-full transform translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-[30%] left-1/2 w-1.5 h-1.5 bg-pitch-line rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
             {/* Penalty arc (semi-circle) */}
-            <div className="absolute right-[30%] top-1/2 h-24 w-12 border-2 border-solid border-pitch-line rounded-l-full transform translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-[30%] left-1/2 h-12 w-24 border-2 border-solid border-pitch-line rounded-b-full transform -translate-x-1/2 -translate-y-1/2"></div>
 
             {/* 6-yard box (Goal Area) */}
-            <div className="absolute right-0 top-1/2 h-[30%] w-[10%] transform -translate-y-1/2">
-              <div className="absolute left-0 top-0 h-full w-0.5 bg-pitch-line"></div>
-              <div className="absolute top-0 left-0 h-0.5 w-full bg-pitch-line"></div>
-              <div className="absolute bottom-0 left-0 h-0.5 w-full bg-pitch-line"></div>
+            <div className="absolute top-0 left-1/2 w-[30%] h-[10%] transform -translate-x-1/2">
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-pitch-line"></div>
+              <div className="absolute top-0 left-0 h-full w-0.5 bg-pitch-line"></div>
+              <div className="absolute top-0 right-0 h-full w-0.5 bg-pitch-line"></div>
             </div>
           </div>
         </div>
 
         {positionsToRender.map((pos, index) => {
-          const coords = positionCoordinates[pos.name] || { x: pos.x, y: pos.y };
+          const coords = VERTICAL_PITCH_COORDINATES[pos.name] || { x: pos.x, y: pos.y }; // Use centralized coordinates
           if (!coords || !coords.x || !coords.y) return null;
 
           let circleClasses = "";
