@@ -48,7 +48,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
 
     updateDimensions();
     window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('change', updateDimensions); // Changed 'resize' to 'change'
   }, []);
 
   useEffect(() => {
@@ -104,95 +104,97 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   const pitchElements: JSX.Element[] = [];
   const playerDotSize = 24; // Reduced player dot size (from 40 to 24)
 
-  // Always render positions and players, even if pitchDimensions are 0 initially
-  formation.positions.forEach((formPos: FormationPosition) => {
-    const playersInPosition = playersByPosition[formPos.name] || [];
-    const hasPlayers = playersInPosition.length > 0;
+  // Only render positions and players if pitch dimensions are valid
+  if (pitchDimensions.width > 0 && pitchDimensions.height > 0) {
+    formation.positions.forEach((formPos: FormationPosition) => {
+      const playersInPosition = playersByPosition[formPos.name] || [];
+      const hasPlayers = playersInPosition.length > 0;
 
-    if (!hasPlayers) {
-      pitchElements.push(
-        <div
-          key={`add-${formPos.name}`}
-          className="absolute flex flex-col items-center justify-center"
-          style={{
-            left: formPos.x,
-            top: formPos.y,
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <button
-            className={cn(
-              "w-8 h-8 rounded-full flex items-center justify-center text-xl font-bold transition-all duration-200", // Reduced button size (from w-10 h-10 to w-8 h-8)
-              pitchColor === 'green' ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-primary hover:bg-primary/90 text-primary-foreground'
-            )}
-            onClick={() => onPositionClick(formPos.name)}
-          >
-            <PlusCircle className="h-5 w-5" /> {/* Reduced icon size (from h-6 w-6 to h-5 w-5) */}
-          </button>
-        </div>
-      );
-    } else {
-      const initialCenterX = getPixelCoordinate(formPos.x, pitchDimensions.width);
-      const initialCenterY = getPixelCoordinate(formPos.y, pitchDimensions.height);
-
-      playersInPosition.forEach((player, playerIndex) => {
-        const nodeRef = playerNodeRefs.current.get(player.id);
-        if (!nodeRef) return;
-
-        const playerDotColor = player.dotColor || (pitchColor === 'green' ? 'bg-blue-500' : 'bg-primary');
-
-        let defaultX = player.customX;
-        let defaultY = player.customY;
-
-        if (defaultX === undefined || defaultY === undefined) {
-          // Calculate initial position relative to the top-left of the pitch
-          defaultX = initialCenterX - (playerDotSize / 2);
-          defaultY = initialCenterY - (playerDotSize / 2);
-        }
-
-        const offset = getPlayerOffset(playerIndex, playersInPosition.length);
-        const finalX = (defaultX || 0) + offset.x;
-        const finalY = (defaultY || 0) + offset.y;
-
+      if (!hasPlayers) {
         pitchElements.push(
-          <Draggable
-            key={player.id}
-            nodeRef={nodeRef}
-            position={{ x: finalX, y: finalY }}
-            onStop={(e, data) => onPlayerDragStop(formPos.name, player.id, data.x, data.y)}
-            bounds="parent"
+          <div
+            key={`add-${formPos.name}`}
+            className="absolute flex flex-col items-center justify-center"
+            style={{
+              left: formPos.x,
+              top: formPos.y,
+              transform: "translate(-50%, -50%)",
+            }}
           >
-            <div
-              ref={nodeRef}
+            <button
               className={cn(
-                "absolute rounded-full flex flex-col items-center justify-center cursor-grab active:cursor-grabbing transition-all duration-200",
-                playerDotColor
+                "w-8 h-8 rounded-full flex items-center justify-center text-xl font-bold transition-all duration-200", // Reduced button size (from w-10 h-10 to w-8 h-8)
+                pitchColor === 'green' ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-primary hover:bg-primary/90 text-primary-foreground'
               )}
-              style={{
-                width: `${playerDotSize}px`,
-                height: `${playerDotSize}px`,
-                zIndex: 10 + playerIndex,
-              }}
+              onClick={() => onPositionClick(formPos.name)}
             >
-              <Avatar className="h-6 w-6"> {/* Reduced avatar size (from h-8 w-8 to h-6 w-6) */}
-                <AvatarImage src={player.avatarUrl} alt={player.name} />
-                <AvatarFallback className="bg-primary text-primary-foreground text-xs">{player.name.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <button
-                className="absolute -top-1 -right-1 bg-destructive rounded-full h-3 w-3 flex items-center justify-center text-white text-xs" // Reduced remove button size
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPlayerRemove(formPos.name, player.id);
+              <PlusCircle className="h-5 w-5" /> {/* Reduced icon size (from h-6 w-6 to h-5 w-5) */}
+            </button>
+          </div>
+        );
+      } else {
+        const initialCenterX = getPixelCoordinate(formPos.x, pitchDimensions.width);
+        const initialCenterY = getPixelCoordinate(formPos.y, pitchDimensions.height);
+
+        playersInPosition.forEach((player, playerIndex) => {
+          const nodeRef = playerNodeRefs.current.get(player.id);
+          if (!nodeRef) return;
+
+          const playerDotColor = player.dotColor || (pitchColor === 'green' ? 'bg-blue-500' : 'bg-primary');
+
+          let defaultX = player.customX;
+          let defaultY = player.customY;
+
+          if (defaultX === undefined || defaultY === undefined) {
+            // Calculate initial position relative to the top-left of the pitch
+            defaultX = initialCenterX - (playerDotSize / 2);
+            defaultY = initialCenterY - (playerDotSize / 2);
+          }
+
+          const offset = getPlayerOffset(playerIndex, playersInPosition.length);
+          const finalX = (defaultX || 0) + offset.x;
+          const finalY = (defaultY || 0) + offset.y;
+
+          pitchElements.push(
+            <Draggable
+              key={player.id}
+              nodeRef={nodeRef}
+              position={{ x: finalX, y: finalY }}
+              onStop={(e, data) => onPlayerDragStop(formPos.name, player.id, data.x, data.y)}
+              bounds="parent"
+            >
+              <div
+                ref={nodeRef}
+                className={cn(
+                  "absolute rounded-full flex flex-col items-center justify-center cursor-grab active:cursor-grabbing transition-all duration-200",
+                  playerDotColor
+                )}
+                style={{
+                  width: `${playerDotSize}px`,
+                  height: `${playerDotSize}px`,
+                  zIndex: 10 + playerIndex,
                 }}
               >
-                <MinusCircle className="h-2 w-2" /> {/* Reduced remove icon size */}
-              </button>
-            </div>
-          </Draggable>
-        );
-      });
-    }
-  });
+                <Avatar className="h-6 w-6"> {/* Reduced avatar size (from h-8 w-8 to h-6 w-6) */}
+                  <AvatarImage src={player.avatarUrl} alt={player.name} />
+                  <AvatarFallback className="bg-primary text-primary-foreground text-xs">{player.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <button
+                  className="absolute -top-1 -right-1 bg-destructive rounded-full h-3 w-3 flex items-center justify-center text-white text-xs" // Reduced remove button size
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPlayerRemove(formPos.name, player.id);
+                  }}
+                >
+                  <MinusCircle className="h-2 w-2" /> {/* Reduced remove icon size */}
+                </button>
+              </div>
+            </Draggable>
+          );
+        });
+      }
+    });
+  }
 
 
   return (
