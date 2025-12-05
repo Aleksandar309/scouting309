@@ -11,6 +11,7 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
+  TabsContent, // Added import for TabsContent
 } from "@/components/ui/tabs";
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import AssignmentForm from '@/components/AssignmentForm';
