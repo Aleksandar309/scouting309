@@ -5,11 +5,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, User, ChevronLeft, PlusCircle, CalendarDays, Briefcase } from 'lucide-react';
+import { Mail, Phone, User, ChevronLeft, PlusCircle, CalendarDays, Briefcase, Table2, LayoutGrid } from 'lucide-react';
 import { Scout, Assignment } from '@/types/scout';
 import {
   Tabs,
-  TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
@@ -17,33 +16,57 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import AssignmentForm from '@/components/AssignmentForm';
 import { Badge } from '@/components/ui/badge';
 import { format, isPast } from 'date-fns';
-import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/task-utils'; // Updated import
+import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/task-utils';
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"; // Import ToggleGroup
+import ScoutListDisplay from '@/components/ScoutListDisplay'; // Import new list display
+import { scoutTableColumns } from '@/utils/scout-table-columns'; // Import scout table columns
+import { SortingState, ColumnFiltersState } from '@tanstack/react-table'; // Import for table state
+import { Player } from '@/types/player'; // Import Player type
+import { Task } from '@/types/task'; // Import Task type
 
 interface ScoutsPageProps {
   assignments: Assignment[];
   setAssignments: React.Dispatch<React.SetStateAction<Assignment[]>>;
-  scouts: Scout[]; // Receive scouts from App.tsx
+  scouts: Scout[];
+  setScouts: React.Dispatch<React.SetStateAction<Scout[]>>;
+  players: Player[]; // Added players prop
+  tasks: Task[]; // Added tasks prop
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>; // Added setTasks prop
 }
 
-const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, scouts }) => {
+const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, scouts, players, tasks, setTasks }) => {
   const navigate = useNavigate();
   const [isAssignmentFormOpen, setIsAssignmentFormOpen] = useState(false);
+  const [viewMode, setViewMode] = React.useState<'list' | 'card'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('scoutViewMode') as 'list' | 'card') || 'list'; // Default to list
+    }
+    return 'list';
+  });
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = React.useState('');
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('scoutViewMode', viewMode);
+    }
+  }, [viewMode]);
 
   const handleAddAssignment = (newAssignment: Assignment) => {
     setAssignments((prevAssignments) => [...prevAssignments, newAssignment]);
     setIsAssignmentFormOpen(false);
   };
 
-  // Group scouts by custom categories
   const groupedScouts: { [key: string]: Scout[] } = {
     "Directors, Presidents, Board Members": [],
     "Head Scout/Chief": [],
     "Senior Scouts": [],
-    "General Scouts": [], // New category for general scouts
+    "General Scouts": [],
     "Youth Scouts": [],
   };
 
-  scouts.forEach(scout => { // Use scouts from props
+  scouts.forEach(scout => {
     if (scout.role === "Head Scout") {
       groupedScouts["Head Scout/Chief"].push(scout);
     } else if (scout.role === "Senior Scout") {
@@ -55,24 +78,18 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
     } else if (scout.role === "Technical Director" || scout.role === "Director of Football") {
       groupedScouts["Directors, Presidents, Board Members"].push(scout);
     }
-    // Add logic for other roles if they exist in mockScouts, e.g., Technical Director, Director of Football
-    // For now, they will fall into no category if not explicitly handled.
   });
 
-  // Sort assignments: Overdue first, then Completed last, then by creation date (newest first)
   const sortedAssignments = [...assignments].sort((a, b) => {
     const aOverdue = a.status !== "Completed" && isPast(new Date(a.dueDate));
     const bOverdue = b.status !== "Completed" && isPast(new Date(b.dueDate));
 
-    // 1. Overdue tasks first
     if (aOverdue && !bOverdue) return -1;
     if (!aOverdue && bOverdue) return 1;
 
-    // 2. Completed tasks last
     if (a.status === "Completed" && b.status !== "Completed") return 1;
     if (a.status !== "Completed" && b.status === "Completed") return -1;
 
-    // 3. Then by creation date (newest first)
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 
@@ -97,44 +114,74 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
           </TabsList>
 
           <TabsContent value="team" className="mt-6">
-            {Object.entries(groupedScouts).map(([category, categoryScouts]) => ( // Renamed scouts to categoryScouts to avoid conflict
-              // Only render the category if there are scouts in it
-              categoryScouts.length > 0 && (
-                <div key={category} className="mb-8">
-                  <h2 className="text-2xl font-bold mb-4 text-foreground">{category}</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {categoryScouts.map((scout) => (
-                      <Link to={`/scouts/${scout.id}`} key={scout.id}>
-                        <Card className="bg-card border-border text-card-foreground shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
-                          <CardHeader className="flex flex-row items-center space-x-4 pb-4">
-                            <Avatar className="h-16 w-16">
-                              <AvatarImage src={scout.avatarUrl} alt={scout.name} />
-                              <AvatarFallback className="bg-primary text-primary-foreground text-xl">{scout.name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <CardTitle className="text-xl font-semibold">{scout.name}</CardTitle>
-                              <p className="text-muted-foreground text-sm">{scout.role}</p>
-                            </div>
-                          </CardHeader>
-                          <CardContent className="space-y-3 text-muted-foreground">
-                            <div className="flex items-center text-sm">
-                              <Mail className="mr-2 h-4 w-4 text-muted-foreground" /> {scout.email}
-                            </div>
-                            <div className="flex items-center text-sm">
-                              <Phone className="mr-2 h-4 w-4 text-muted-foreground" /> {scout.phone}
-                            </div>
-                            <div className="flex items-center text-sm">
-                              <User className="mr-2 h-4 w-4 text-muted-foreground" /> Active Players: {scout.activePlayers}
-                            </div>
-                            <div className="text-xs text-muted-foreground">Last Report: {scout.lastReportDate}</div>
-                          </CardContent>
-                        </Card>
-                      </Link>
-                    ))}
+            <div className="flex justify-end mb-4">
+              <ToggleGroup
+                type="single"
+                value={viewMode}
+                onValueChange={(value: 'list' | 'card') => {
+                  if (value) setViewMode(value);
+                }}
+                className="bg-muted rounded-md p-1 border border-border"
+              >
+                <ToggleGroupItem value="list" aria-label="Toggle list view" className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground text-muted-foreground hover:bg-accent">
+                  <Table2 className="h-4 w-4 mr-2" /> List View
+                </ToggleGroupItem>
+                <ToggleGroupItem value="card" aria-label="Toggle card view" className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground text-muted-foreground hover:bg-accent">
+                  <LayoutGrid className="h-4 w-4 mr-2" /> Card View
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </div>
+
+            {viewMode === 'list' ? (
+              <ScoutListDisplay
+                data={scouts}
+                columns={scoutTableColumns}
+                sorting={sorting}
+                setSorting={setSorting}
+                columnFilters={columnFilters}
+                setColumnFilters={setColumnFilters}
+                globalFilter={globalFilter}
+                setGlobalFilter={setGlobalFilter}
+              />
+            ) : (
+              Object.entries(groupedScouts).map(([category, categoryScouts]) => (
+                categoryScouts.length > 0 && (
+                  <div key={category} className="mb-8">
+                    <h2 className="text-2xl font-bold mb-4 text-foreground">{category}</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {categoryScouts.map((scout) => (
+                        <Link to={`/scouts/${scout.id}`} key={scout.id}>
+                          <Card className="bg-card border-border text-card-foreground shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
+                            <CardHeader className="flex flex-row items-center space-x-4 pb-4">
+                              <Avatar className="h-16 w-16">
+                                <AvatarImage src={scout.avatarUrl} alt={scout.name} />
+                                <AvatarFallback className="bg-primary text-primary-foreground text-xl">{scout.name.charAt(0)}</AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <CardTitle className="text-xl font-semibold">{scout.name}</CardTitle>
+                                <p className="text-muted-foreground text-sm">{scout.role}</p>
+                              </div>
+                            </CardHeader>
+                            <CardContent className="space-y-3 text-muted-foreground">
+                              <div className="flex items-center text-sm">
+                                <Mail className="mr-2 h-4 w-4 text-muted-foreground" /> {scout.email}
+                              </div>
+                              <div className="flex items-center text-sm">
+                                <Phone className="mr-2 h-4 w-4 text-muted-foreground" /> {scout.phone}
+                              </div>
+                              <div className="flex items-center text-sm">
+                                <User className="mr-2 h-4 w-4 text-muted-foreground" /> Active Players: {scout.activePlayers}
+                              </div>
+                              <div className="text-xs text-muted-foreground">Last Report: {scout.lastReportDate}</div>
+                            </CardContent>
+                          </Card>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )
-            ))}
+                )
+              ))
+            )}
           </TabsContent>
 
           <TabsContent value="assignments" className="mt-6">
