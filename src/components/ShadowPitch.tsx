@@ -56,7 +56,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   const textColorClass = pitchColor === 'green' ? 'text-white' : 'text-foreground';
 
   const pitchRef = useRef<HTMLDivElement>(null);
-  const [pitchDimensions, setPitchDimensions] = useState<{ width: number; height: number } | null>(null);
+  const [pitchDimensions, setPitchDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 }); // Initialize with 0,0
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -110,15 +110,20 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
     const playersInPosition = playersByPosition[formPos.name] || [];
     const hasPlayers = playersInPosition.length > 0;
 
-    // For "Add Player" button, always use percentage-based positioning
+    // Calculate initial center pixel coordinates for the formation position
+    // Always use pitchDimensions, which is now initialized to {0,0} and updated by useEffect
+    const initialCenterX = getPixelCoordinate(formPos.x, pitchDimensions.width);
+    const initialCenterY = getPixelCoordinate(formPos.y, pitchDimensions.height);
+
     if (!hasPlayers) {
+      // Render the Add Player button if no players are assigned to this position
       pitchElements.push(
         <div
           key={`add-${formPos.name}`}
           className="absolute flex flex-col items-center justify-center"
           style={{
-            left: formPos.x,
-            top: formPos.y,
+            left: formPos.x, // Use percentage for initial positioning of the button
+            top: formPos.y, // Use percentage for initial positioning of the button
             transform: "translate(-50%, -50%)", // Center the button
           }}
         >
@@ -134,67 +139,64 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
         </div>
       );
     } else {
-      // For draggable players, ensure pitchDimensions are available for initial pixel calculation
-      if (pitchDimensions) {
-        const initialCenterX = getPixelCoordinate(formPos.x, pitchDimensions.width);
-        const initialCenterY = getPixelCoordinate(formPos.y, pitchDimensions.height);
+      // Render players
+      playersInPosition.forEach((player, playerIndex) => {
+        const nodeRef = React.useRef(null);
+        const playerDotColor = player.dotColor || (pitchColor === 'green' ? 'bg-blue-500' : 'bg-primary');
 
-        playersInPosition.forEach((player, playerIndex) => {
-          const nodeRef = React.useRef(null);
-          const playerDotColor = player.dotColor || (pitchColor === 'green' ? 'bg-blue-500' : 'bg-primary');
+        // Calculate initial top-left pixel coordinates for Draggable
+        // If customX/Y are not set, use the formation position's center, adjusted for dot size
+        let defaultX = player.customX;
+        let defaultY = player.customY;
 
-          let defaultX = player.customX;
-          let defaultY = player.customY;
+        if (defaultX === undefined || defaultY === undefined) {
+          defaultX = initialCenterX - (playerDotSize / 2); // Subtract half of dot width
+          defaultY = initialCenterY - (playerDotSize / 2); // Subtract half of dot height
+        }
 
-          if (defaultX === undefined || defaultY === undefined) {
-            defaultX = initialCenterX - (playerDotSize / 2);
-            defaultY = initialCenterY - (playerDotSize / 2);
-          }
+        // Apply stacking offset to the Draggable's position
+        const offset = getPlayerOffset(playerIndex, playersInPosition.length);
+        const finalX = (defaultX || 0) + offset.x;
+        const finalY = (defaultY || 0) + offset.y;
 
-          const offset = getPlayerOffset(playerIndex, playersInPosition.length);
-          const finalX = (defaultX || 0) + offset.x;
-          const finalY = (defaultY || 0) + offset.y;
-
-          pitchElements.push(
-            <Draggable
-              key={player.id}
-              nodeRef={nodeRef}
-              position={{ x: finalX, y: finalY }}
-              onStop={(e, data) => onPlayerDragStop(formPos.name, player.id, data.x, data.y)}
-              bounds="parent"
+        pitchElements.push(
+          <Draggable
+            key={player.id}
+            nodeRef={nodeRef}
+            position={{ x: finalX, y: finalY }} // Use calculated pixel position
+            onStop={(e, data) => onPlayerDragStop(formPos.name, player.id, data.x, data.y)}
+            bounds="parent" // Constrain dragging to the parent element (the pitch)
+          >
+            <div
+              ref={nodeRef}
+              className={cn(
+                "absolute rounded-full flex flex-col items-center justify-center cursor-grab active:cursor-grabbing transition-all duration-200",
+                playerDotColor
+              )}
+              style={{
+                width: `${playerDotSize}px`,
+                height: `${playerDotSize}px`,
+                zIndex: 10 + playerIndex,
+              }}
             >
-              <div
-                ref={nodeRef}
-                className={cn(
-                  "absolute rounded-full flex flex-col items-center justify-center cursor-grab active:cursor-grabbing transition-all duration-200",
-                  playerDotColor
-                )}
-                style={{
-                  width: `${playerDotSize}px`,
-                  height: `${playerDotSize}px`,
-                  zIndex: 10 + playerIndex,
+              {/* Player content (Avatar, remove button) */}
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={player.avatarUrl} alt={player.name} />
+                <AvatarFallback className="bg-muted text-muted-foreground text-xs">{player.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <button
+                className="absolute -top-1 -right-1 bg-destructive rounded-full h-4 w-4 flex items-center justify-center text-white text-xs"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPlayerRemove(formPos.name, player.id);
                 }}
               >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={player.avatarUrl} alt={player.name} />
-                  <AvatarFallback className="bg-muted text-muted-foreground text-xs">{player.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <button
-                  className="absolute -top-1 -right-1 bg-destructive rounded-full h-4 w-4 flex items-center justify-center text-white text-xs"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onPlayerRemove(formPos.name, player.id);
-                  }}
-                >
-                  <MinusCircle className="h-3 w-3" />
-                </button>
-              </div>
-            </Draggable>
-          );
-        });
-      }
-      // If pitchDimensions is null, draggable players are not rendered in the first pass.
-      // They will render once pitchDimensions is set by the useEffect.
+                <MinusCircle className="h-3 w-3" />
+              </button>
+            </div>
+          </Draggable>
+        );
+      });
     }
   });
 
