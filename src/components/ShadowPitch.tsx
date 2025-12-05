@@ -48,7 +48,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
 
     updateDimensions();
     window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('change', updateDimensions); // Changed 'resize' to 'change'
+    return () => window.removeEventListener('resize', updateDimensions); // Corrected: Changed 'change' back to 'resize'
   }, []);
 
   useEffect(() => {
@@ -105,7 +105,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   const playerDotSize = 24; // Reduced player dot size (from 40 to 24)
 
   // Only render positions and players if pitch dimensions are valid
-  if (pitchDimensions.width > 0 && pitchDimensions.height > 0) {
+  if (pitchDimensions.width > 0 && pitchDimensions.height > 0) { // Moved this check to wrap the entire loop
     formation.positions.forEach((formPos: FormationPosition) => {
       const playersInPosition = playersByPosition[formPos.name] || [];
       const hasPlayers = playersInPosition.length > 0;
