@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, createRef } from 'react'; // Import createRef
 import { Formation, FormationPosition } from '@/types/formation';
 import { ShadowTeamPlayer } from '@/types/shadow-team';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -56,7 +56,10 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   const textColorClass = pitchColor === 'green' ? 'text-white' : 'text-foreground';
 
   const pitchRef = useRef<HTMLDivElement>(null);
-  const [pitchDimensions, setPitchDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 }); // Initialize with 0,0
+  const [pitchDimensions, setPitchDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
+
+  // Map to store refs for each draggable player
+  const playerNodeRefs = useRef(new Map<string, React.RefObject<HTMLDivElement>>());
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -68,10 +71,35 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
       }
     };
 
-    updateDimensions(); // Set initial dimensions
+    updateDimensions();
     window.addEventListener('resize', updateDimensions);
     return () => window.removeEventListener('resize', updateDimensions);
   }, []);
+
+  // Effect to manage player refs in the map
+  useEffect(() => {
+    const allPlayerIdsInFormation: string[] = [];
+    if (formation) {
+      formation.positions.forEach(formPos => {
+        const playersInPosition = playersByPosition[formPos.name] || [];
+        playersInPosition.forEach(player => allPlayerIdsInFormation.push(player.id));
+      });
+    }
+
+    // Remove refs for players no longer in the formation
+    playerNodeRefs.current.forEach((_ref, id) => {
+      if (!allPlayerIdsInFormation.includes(id)) {
+        playerNodeRefs.current.delete(id);
+      }
+    });
+
+    // Add refs for new players in the formation
+    allPlayerIdsInFormation.forEach(id => {
+      if (!playerNodeRefs.current.has(id)) {
+        playerNodeRefs.current.set(id, createRef<HTMLDivElement>());
+      }
+    });
+  }, [formation, playersByPosition]); // Depend on formation and playersByPosition to re-manage refs
 
   if (!formation) {
     return (
@@ -85,15 +113,13 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
     );
   }
 
-  // Helper to convert percentage string to pixel value
   const getPixelCoordinate = (percent: string, totalDimension: number) => {
     return (parseFloat(percent) / 100) * totalDimension;
   };
 
-  // Helper to get offset for multiple players in a single position
   const getPlayerOffset = (playerIndex: number, totalPlayers: number) => {
     if (totalPlayers === 1) return { x: 0, y: 0 };
-    const spread = 20; // Max spread in pixels
+    const spread = 20;
     const offsetPerPlayer = spread / (totalPlayers - 1);
     const startOffset = -spread / 2;
     return {
@@ -102,29 +128,25 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
     };
   };
 
-  // Collect all elements to render at the top level of the pitch
   const pitchElements: JSX.Element[] = [];
-  const playerDotSize = 40; // Player dot width/height
+  const playerDotSize = 40;
 
   formation.positions.forEach((formPos: FormationPosition) => {
     const playersInPosition = playersByPosition[formPos.name] || [];
     const hasPlayers = playersInPosition.length > 0;
 
-    // Calculate initial center pixel coordinates for the formation position
-    // Always use pitchDimensions, which is now initialized to {0,0} and updated by useEffect
     const initialCenterX = getPixelCoordinate(formPos.x, pitchDimensions.width);
     const initialCenterY = getPixelCoordinate(formPos.y, pitchDimensions.height);
 
     if (!hasPlayers) {
-      // Render the Add Player button if no players are assigned to this position
       pitchElements.push(
         <div
           key={`add-${formPos.name}`}
           className="absolute flex flex-col items-center justify-center"
           style={{
-            left: formPos.x, // Use percentage for initial positioning of the button
-            top: formPos.y, // Use percentage for initial positioning of the button
-            transform: "translate(-50%, -50%)", // Center the button
+            left: formPos.x,
+            top: formPos.y,
+            transform: "translate(-50%, -50%)",
           }}
         >
           <button
@@ -139,22 +161,20 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
         </div>
       );
     } else {
-      // Render players
       playersInPosition.forEach((player, playerIndex) => {
-        const nodeRef = React.useRef(null);
+        const nodeRef = playerNodeRefs.current.get(player.id); // Get ref from map
+        if (!nodeRef) return; // Should not happen if useEffect is correct
+
         const playerDotColor = player.dotColor || (pitchColor === 'green' ? 'bg-blue-500' : 'bg-primary');
 
-        // Calculate initial top-left pixel coordinates for Draggable
-        // If customX/Y are not set, use the formation position's center, adjusted for dot size
         let defaultX = player.customX;
         let defaultY = player.customY;
 
         if (defaultX === undefined || defaultY === undefined) {
-          defaultX = initialCenterX - (playerDotSize / 2); // Subtract half of dot width
-          defaultY = initialCenterY - (playerDotSize / 2); // Subtract half of dot height
+          defaultX = initialCenterX - (playerDotSize / 2);
+          defaultY = initialCenterY - (playerDotSize / 2);
         }
 
-        // Apply stacking offset to the Draggable's position
         const offset = getPlayerOffset(playerIndex, playersInPosition.length);
         const finalX = (defaultX || 0) + offset.x;
         const finalY = (defaultY || 0) + offset.y;
@@ -162,13 +182,13 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
         pitchElements.push(
           <Draggable
             key={player.id}
-            nodeRef={nodeRef}
-            position={{ x: finalX, y: finalY }} // Use calculated pixel position
+            nodeRef={nodeRef} // Use the ref from the map
+            position={{ x: finalX, y: finalY }}
             onStop={(e, data) => onPlayerDragStop(formPos.name, player.id, data.x, data.y)}
-            bounds="parent" // Constrain dragging to the parent element (the pitch)
+            bounds="parent"
           >
             <div
-              ref={nodeRef}
+              ref={nodeRef} // Assign the ref to the draggable div
               className={cn(
                 "absolute rounded-full flex flex-col items-center justify-center cursor-grab active:cursor-grabbing transition-all duration-200",
                 playerDotColor
@@ -182,7 +202,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
               {/* Player content (Avatar, remove button) */}
               <Avatar className="h-8 w-8">
                 <AvatarImage src={player.avatarUrl} alt={player.name} />
-                <AvatarFallback className="bg-muted text-muted-foreground text-xs">{player.name.charAt(0)}</AvatarFallback>
+                <AvatarFallback className="bg-primary text-primary-foreground text-xs">{player.name.charAt(0)}</AvatarFallback> {/* Corrected AvatarFallback color */}
               </Avatar>
               <button
                 className="absolute -top-1 -right-1 bg-destructive rounded-full h-4 w-4 flex items-center justify-center text-white text-xs"
