@@ -100,7 +100,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   if (!formation) {
     return (
       <div className={cn(
-        "relative w-full aspect-[2/3] max-w-[400px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner flex items-center justify-center",
+        "relative w-full aspect-[2/3] max-w-[520px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner flex items-center justify-center",
         pitchBackgroundClass,
         pitchLineColorClass
       )}>
@@ -221,7 +221,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
       <div
         ref={pitchRef}
         className={cn(
-          "relative w-full aspect-[2/3] max-w-[400px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner",
+          "relative w-full aspect-[2/3] max-w-[520px] mx-auto border-2 rounded-lg overflow-hidden shadow-inner",
           pitchBackgroundClass,
           pitchLineColorClass
         )}
