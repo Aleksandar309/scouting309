@@ -56,10 +56,8 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   const textColorClass = pitchColor === 'green' ? 'text-white' : 'text-foreground';
 
   const pitchRef = useRef<HTMLDivElement>(null);
-  // Initialize pitchDimensions with default values instead of null
   const [pitchDimensions, setPitchDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
 
-  // Map to store refs for each draggable player
   const playerNodeRefs = useRef(new Map<string, React.RefObject<HTMLDivElement>>());
 
   useEffect(() => {
@@ -72,12 +70,11 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
       }
     };
 
-    updateDimensions(); // Set initial dimensions
+    updateDimensions();
     window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions); // Changed 'change' back to 'resize'
+    return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
-  // Effect to manage player refs in the map
   useEffect(() => {
     const allPlayerIdsInFormation: string[] = [];
     if (formation) {
@@ -87,20 +84,18 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
       });
     }
 
-    // Remove refs for players no longer in the formation
     playerNodeRefs.current.forEach((_ref, id) => {
       if (!allPlayerIdsInFormation.includes(id)) {
         playerNodeRefs.current.delete(id);
       }
     });
 
-    // Add refs for new players in the formation
     allPlayerIdsInFormation.forEach(id => {
       if (!playerNodeRefs.current.has(id)) {
         playerNodeRefs.current.set(id, createRef<HTMLDivElement>());
       }
     });
-  }, [formation, playersByPosition]); // Depend on formation and playersByPosition to re-manage refs
+  }, [formation, playersByPosition]);
 
   if (!formation) {
     return (
@@ -114,15 +109,14 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
     );
   }
 
-  // Helper to convert percentage string to pixel value
   const getPixelCoordinate = (percent: string, totalDimension: number) => {
     return (parseFloat(percent) / 100) * totalDimension;
   };
 
-  // Helper to get offset for multiple players in a single position
+  // Adjusted spread for smaller player dots
   const getPlayerOffset = (playerIndex: number, totalPlayers: number) => {
     if (totalPlayers === 1) return { x: 0, y: 0 };
-    const spread = 40; // Increased spread for more room for 3 players
+    const spread = 20; // Reduced spread for smaller dots
     const offsetPerPlayer = spread / (totalPlayers - 1);
     const startOffset = -spread / 2;
     return {
@@ -131,62 +125,53 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
     };
   };
 
-  // Collect all elements to render at the top level of the pitch
   const pitchElements: JSX.Element[] = [];
-  const playerDotSize = 40; // Player dot width/height
+  const playerDotSize = 24; // Reduced player dot size (from 40 to 24)
 
   formation.positions.forEach((formPos: FormationPosition) => {
     const playersInPosition = playersByPosition[formPos.name] || [];
     const hasPlayers = playersInPosition.length > 0;
 
-    // For "Add Player" button, always use percentage-based positioning
     if (!hasPlayers) {
       pitchElements.push(
         <div
           key={`add-${formPos.name}`}
           className="absolute flex flex-col items-center justify-center"
           style={{
-            left: formPos.x, // Use percentage for initial positioning of the button
-            top: formPos.y, // Use percentage for initial positioning of the button
-            transform: "translate(-50%, -50%)", // Center the button
+            left: formPos.x,
+            top: formPos.y,
+            transform: "translate(-50%, -50%)",
           }}
         >
           <button
             className={cn(
-              "w-10 h-10 rounded-full flex items-center justify-center text-2xl font-bold transition-all duration-200",
+              "w-8 h-8 rounded-full flex items-center justify-center text-xl font-bold transition-all duration-200", // Reduced button size (from w-10 h-10 to w-8 h-8)
               pitchColor === 'green' ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-primary hover:bg-primary/90 text-primary-foreground'
             )}
             onClick={() => onPositionClick(formPos.name)}
           >
-            <PlusCircle className="h-6 w-6" />
+            <PlusCircle className="h-5 w-5" /> {/* Reduced icon size (from h-6 w-6 to h-5 w-5) */}
           </button>
         </div>
       );
     } else {
-      // Players will now always be pushed to pitchElements,
-      // and their initial position will be (0,0) if pitchDimensions are {width:0, height:0}
-      // and then update once dimensions are available.
-
       const initialCenterX = getPixelCoordinate(formPos.x, pitchDimensions.width);
       const initialCenterY = getPixelCoordinate(formPos.y, pitchDimensions.height);
 
       playersInPosition.forEach((player, playerIndex) => {
-        const nodeRef = playerNodeRefs.current.get(player.id); // Get ref from map
-        if (!nodeRef) return; // Should not happen if useEffect is correct
+        const nodeRef = playerNodeRefs.current.get(player.id);
+        if (!nodeRef) return;
 
         const playerDotColor = player.dotColor || (pitchColor === 'green' ? 'bg-blue-500' : 'bg-primary');
 
-        // Calculate initial top-left pixel coordinates for Draggable
-        // If customX/Y are not set, use the formation position's center, adjusted for dot size
         let defaultX = player.customX;
         let defaultY = player.customY;
 
         if (defaultX === undefined || defaultY === undefined) {
-          defaultX = initialCenterX - (playerDotSize / 2); // Subtract half of dot width
-          defaultY = initialCenterY - (playerDotSize / 2); // Subtract half of dot height
+          defaultX = initialCenterX - (playerDotSize / 2);
+          defaultY = initialCenterY - (playerDotSize / 2);
         }
 
-        // Apply stacking offset to the Draggable's position
         const offset = getPlayerOffset(playerIndex, playersInPosition.length);
         const finalX = (defaultX || 0) + offset.x;
         const finalY = (defaultY || 0) + offset.y;
@@ -194,13 +179,13 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
         pitchElements.push(
           <Draggable
             key={player.id}
-            nodeRef={nodeRef} // Use the ref from the map
-            position={{ x: finalX, y: finalY }} // Use calculated pixel position
+            nodeRef={nodeRef}
+            position={{ x: finalX, y: finalY }}
             onStop={(e, data) => onPlayerDragStop(formPos.name, player.id, data.x, data.y)}
-            bounds="parent" // Constrain dragging to the parent element (the pitch)
+            bounds="parent"
           >
             <div
-              ref={nodeRef} // Assign the ref to the draggable div
+              ref={nodeRef}
               className={cn(
                 "absolute rounded-full flex flex-col items-center justify-center cursor-grab active:cursor-grabbing transition-all duration-200",
                 playerDotColor
@@ -211,19 +196,18 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
                 zIndex: 10 + playerIndex,
               }}
             >
-              {/* Player content (Avatar, remove button) */}
-              <Avatar className="h-8 w-8">
+              <Avatar className="h-6 w-6"> {/* Reduced avatar size (from h-8 w-8 to h-6 w-6) */}
                 <AvatarImage src={player.avatarUrl} alt={player.name} />
                 <AvatarFallback className="bg-primary text-primary-foreground text-xs">{player.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <button
-                className="absolute -top-1 -right-1 bg-destructive rounded-full h-4 w-4 flex items-center justify-center text-white text-xs"
+                className="absolute -top-1 -right-1 bg-destructive rounded-full h-3 w-3 flex items-center justify-center text-white text-xs" // Reduced remove button size
                 onClick={(e) => {
                   e.stopPropagation();
                   onPlayerRemove(formPos.name, player.id);
                 }}
               >
-                <MinusCircle className="h-3 w-3" />
+                <MinusCircle className="h-2 w-2" /> {/* Reduced remove icon size */}
               </button>
             </div>
           </Draggable>
