@@ -1,19 +1,24 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import PlayerDatabase from "./pages/PlayerDatabase"; // Ispravljen uvoz
+import PlayerDatabase from "./pages/PlayerDatabase";
 import Scouts from "./pages/Scouts";
-import ShortlistPage from "./pages/Shortlist"; // Corrected import from Shortlists to ShortlistPage
+import ShortlistPage from "./pages/Shortlist";
 import ShadowTeams from "./pages/ShadowTeams";
 import Tasks from "./pages/Tasks";
-import Forum from "./pages/Forum"; // Import the new Forum page
+import Forum from "./pages/Forum";
 import NotFound from "./pages/NotFound";
+import PlayerProfile from "./pages/PlayerProfile"; // Import PlayerProfile
+import ScoutProfile from "./pages/ScoutProfile"; // Import ScoutProfile
 import { Player } from "./types/player";
 import { Scout } from "./types/scout";
 import { Shortlist } from "./types/shortlist";
 import { ShadowTeam } from "./types/shadow-team";
 import { Task } from "./types/task";
-import { ShortlistProvider } from "./context/ShortlistContext"; // Import ShortlistProvider
+import { ShortlistProvider } from "./context/ShortlistContext";
+import { initialMockPlayers } from "./data/mockPlayers"; // Import mock data
+import { mockScouts } from "./data/mockScouts"; // Import mock data
+import { initialMockTasks } from "./data/mockTasks"; // Import mock data
 
 function App() {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -23,25 +28,18 @@ function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
-    // Initialize with some dummy data if localStorage is empty
     const storedPlayers = localStorage.getItem("players");
     if (storedPlayers) {
       setPlayers(JSON.parse(storedPlayers));
     } else {
-      setPlayers([
-        { id: "1", name: "Lionel Messi", position: "Forward", team: "Inter Miami", nationality: "Argentina", dateOfBirth: "1987-06-24", scoutedBy: "1", reports: [] },
-        { id: "2", name: "Cristiano Ronaldo", position: "Forward", team: "Al Nassr", nationality: "Portugal", dateOfBirth: "1985-02-05", scoutedBy: "2", reports: [] },
-      ]);
+      setPlayers(initialMockPlayers); // Use imported mock data
     }
 
     const storedScouts = localStorage.getItem("scouts");
     if (storedScouts) {
-      setScouts(JSON.parse(storedScouts));
+      setScouts(JSON.parse(storedScored));
     } else {
-      setScouts([
-        { id: "1", name: "Marko Petrović", email: "marko.petrovic@example.com", phone: "123-456-7890", region: "Europe", assignedTasks: [] },
-        { id: "2", name: "Ana Kovačević", email: "ana.kovacevic@example.com", phone: "098-765-4321", region: "South America", assignedTasks: [] },
-      ]);
+      setScouts(mockScouts); // Use imported mock data
     }
 
     const storedShortlists = localStorage.getItem("shortlists");
@@ -49,7 +47,8 @@ function App() {
       setShortlists(JSON.parse(storedShortlists));
     } else {
       setShortlists([
-        { id: "1", name: "Top Strikers 2024", players: ["1"], createdAt: "2024-01-15" },
+        { id: "1", name: "Top Strikers 2024", players: [{ id: "5", name: "Evan Ferguson", team: "Brighton", positions: ["CF", "AM"] }], createdAt: new Date().toISOString() },
+        { id: "2", name: "Midfield Targets", players: [{ id: "1", name: "Mats Wieffer", team: "Feyenoord", positions: ["DM", "CM", "CF"] }], createdAt: new Date(Date.now() - 86400000).toISOString() }, // One day earlier
       ]);
     }
 
@@ -58,7 +57,7 @@ function App() {
       setShadowTeams(JSON.parse(storedShadowTeams));
     } else {
       setShadowTeams([
-        { id: "1", name: "Dream Team Alpha", players: ["1", "2"], formation: "4-3-3", createdAt: "2024-02-01" },
+        { id: "1", name: "Dream Team Alpha", formationId: "433", playersByPosition: {}, sharingSettings: "private", calendarIntegration: false },
       ]);
     }
 
@@ -66,10 +65,7 @@ function App() {
     if (storedTasks) {
       setTasks(JSON.parse(storedTasks));
     } else {
-      setTasks([
-        { id: "1", title: "Scout new talent in Brazil", description: "Focus on U20 players in São Paulo.", assignedTo: "2", status: "Pending", dueDate: "2024-07-30" },
-        { id: "2", title: "Analyze Messi's recent performance", description: "Create a detailed report on his last 5 games.", assignedTo: "1", status: "Completed", dueDate: "2024-06-20" },
-      ]);
+      setTasks(initialMockTasks); // Use imported mock data
     }
   }, []);
 
@@ -98,9 +94,11 @@ function App() {
       <ShortlistProvider shortlists={shortlists} setShortlists={setShortlists}>
         <Routes>
           <Route path="/" element={<Index players={players} scouts={scouts} shortlists={shortlists} shadowTeams={shadowTeams} tasks={tasks} />} />
-          <Route path="/players" element={<PlayerDatabase players={players} setPlayers={setPlayers} scouts={scouts} />} /> {/* Ispravljena ruta */}
-          <Route path="/scouts" element={<Scouts scouts={scouts} setScouts={setScouts} players={players} tasks={tasks} setTasks={setTasks} />} />
-          <Route path="/shortlists" element={<ShortlistPage shortlists={shortlists} setShortlists={setShortlists} players={players} />} />
+          <Route path="/players" element={<PlayerDatabase players={players} setPlayers={setPlayers} />} />
+          <Route path="/player/:id" element={<PlayerProfile players={players} setPlayers={setPlayers} scouts={scouts} shadowTeams={shadowTeams} setShadowTeams={setShadowTeams} />} />
+          <Route path="/scouts" element={<Scouts assignments={[]} setAssignments={() => {}} scouts={scouts} setScouts={setScouts} players={players} tasks={tasks} setTasks={setTasks} />} />
+          <Route path="/scouts/:id" element={<ScoutProfile players={players} assignments={[]} scouts={scouts} setScouts={setScouts} tasks={tasks} setTasks={setTasks} />} />
+          <Route path="/shortlists" element={<ShortlistPage players={players} />} />
           <Route path="/shadow-teams" element={<ShadowTeams shadowTeams={shadowTeams} setShadowTeams={setShadowTeams} players={players} />} />
           <Route path="/tasks" element={<Tasks tasks={tasks} setTasks={setTasks} scouts={scouts} />} />
           <Route path="/forum" element={<Forum />} />

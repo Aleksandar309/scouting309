@@ -9,6 +9,7 @@ interface ShortlistContextType {
   addPlayerToShortlist: (shortlistId: string, player: ShortlistItem) => void;
   createShortlist: (name: string, initialPlayer?: ShortlistItem) => void;
   removePlayerFromShortlist: (shortlistId: string, playerId: string) => void;
+  deleteShortlist: (shortlistId: string) => void; // NEW: Function to delete a shortlist
 }
 
 const ShortlistContext = createContext<ShortlistContextType | undefined>(undefined);
@@ -49,6 +50,7 @@ export const ShortlistProvider: React.FC<ShortlistProviderProps> = ({ children, 
         id: `sl-${Date.now()}`,
         name,
         players: initialPlayer ? [initialPlayer] : [],
+        createdAt: new Date().toISOString(), // NEW: Add creation date
       };
       toast.success(`Shortlist "${name}" created!`);
       if (initialPlayer) {
@@ -72,8 +74,16 @@ export const ShortlistProvider: React.FC<ShortlistProviderProps> = ({ children, 
     });
   };
 
+  const deleteShortlist = (shortlistId: string) => {
+    setShortlists((prevShortlists) => {
+      const updatedShortlists = prevShortlists.filter((sl) => sl.id !== shortlistId);
+      toast.success("Shortlist deleted successfully.");
+      return updatedShortlists;
+    });
+  };
+
   return (
-    <ShortlistContext.Provider value={{ shortlists, addPlayerToShortlist, createShortlist, removePlayerFromShortlist }}>
+    <ShortlistContext.Provider value={{ shortlists, addPlayerToShortlist, createShortlist, removePlayerFromShortlist, deleteShortlist }}>
       {children}
     </ShortlistContext.Provider>
   );
