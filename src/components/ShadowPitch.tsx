@@ -49,7 +49,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
 
     updateDimensions();
     window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions); // Corrected: Changed 'change' back to 'resize'
+    return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
   useEffect(() => {
@@ -106,7 +106,7 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
   const playerDotSize = 24; // Reduced player dot size (from 40 to 24)
 
   // Only render positions and players if pitch dimensions are valid
-  if (pitchDimensions.width > 0 && pitchDimensions.height > 0) { // Moved this check to wrap the entire loop
+  if (pitchDimensions.width > 0 && pitchDimensions.height > 0) {
     formation.positions.forEach((formPos: FormationPosition) => {
       const playersInPosition = playersByPosition[formPos.name] || [];
       const hasPlayers = playersInPosition.length > 0;
@@ -122,17 +122,15 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
               transform: "translate(-50%, -50%)",
             }}
           >
-            <Button
-              variant="ghost" // Changed to ghost variant
-              size="icon" // Changed to icon size
+            <div
               className={cn(
-                "w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 border border-dashed", // Smaller size, dashed border
-                pitchColor === 'green' ? 'border-white text-white hover:bg-white/20' : 'border-muted-foreground text-muted-foreground hover:bg-accent'
+                "w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 border border-dashed cursor-pointer",
+                pitchColor === 'green' ? 'border-white text-white hover:bg-white/20' : 'border-muted-foreground text-muted-foreground hover:bg-accent/50'
               )}
               onClick={() => onPositionClick(formPos.name)}
             >
-              <PlusCircle className="h-4 w-4" /> {/* Reduced icon size */}
-            </Button>
+              <PlusCircle className="h-4 w-4" />
+            </div>
           </div>
         );
       } else {
@@ -178,18 +176,18 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
                   zIndex: 10 + playerIndex,
                 }}
               >
-                <Avatar className="h-6 w-6"> {/* Reduced avatar size (from h-8 w-8 to h-6 w-6) */}
+                <Avatar className="h-6 w-6">
                   <AvatarImage src={player.avatarUrl} alt={player.name} />
                   <AvatarFallback className="bg-primary text-primary-foreground text-xs">{player.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <button
-                  className="absolute -top-1 -right-1 bg-destructive rounded-full h-3 w-3 flex items-center justify-center text-white text-xs" // Reduced remove button size
+                  className="absolute -top-1 -right-1 bg-destructive rounded-full h-3 w-3 flex items-center justify-center text-white text-xs"
                   onClick={(e) => {
                     e.stopPropagation();
                     onPlayerRemove(formPos.name, player.id);
                   }}
                 >
-                  <MinusCircle className="h-2 w-2" /> {/* Reduced remove icon size */}
+                  <MinusCircle className="h-2 w-2" />
                 </button>
               </div>
             </Draggable>
