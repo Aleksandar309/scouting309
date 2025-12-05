@@ -12,6 +12,7 @@ import TaskForm from '@/components/TaskForm';
 import { Badge } from '@/components/ui/badge';
 import { format, isPast } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/task-utils'; // Import task utils
 
 interface TasksPageProps {
   tasks: Task[];
@@ -36,36 +37,6 @@ const TasksPage: React.FC<TasksPageProps> = ({ tasks, setTasks, scouts }) => {
     );
     // Optionally show a toast notification
     // toast.success("Task marked as complete!");
-  };
-
-  const getPriorityBadgeClass = (priority: Task["priority"]) => {
-    switch (priority) {
-      case "P1": return "bg-red-600 text-white";
-      case "P2": return "bg-yellow-600 text-white";
-      case "P3": return "bg-blue-600 text-white";
-      default: return "bg-gray-500 text-white";
-    }
-  };
-
-  const getStatusBadgeClass = (status: Task["status"]) => {
-    switch (status) {
-      case "Pending": return "bg-gray-500 text-white";
-      case "In Progress": return "bg-blue-500 text-white";
-      case "Completed": return "bg-green-600 text-white";
-      case "Overdue": return "bg-destructive text-destructive-foreground";
-      default: return "bg-gray-500 text-white";
-    }
-  };
-
-  const getDueDateStatus = (dueDate: string, status: Task["status"]) => {
-    if (status === "Completed") {
-      return null;
-    }
-    const date = new Date(dueDate);
-    if (isPast(date)) {
-      return <Badge variant="destructive" className="bg-destructive text-destructive-foreground ml-2">Overdue</Badge>;
-    }
-    return null;
   };
 
   // Sort tasks: Overdue first, then P1, P2, P3, then by due date

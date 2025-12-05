@@ -19,7 +19,7 @@ import { playerTableColumns } from '@/utils/player-table-columns';
 import { format, isPast } from 'date-fns';
 import ScoutAttributesSection from '@/components/ScoutAttributesSection';
 import { ScoutRole } from '@/utils/scout-roles';
-import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/assignment-utils';
+import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/task-utils'; // Updated import
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog'; // Import Dialog components
 import ScoutEditForm from '@/components/ScoutEditForm'; // Import ScoutEditForm

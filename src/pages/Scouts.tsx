@@ -17,7 +17,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import AssignmentForm from '@/components/AssignmentForm';
 import { Badge } from '@/components/ui/badge';
 import { format, isPast } from 'date-fns';
-import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/assignment-utils'; // Import assignment utils
+import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/task-utils'; // Updated import
 
 interface ScoutsPageProps {
   assignments: Assignment[];

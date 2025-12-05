@@ -1,11 +1,15 @@
 "use client";
 
 import { Assignment } from '@/types/scout';
+import { Task } from '@/types/task'; // Import Task type
 import { Badge } from '@/components/ui/badge';
 import { isPast } from 'date-fns';
-import React from 'react'; // Import React for JSX
+import React from 'react';
 
-export const getPriorityBadgeClass = (priority: Assignment["priority"]) => {
+type PriorityType = Assignment["priority"] | Task["priority"];
+type StatusType = Assignment["status"] | Task["status"];
+
+export const getPriorityBadgeClass = (priority: PriorityType) => {
   switch (priority) {
     case "P1": return "bg-red-600 text-white";
     case "P2": return "bg-yellow-600 text-white";
@@ -14,7 +18,7 @@ export const getPriorityBadgeClass = (priority: Assignment["priority"]) => {
   }
 };
 
-export const getStatusBadgeClass = (status: Assignment["status"]) => {
+export const getStatusBadgeClass = (status: StatusType) => {
   switch (status) {
     case "Pending": return "bg-gray-500 text-white";
     case "In Progress": return "bg-blue-500 text-white";
@@ -24,15 +28,13 @@ export const getStatusBadgeClass = (status: Assignment["status"]) => {
   }
 };
 
-export const getDueDateStatus = (dueDate: string, status: Assignment["status"]) => {
-  // If the status is already 'Completed', it's not overdue.
+export const getDueDateStatus = (dueDate: string, status: StatusType) => {
   if (status === "Completed") {
     return null;
   }
 
   const date = new Date(dueDate);
-  // If the date is in the past AND the status is not 'Completed', then it's overdue.
-  if (isPast(date)) { // Removed `&& status !== "Completed"` as it's redundant after the first check
+  if (isPast(date)) {
     return <Badge variant="destructive" className="bg-destructive text-destructive-foreground ml-2">Overdue</Badge>;
   }
   return null;
