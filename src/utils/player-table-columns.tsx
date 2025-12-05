@@ -112,7 +112,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
     },
     cell: ({ row }) => (
       <TableCell className="sticky-column-cell">
-        <Link to={`/player/${row.original.id}`} className="text-primary hover:underline">
+        <Link to={`/player/${row.original.id}`} className="text-primary hover:underline flex"> {/* Dodata 'flex' klasa ovde */}
           {row.getValue("name")}
         </Link>
       </TableCell>
