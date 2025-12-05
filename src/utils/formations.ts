@@ -1,29 +1,29 @@
 import { Player, PlayerPosition } from '@/types/player';
 import { Formation, FormationPosition, PlayerFormationFitPosition } from '@/types/formation';
 
-// Transformed for vertical pitch (defense bottom, attack top)
+// Transformed for horizontal pitch (defense left, attack right)
 const positionCoordinates: { [key: string]: { x: string; y: string } } = {
-  "GK": { x: "50%", y: "90%" }, // Golman na dnu
-  "CB": { x: "50%", y: "78%" },
-  "LCB": { x: "30%", y: "78%" },
-  "RCB": { x: "70%", y: "78%" },
-  "LB": { x: "10%", y: "70%" },
-  "RB": { x: "90%", y: "70%" },
-  "DM": { x: "50%", y: "60%" },
-  "LDM": { x: "30%", y: "60%" },
-  "RDM": { x: "70%", y: "60%" },
-  "LCM": { x: "30%", y: "50%" },
-  "RCM": { x: "70%", y: "50%" },
+  "GK": { x: "10%", y: "50%" }, // Golman na levoj strani
+  "CB": { x: "22%", y: "50%" },
+  "LCB": { x: "22%", y: "30%" },
+  "RCB": { x: "22%", y: "70%" },
+  "LB": { x: "30%", y: "10%" },
+  "RB": { x: "30%", y: "90%" },
+  "DM": { x: "40%", y: "50%" },
+  "LDM": { x: "40%", y: "30%" },
+  "RDM": { x: "40%", y: "70%" },
+  "LCM": { x: "50%", y: "30%" },
+  "RCM": { x: "50%", y: "70%" },
   "CM": { x: "50%", y: "50%" },
-  "LWB": { x: "10%", y: "55%" },
-  "RWB": { x: "90%", y: "55%" },
-  "AM": { x: "50%", y: "30%" },
-  "LW": { x: "15%", y: "20%" },
-  "RW": { x: "85%", y: "20%" },
-  "CF": { x: "50%", y: "10%" }, // Generic CF
-  "CF_CENTRAL": { x: "50%", y: "10%" },
-  "CF_LEFT": { x: "35%", y: "10%" },
-  "CF_RIGHT": { x: "65%", y: "10%" },
+  "LWB": { x: "45%", y: "10%" },
+  "RWB": { x: "45%", y: "90%" },
+  "AM": { x: "70%", y: "50%" },
+  "LW": { x: "80%", y: "15%" },
+  "RW": { x: "80%", y: "85%" },
+  "CF": { x: "90%", y: "50%" }, // Generic CF
+  "CF_CENTRAL": { x: "90%", y: "50%" },
+  "CF_LEFT": { x: "90%", y: "35%" },
+  "CF_RIGHT": { x: "90%", y: "65%" },
 };
 
 export const FM_FORMATIONS: Formation[] = [
@@ -67,13 +67,13 @@ export const FM_FORMATIONS: Formation[] = [
     positions: [
       { name: "GK", ...positionCoordinates["GK"] },
       { name: "LB", ...positionCoordinates["LB"] },
-      { name: "LCB", x: "30%", y: "78%" },
-      { name: "RCB", x: "70%", y: "78%" },
+      { name: "LCB", x: "22%", y: "30%" },
+      { name: "RCB", x: "22%", y: "70%" },
       { name: "RB", ...positionCoordinates["RB"] },
-      { name: "LM", x: "10%", y: "60%" },
-      { name: "LCM", x: "30%", y: "50%" },
-      { name: "RCM", x: "70%", y: "50%" },
-      { name: "RM", x: "90%", y: "60%" },
+      { name: "LM", x: "40%", y: "10%" },
+      { name: "LCM", x: "50%", y: "30%" },
+      { name: "RCM", x: "50%", y: "70%" },
+      { name: "RM", x: "40%", y: "90%" },
       { name: "CF_LEFT", ...positionCoordinates["CF_LEFT"] },
       { name: "CF_RIGHT", ...positionCoordinates["CF_RIGHT"] },
     ],
@@ -83,13 +83,13 @@ export const FM_FORMATIONS: Formation[] = [
     name: "3-4-3",
     positions: [
       { name: "GK", ...positionCoordinates["GK"] },
-      { name: "LCB", x: "30%", y: "78%" },
-      { name: "CB", x: "50%", y: "78%" },
-      { name: "RCB", x: "70%", y: "78%" },
+      { name: "LCB", x: "22%", y: "30%" },
+      { name: "CB", x: "22%", y: "50%" },
+      { name: "RCB", x: "22%", y: "70%" },
       { name: "LWB", ...positionCoordinates["LWB"] },
       { name: "RWB", ...positionCoordinates["RWB"] },
-      { name: "LCM", x: "30%", y: "50%" },
-      { name: "RCM", x: "70%", y: "50%" },
+      { name: "LCM", x: "50%", y: "30%" },
+      { name: "RCM", x: "50%", y: "70%" },
       { name: "LW", ...positionCoordinates["LW"] },
       { name: "RW", ...positionCoordinates["RW"] },
       { name: "CF_CENTRAL", ...positionCoordinates["CF_CENTRAL"] },
@@ -100,14 +100,14 @@ export const FM_FORMATIONS: Formation[] = [
     name: "3-5-2",
     positions: [
       { name: "GK", ...positionCoordinates["GK"] },
-      { name: "LCB", x: "30%", y: "78%" },
-      { name: "CB", x: "50%", y: "78%" },
-      { name: "RCB", x: "70%", y: "78%" },
+      { name: "LCB", x: "22%", y: "30%" },
+      { name: "CB", x: "22%", y: "50%" },
+      { name: "RCB", x: "22%", y: "70%" },
       { name: "LWB", ...positionCoordinates["LWB"] },
       { name: "RWB", ...positionCoordinates["RWB"] },
       { name: "DM", ...positionCoordinates["DM"] },
-      { name: "LCM", x: "30%", y: "50%" },
-      { name: "RCM", x: "70%", y: "50%" },
+      { name: "LCM", x: "50%", y: "30%" },
+      { name: "RCM", x: "50%", y: "70%" },
       { name: "CF_LEFT", ...positionCoordinates["CF_LEFT"] },
       { name: "CF_RIGHT", ...positionCoordinates["CF_RIGHT"] },
     ],
@@ -123,11 +123,11 @@ export const FM_FORMATIONS: Formation[] = [
       { name: "RCB", ...positionCoordinates["RCB"] },
       { name: "RB", ...positionCoordinates["RB"] },
       { name: "DM", ...positionCoordinates["DM"] },
-      { name: "LCM", x: "38%", y: "50%" }, // Narrower CMs
-      { name: "RCM", x: "62%", y: "50%" }, // Narrower CMs
+      { name: "LCM", x: "50%", y: "38%" }, // Narrower CMs
+      { name: "RCM", x: "50%", y: "62%" }, // Narrower CMs
       { name: "AM", ...positionCoordinates["AM"] },
-      { name: "CF_LEFT", x: "40%", y: "10%" }, // Two strikers
-      { name: "CF_RIGHT", x: "60%", y: "10%" }, // Two strikers
+      { name: "CF_LEFT", x: "90%", y: "40%" }, // Two strikers
+      { name: "CF_RIGHT", x: "90%", y: "60%" }, // Two strikers
     ],
   },
   {
@@ -135,14 +135,14 @@ export const FM_FORMATIONS: Formation[] = [
     name: "5-3-2",
     positions: [
       { name: "GK", ...positionCoordinates["GK"] },
-      { name: "LCB", x: "30%", y: "78%" },
-      { name: "CB", x: "50%", y: "78%" },
-      { name: "RCB", x: "70%", y: "78%" },
+      { name: "LCB", x: "22%", y: "30%" },
+      { name: "CB", x: "22%", y: "50%" },
+      { name: "RCB", x: "22%", y: "70%" },
       { name: "LWB", ...positionCoordinates["LWB"] },
       { name: "RWB", ...positionCoordinates["RWB"] },
-      { name: "LCM", x: "30%", y: "50%" },
+      { name: "LCM", x: "50%", y: "30%" },
       { name: "CM", x: "50%", y: "50%" },
-      { name: "RCM", x: "70%", y: "50%" },
+      { name: "RCM", x: "50%", y: "70%" },
       { name: "CF_LEFT", ...positionCoordinates["CF_LEFT"] },
       { name: "CF_RIGHT", ...positionCoordinates["CF_RIGHT"] },
     ],
@@ -156,12 +156,12 @@ export const FM_FORMATIONS: Formation[] = [
       { name: "LCB", ...positionCoordinates["LCB"] },
       { name: "RCB", ...positionCoordinates["RCB"] },
       { name: "RB", ...positionCoordinates["RB"] },
-      { name: "LDM", x: "30%", y: "60%" }, // Three central midfielders, can be DM or CM
-      { name: "CM", x: "50%", y: "60%" },
-      { name: "RDM", x: "70%", y: "60%" },
+      { name: "LDM", x: "40%", y: "30%" }, // Three central midfielders, can be DM or CM
+      { name: "CM", x: "40%", y: "50%" },
+      { name: "RDM", x: "40%", y: "70%" },
       { name: "AM", ...positionCoordinates["AM"] },
-      { name: "CF_LEFT", x: "40%", y: "10%" },
-      { name: "CF_RIGHT", x: "60%", y: "10%" },
+      { name: "CF_LEFT", x: "90%", y: "40%" },
+      { name: "CF_RIGHT", x: "90%", y: "60%" },
     ],
   },
 ];
