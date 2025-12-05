@@ -125,8 +125,8 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
             <div className="flex justify-between items-center mb-4"> {/* Added flex container */}
               <Dialog open={isAddScoutFormOpen} onOpenChange={setIsAddScoutFormOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-                    <PlusCircle className="mr-2 h-4 w-4" /> Add New Scout
+                  <Button variant="default" size="icon"> {/* Changed to icon-only, default variant */}
+                    <PlusCircle className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>
                 <AddScoutForm onAddScout={handleAddScout} onClose={() => setIsAddScoutFormOpen(false)} />
