@@ -164,32 +164,43 @@ const ShadowPitch: React.FC<ShadowPitchProps> = ({
               onStop={(e, data) => onPlayerDragStop(formPos.name, player.id, data.x, data.y)}
               bounds="parent"
             >
-              <div
-                ref={nodeRef}
-                className={cn(
-                  "absolute rounded-full flex flex-col items-center justify-center cursor-grab active:cursor-grabbing transition-all duration-200",
-                  playerDotColor
-                )}
-                style={{
-                  width: `${playerDotSize}px`,
-                  height: `${playerDotSize}px`,
-                  zIndex: 10 + playerIndex,
-                }}
-              >
-                <Avatar className="h-6 w-6">
-                  <AvatarImage src={player.avatarUrl} alt={player.name} />
-                  <AvatarFallback className="bg-primary text-primary-foreground text-xs">{player.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <button
-                  className="absolute -top-1 -right-1 bg-destructive rounded-full h-3 w-3 flex items-center justify-center text-white text-xs"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onPlayerRemove(formPos.name, player.id);
-                  }}
-                >
-                  <MinusCircle className="h-2 w-2" />
-                </button>
-              </div>
+              <Tooltip> {/* Wrap the draggable content with Tooltip */}
+                <TooltipTrigger asChild>
+                  <div
+                    ref={nodeRef}
+                    className={cn(
+                      "absolute rounded-full flex flex-col items-center justify-center cursor-grab active:cursor-grabbing transition-all duration-200",
+                      playerDotColor
+                    )}
+                    style={{
+                      width: `${playerDotSize}px`,
+                      height: `${playerDotSize}px`,
+                      zIndex: 10 + playerIndex,
+                    }}
+                  >
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={player.avatarUrl} alt={player.name} />
+                      <AvatarFallback className="bg-primary text-primary-foreground text-xs">{player.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <button
+                      className="absolute -top-1 -right-1 bg-destructive rounded-full h-3 w-3 flex items-center justify-center text-white text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onPlayerRemove(formPos.name, player.id);
+                      }}
+                    >
+                      <MinusCircle className="h-2 w-2" />
+                    </button>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="bg-popover border-border text-popover-foreground">
+                  <p className="font-semibold">{player.name}</p>
+                  <p className="text-sm text-muted-foreground">Age: {player.age}</p>
+                  <p className="text-sm text-muted-foreground">CA: {player.currentAbility}</p>
+                  <p className="text-sm text-muted-foreground">PA: {player.potentialAbility}</p>
+                  {player.note && <p className="text-xs text-muted-foreground mt-1 italic">Note: {player.note}</p>}
+                </TooltipContent>
+              </Tooltip>
             </Draggable>
           );
         });
