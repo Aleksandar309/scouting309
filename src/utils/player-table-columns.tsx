@@ -157,11 +157,16 @@ export const playerTableColumns: ColumnDef<Player>[] = [
     ),
     cell: ({ row }) => (
       <div className="flex flex-wrap gap-1">
-        {row.original.positions.map((pos) => (
+        {row.original.positions.slice(0, 2).map((pos) => ( // Limit to first 2 positions
           <Badge key={pos} variant="secondary" className="bg-muted text-muted-foreground whitespace-nowrap"> {/* Added whitespace-nowrap */}
             {pos}
           </Badge>
         ))}
+        {row.original.positions.length > 2 && (
+          <Badge variant="secondary" className="bg-muted text-muted-foreground whitespace-nowrap">
+            +{row.original.positions.length - 2}
+          </Badge>
+        )}
       </div>
     ),
     enableSorting: true,
