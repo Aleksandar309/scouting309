@@ -80,7 +80,7 @@ const attributeColumns: ColumnDef<Player>[] = ALL_ATTRIBUTE_NAMES.map(attrName =
     <Button
       variant="ghost"
       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      className="text-foreground hover:bg-accent"
+      className="text-foreground hover:bg-accent whitespace-nowrap" // Added whitespace-nowrap
     >
       {attrName}
       <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -88,7 +88,7 @@ const attributeColumns: ColumnDef<Player>[] = ALL_ATTRIBUTE_NAMES.map(attrName =
   ),
   cell: ({ row }) => {
     const rating = getAttributeRating(row.original, attrName);
-    return <span className="text-foreground">{rating}</span>;
+    return <span className="text-foreground whitespace-nowrap">{rating}</span>; // Added whitespace-nowrap
   },
   enableSorting: true,
   minSize: 100, // Set a minimum size for attribute columns
@@ -104,7 +104,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-foreground hover:bg-accent"
+          className="text-foreground hover:bg-accent whitespace-nowrap" // Added whitespace-nowrap
         >
           Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -112,12 +112,12 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       );
     },
     cell: ({ row }) => (
-      <Link to={`/player/${row.original.id}`} className="text-primary hover:underline flex">
+      <Link to={`/player/${row.original.id}`} className="text-primary hover:underline flex whitespace-nowrap"> {/* Added whitespace-nowrap */}
         {row.getValue("name")}
       </Link>
     ),
-    minSize: 150, // Set a minimum size for the name column
-    maxSize: 300, // Set a maximum size for the name column
+    minSize: 180, // Increased minSize
+    maxSize: 300,
   },
   {
     accessorKey: "team",
@@ -125,17 +125,22 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
+        className="text-foreground hover:bg-accent whitespace-nowrap" // Added whitespace-nowrap
       >
         Team
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap"> {/* Added whitespace-nowrap */}
+        {row.getValue("team")}
+      </div>
+    ),
     filterFn: (row, columnId, filterValue) => {
       const team: string = row.getValue(columnId);
       return team.toLowerCase().includes(filterValue.toLowerCase());
     },
-    minSize: 120,
+    minSize: 150, // Increased minSize
     maxSize: 250,
   },
   {
@@ -144,7 +149,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
+        className="text-foreground hover:bg-accent whitespace-nowrap" // Added whitespace-nowrap
       >
         Positions
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -153,7 +158,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
     cell: ({ row }) => (
       <div className="flex flex-wrap gap-1">
         {row.original.positions.map((pos) => (
-          <Badge key={pos} variant="secondary" className="bg-muted text-muted-foreground">
+          <Badge key={pos} variant="secondary" className="bg-muted text-muted-foreground whitespace-nowrap"> {/* Added whitespace-nowrap */}
             {pos}
           </Badge>
         ))}
@@ -174,11 +179,16 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
+        className="text-foreground hover:bg-accent whitespace-nowrap" // Added whitespace-nowrap
       >
         Nationality
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap"> {/* Added whitespace-nowrap */}
+        {row.getValue("nationality")}
+      </div>
     ),
     filterFn: (row, columnId, filterValue) => {
       const nationality: string = row.getValue(columnId);
@@ -193,11 +203,16 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
+        className="text-foreground hover:bg-accent whitespace-nowrap" // Added whitespace-nowrap
       >
         Age
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap"> {/* Added whitespace-nowrap */}
+        {row.getValue("age")}
+      </div>
     ),
     minSize: 80,
     maxSize: 120,
@@ -208,11 +223,16 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
+        className="text-foreground hover:bg-accent whitespace-nowrap" // Added whitespace-nowrap
       >
         Value
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap"> {/* Added whitespace-nowrap */}
+        {row.getValue("value")}
+      </div>
     ),
     minSize: 100,
     maxSize: 180,
@@ -223,7 +243,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
+        className="text-foreground hover:bg-accent whitespace-nowrap" // Added whitespace-nowrap
       >
         Current Ability
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -234,7 +254,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       const rating = row.original.scoutingProfile.currentAbility;
       const progressValue = Math.min(Math.max(rating * 10, 0), 100);
       return (
-        <div className="flex items-center w-full">
+        <div className="flex items-center w-full whitespace-nowrap"> {/* Added whitespace-nowrap */}
           <Progress value={progressValue} className="h-2 bg-muted" indicatorClassName="bg-primary" />
           <span className="ml-2 text-sm text-foreground">{rating}</span>
         </div>
@@ -253,7 +273,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
+        className="text-foreground hover:bg-accent whitespace-nowrap" // Added whitespace-nowrap
       >
         Potential Ability
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -264,7 +284,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       const rating = row.original.scoutingProfile.potentialAbility;
       const progressValue = Math.min(Math.max(rating * 10, 0), 100);
       return (
-        <div className="flex items-center w-full">
+        <div className="flex items-center w-full whitespace-nowrap"> {/* Added whitespace-nowrap */}
           <Progress value={progressValue} className="h-2 bg-muted" indicatorClassName="bg-green-500" />
           <span className="ml-2 text-sm text-foreground">{rating}</span>
         </div>
@@ -281,7 +301,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
     accessorKey: "priorityTarget",
     header: "Priority",
     cell: ({ row }) => (
-      row.getValue("priorityTarget") ? <Badge className="bg-yellow-600 text-white">Yes</Badge> : <Badge variant="secondary" className="bg-muted text-muted-foreground">No</Badge>
+      row.getValue("priorityTarget") ? <Badge className="bg-yellow-600 text-white whitespace-nowrap">Yes</Badge> : <Badge variant="secondary" className="bg-muted text-muted-foreground whitespace-nowrap">No</Badge> // Added whitespace-nowrap
     ),
     enableSorting: true,
     minSize: 100,
@@ -300,7 +320,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
             <Button
               variant="outline"
               size="sm"
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 whitespace-nowrap" // Added whitespace-nowrap
               onClick={(e) => e.stopPropagation()}
             >
               <Plus className="h-4 w-4" />

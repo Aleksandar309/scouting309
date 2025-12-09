@@ -20,7 +20,7 @@ export const scoutTableColumns: ColumnDef<Scout>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-foreground hover:bg-accent"
+          className="text-foreground hover:bg-accent whitespace-nowrap" // Added whitespace-nowrap
         >
           Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -28,7 +28,7 @@ export const scoutTableColumns: ColumnDef<Scout>[] = [
       );
     },
     cell: ({ row }) => (
-      <Link to={`/scouts/${row.original.id}`} className="flex items-center text-primary hover:underline">
+      <Link to={`/scouts/${row.original.id}`} className="flex items-center text-primary hover:underline whitespace-nowrap"> {/* Added whitespace-nowrap */}
         <Avatar className="h-8 w-8 mr-2">
           <AvatarImage src={row.original.avatarUrl} alt={row.original.name} />
           <AvatarFallback className="bg-primary text-primary-foreground text-sm">{row.original.name.charAt(0)}</AvatarFallback>
@@ -36,8 +36,8 @@ export const scoutTableColumns: ColumnDef<Scout>[] = [
         {row.getValue("name")}
       </Link>
     ),
-    minSize: 150, // Set a minimum size for the name column
-    maxSize: 300, // Set a maximum size for the name column
+    minSize: 180, // Increased minSize
+    maxSize: 300,
   },
   {
     accessorKey: "role",
@@ -45,20 +45,25 @@ export const scoutTableColumns: ColumnDef<Scout>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
+        className="text-foreground hover:bg-accent whitespace-nowrap" // Added whitespace-nowrap
       >
         Role
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    minSize: 120,
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap"> {/* Added whitespace-nowrap */}
+        {row.getValue("role")}
+      </div>
+    ),
+    minSize: 150, // Increased minSize
     maxSize: 250,
   },
   {
     accessorKey: "email",
     header: "Email",
     cell: ({ row }) => (
-      <div className="flex items-center">
+      <div className="flex items-center whitespace-nowrap"> {/* Added whitespace-nowrap */}
         <Mail className="mr-2 h-4 w-4 text-muted-foreground" /> {row.getValue("email")}
       </div>
     ),
@@ -69,7 +74,7 @@ export const scoutTableColumns: ColumnDef<Scout>[] = [
     accessorKey: "phone",
     header: "Phone",
     cell: ({ row }) => (
-      <div className="flex items-center">
+      <div className="flex items-center whitespace-nowrap"> {/* Added whitespace-nowrap */}
         <Phone className="mr-2 h-4 w-4 text-muted-foreground" /> {row.getValue("phone")}
       </div>
     ),
@@ -82,14 +87,14 @@ export const scoutTableColumns: ColumnDef<Scout>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
+        className="text-foreground hover:bg-accent whitespace-nowrap" // Added whitespace-nowrap
       >
         Active Players
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex items-center">
+      <div className="flex items-center whitespace-nowrap"> {/* Added whitespace-nowrap */}
         <User className="mr-2 h-4 w-4 text-muted-foreground" /> {row.getValue("activePlayers")}
       </div>
     ),
@@ -102,14 +107,14 @@ export const scoutTableColumns: ColumnDef<Scout>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-foreground hover:bg-accent"
+        className="text-foreground hover:bg-accent whitespace-nowrap" // Added whitespace-nowrap
       >
         Last Report
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex items-center">
+      <div className="flex items-center whitespace-nowrap"> {/* Added whitespace-nowrap */}
         <CalendarDays className="mr-2 h-4 w-4 text-muted-foreground" /> {row.getValue("lastReportDate")}
       </div>
     ),
