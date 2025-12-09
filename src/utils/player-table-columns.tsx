@@ -162,11 +162,6 @@ export const playerTableColumns: ColumnDef<Player>[] = [
             {pos}
           </Badge>
         ))}
-        {row.original.positions.length > 2 && (
-          <Badge variant="secondary" className="bg-muted text-muted-foreground whitespace-nowrap">
-            +{row.original.positions.length - 2}
-          </Badge>
-        )}
       </div>
     ),
     enableSorting: true,
