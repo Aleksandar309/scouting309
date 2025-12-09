@@ -10,8 +10,6 @@ import {
   SortingState,
   getFilteredRowModel,
   ColumnFiltersState,
-  getCanResizeColumn, // Added import
-  getIsResizing, // Added import
 } from '@tanstack/react-table';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,7 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Player } from '@/types/player';
-import { cn } from '@/lib/utils'; // Added import for cn
+import { cn } from '@/lib/utils';
 
 interface PlayerTableDisplayProps {
   data: Player[];
@@ -63,25 +61,53 @@ const PlayerTableDisplay: React.FC<PlayerTableDisplayProps> = ({
       columnFilters,
       globalFilter,
     },
-    enableColumnResizing: true, // Enabled column resizing
-    columnResizeMode: "onChange", // Set resize mode
+    enableColumnResizing: true,
+    columnResizeMode: "onChange",
+    defaultColumn: {
+      minSize: 50, // Default minimum size for all columns
+    },
   });
+
+  // Calculate sticky column offsets dynamically
+  const stickyColumnOffsets = React.useMemo(() => {
+    const offsets: { [key: string]: number } = {};
+    let currentOffset = 0;
+    // Iterate through all visible headers to calculate cumulative offset
+    for (const header of table.getFlatHeaders()) {
+      if (header.column.id === 'name' || header.column.id === 'team') {
+        offsets[header.column.id] = currentOffset;
+        currentOffset += header.getSize();
+      }
+    }
+    return offsets;
+  }, [table.getFlatHeaders(), table.getState().columnSizingInfo]); // Recalculate if column sizes change
 
   return (
     <div className="rounded-md border border-border bg-card overflow-x-auto">
-      <Table style={{ width: table.getTotalSize() }}> {/* Set table width based on total column size */}
+      <Table style={{ width: table.getTotalSize() }}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="border-border">
               {headerGroup.headers.map((header) => {
+                const isNameColumn = header.column.id === 'name';
+                const isTeamColumn = header.column.id === 'team';
+                const isSticky = isNameColumn || isTeamColumn;
+                const leftOffset = stickyColumnOffsets[header.column.id];
+
                 return (
                   <TableHead
                     key={header.id}
                     colSpan={header.colSpan}
-                    style={{ width: header.getSize() }} // Set header width
+                    style={{
+                      width: header.getSize(),
+                      position: isSticky ? 'sticky' : undefined,
+                      left: isSticky ? leftOffset : undefined,
+                      zIndex: isSticky ? (isNameColumn ? 10 : 9) : undefined, // Name: 10, Team: 9
+                      backgroundColor: isSticky ? 'hsl(var(--background))' : undefined, // Ensure background for sticky headers
+                    }}
                     className={cn(
-                      "text-foreground relative", // Added relative for resizer positioning
-                      header.column.id === 'name' && "sticky-column-header" // Apply sticky class for name column
+                      "text-foreground relative",
+                      // Removed sticky-column-header class as styles are applied inline
                     )}
                   >
                     {header.isPlaceholder
@@ -115,18 +141,31 @@ const PlayerTableDisplay: React.FC<PlayerTableDisplayProps> = ({
                 className="border-border hover:bg-table-row-hover cursor-pointer"
                 onClick={() => navigate(`/player/${row.original.id}`)}
               >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell
-                    key={cell.id}
-                    style={{ width: cell.column.getSize() }} // Set cell width
-                    className={cn(
-                      "text-foreground",
-                      cell.column.id === 'name' && "sticky-column-cell" // Apply sticky class for name cell
-                    )}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+                {row.getVisibleCells().map((cell) => {
+                  const isNameColumn = cell.column.id === 'name';
+                  const isTeamColumn = cell.column.id === 'team';
+                  const isSticky = isNameColumn || isTeamColumn;
+                  const leftOffset = stickyColumnOffsets[cell.column.id];
+
+                  return (
+                    <TableCell
+                      key={cell.id}
+                      style={{
+                        width: cell.column.getSize(),
+                        position: isSticky ? 'sticky' : undefined,
+                        left: isSticky ? leftOffset : undefined,
+                        zIndex: isSticky ? (isNameColumn ? 5 : 4) : undefined, // Name: 5, Team: 4
+                        backgroundColor: isSticky ? 'hsl(var(--card))' : undefined, // Ensure background for sticky cells
+                      }}
+                      className={cn(
+                        "text-foreground",
+                        // Removed sticky-column-cell class as styles are applied inline
+                      )}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             ))
           ) : (
