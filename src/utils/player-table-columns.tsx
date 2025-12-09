@@ -18,6 +18,7 @@ import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import { ALL_ATTRIBUTE_NAMES } from '@/utils/player-attributes';
 import { POSITION_ORDER } from '@/utils/position-order';
 import { TableCell, TableHead } from '@/components/ui/table'; // Import TableCell and TableHead
+import { cn } from '@/lib/utils'; // Import cn for utility classes
 
 // Helper function to find an attribute's rating across all categories
 const getAttributeRating = (player: Player, attributeName: string): number => {
@@ -90,6 +91,8 @@ const attributeColumns: ColumnDef<Player>[] = ALL_ATTRIBUTE_NAMES.map(attrName =
     return <span className="text-foreground">{rating}</span>;
   },
   enableSorting: true,
+  minSize: 100, // Set a minimum size for attribute columns
+  maxSize: 200, // Set a maximum size for attribute columns
 }));
 
 
@@ -98,25 +101,23 @@ export const playerTableColumns: ColumnDef<Player>[] = [
     accessorKey: "name",
     header: ({ column }) => {
       return (
-        <TableHead className="sticky-column-header">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="text-foreground hover:bg-accent"
-          >
-            Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        </TableHead>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-foreground hover:bg-accent"
+        >
+          Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
       );
     },
     cell: ({ row }) => (
-      <TableCell className="sticky-column-cell">
-        <Link to={`/player/${row.original.id}`} className="text-primary hover:underline flex"> {/* Dodata 'flex' klasa ovde */}
-          {row.getValue("name")}
-        </Link>
-      </TableCell>
+      <Link to={`/player/${row.original.id}`} className="text-primary hover:underline flex">
+        {row.getValue("name")}
+      </Link>
     ),
+    minSize: 150, // Set a minimum size for the name column
+    maxSize: 300, // Set a maximum size for the name column
   },
   {
     accessorKey: "team",
@@ -134,6 +135,8 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       const team: string = row.getValue(columnId);
       return team.toLowerCase().includes(filterValue.toLowerCase());
     },
+    minSize: 120,
+    maxSize: 250,
   },
   {
     accessorKey: "positions",
@@ -162,6 +165,8 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       const positions: string[] = row.getValue(columnId);
       return positions.some(pos => pos.toLowerCase().includes(filterValue.toLowerCase()));
     },
+    minSize: 150,
+    maxSize: 300,
   },
   {
     accessorKey: "nationality",
@@ -179,6 +184,8 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       const nationality: string = row.getValue(columnId);
       return nationality.toLowerCase().includes(filterValue.toLowerCase());
     },
+    minSize: 120,
+    maxSize: 200,
   },
   {
     accessorKey: "age",
@@ -192,6 +199,8 @@ export const playerTableColumns: ColumnDef<Player>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
+    minSize: 80,
+    maxSize: 120,
   },
   {
     accessorKey: "value",
@@ -205,6 +214,8 @@ export const playerTableColumns: ColumnDef<Player>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
+    minSize: 100,
+    maxSize: 180,
   },
   {
     accessorKey: "scoutingProfile.currentAbility",
@@ -233,6 +244,8 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       const rating = row.original.scoutingProfile.currentAbility;
       return rating >= filterValue;
     },
+    minSize: 150,
+    maxSize: 250,
   },
   {
     accessorKey: "scoutingProfile.potentialAbility",
@@ -261,6 +274,8 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       const rating = row.original.scoutingProfile.potentialAbility;
       return rating >= filterValue;
     },
+    minSize: 150,
+    maxSize: 250,
   },
   {
     accessorKey: "priorityTarget",
@@ -269,6 +284,8 @@ export const playerTableColumns: ColumnDef<Player>[] = [
       row.getValue("priorityTarget") ? <Badge className="bg-yellow-600 text-white">Yes</Badge> : <Badge variant="secondary" className="bg-muted text-muted-foreground">No</Badge>
     ),
     enableSorting: true,
+    minSize: 100,
+    maxSize: 150,
   },
   ...attributeColumns,
   {
@@ -284,7 +301,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
               variant="outline"
               size="sm"
               className="bg-primary text-primary-foreground hover:bg-primary/90"
-              onClick={(e) => e.stopPropagation()} // Dodato: Zaustavljanje propagacije događaja
+              onClick={(e) => e.stopPropagation()}
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -295,5 +312,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
     },
     enableSorting: false,
     enableHiding: false,
+    minSize: 80,
+    maxSize: 120,
   },
 ];

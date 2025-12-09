@@ -9,23 +9,22 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Scout } from "@/types/scout";
-import { TableHead } from '@/components/ui/table';
+import { TableHead } from '@/components/ui/table'; // Import TableHead
+import { cn } from '@/lib/utils'; // Import cn for utility classes
 
 export const scoutTableColumns: ColumnDef<Scout>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
       return (
-        <TableHead className="sticky-column-header">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="text-foreground hover:bg-accent"
-          >
-            Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        </TableHead>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-foreground hover:bg-accent"
+        >
+          Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
       );
     },
     cell: ({ row }) => (
@@ -37,6 +36,8 @@ export const scoutTableColumns: ColumnDef<Scout>[] = [
         {row.getValue("name")}
       </Link>
     ),
+    minSize: 150, // Set a minimum size for the name column
+    maxSize: 300, // Set a maximum size for the name column
   },
   {
     accessorKey: "role",
@@ -50,6 +51,8 @@ export const scoutTableColumns: ColumnDef<Scout>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
+    minSize: 120,
+    maxSize: 250,
   },
   {
     accessorKey: "email",
@@ -59,6 +62,8 @@ export const scoutTableColumns: ColumnDef<Scout>[] = [
         <Mail className="mr-2 h-4 w-4 text-muted-foreground" /> {row.getValue("email")}
       </div>
     ),
+    minSize: 180,
+    maxSize: 350,
   },
   {
     accessorKey: "phone",
@@ -68,6 +73,8 @@ export const scoutTableColumns: ColumnDef<Scout>[] = [
         <Phone className="mr-2 h-4 w-4 text-muted-foreground" /> {row.getValue("phone")}
       </div>
     ),
+    minSize: 150,
+    maxSize: 250,
   },
   {
     accessorKey: "activePlayers",
@@ -86,6 +93,8 @@ export const scoutTableColumns: ColumnDef<Scout>[] = [
         <User className="mr-2 h-4 w-4 text-muted-foreground" /> {row.getValue("activePlayers")}
       </div>
     ),
+    minSize: 120,
+    maxSize: 180,
   },
   {
     accessorKey: "lastReportDate",
@@ -104,5 +113,7 @@ export const scoutTableColumns: ColumnDef<Scout>[] = [
         <CalendarDays className="mr-2 h-4 w-4 text-muted-foreground" /> {row.getValue("lastReportDate")}
       </div>
     ),
+    minSize: 150,
+    maxSize: 200,
   },
 ];
