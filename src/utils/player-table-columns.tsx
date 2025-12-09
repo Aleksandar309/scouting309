@@ -319,11 +319,11 @@ export const playerTableColumns: ColumnDef<Player>[] = [
           <DialogTrigger asChild>
             <Button
               variant="outline"
-              size="sm"
-              className="bg-primary text-primary-foreground hover:bg-primary/90 whitespace-nowrap" // Added whitespace-nowrap
+              size="icon" // Changed size to 'icon' for a smaller button
+              className="bg-primary text-primary-foreground hover:bg-primary/90 whitespace-nowrap h-7 w-7" // Added custom height and width
               onClick={(e) => e.stopPropagation()}
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-3 w-3" /> {/* Reduced icon size */}
             </Button>
           </DialogTrigger>
           <AddToShortlistDialog allPlayers={[]} initialPlayerId={player.id} onClose={() => setIsShortlistDialogOpen(false)} />
@@ -332,7 +332,7 @@ export const playerTableColumns: ColumnDef<Player>[] = [
     },
     enableSorting: false,
     enableHiding: false,
-    minSize: 80,
-    maxSize: 120,
+    minSize: 60, // Reduced minSize for the actions column
+    maxSize: 80, // Reduced maxSize for the actions column
   },
 ];
