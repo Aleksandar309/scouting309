@@ -234,21 +234,22 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
                         <Briefcase className="h-4 w-4 mr-1" /> Assigned to: <Link to={`/scouts/${assignment.assignedTo}`} className="text-primary hover:underline ml-1">{assignment.assignedToName}</Link>
                       </p>
                     </CardHeader>
-                  <CardContent className="space-y-2 text-muted-foreground text-sm">
-                    <p>{assignment.description}</p>
-                    <div className="flex items-center justify-between pt-2 border-t border-border">
-                      <span className="flex items-center">
-                        <CalendarDays className="h-4 w-4 mr-1" /> Due: {format(new Date(assignment.dueDate), 'MMM dd, yyyy')}
-                        {getDueDateStatus(assignment.dueDate, assignment.status)}
-                      </span>
-                      <Badge className={getStatusBadgeClass(assignment.status)}>{assignment.status}</Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </div>
-        </TabsContent>
+                    <CardContent className="space-y-2 text-muted-foreground text-sm">
+                      <p>{assignment.description}</p>
+                      <div className="flex items-center justify-between pt-2 border-t border-border">
+                        <span className="flex items-center">
+                          <CalendarDays className="h-4 w-4 mr-1" /> Due: {format(new Date(assignment.dueDate), 'MMM dd, yyyy')}
+                          {getDueDateStatus(assignment.dueDate, assignment.status)}
+                        </span>
+                        <Badge className={getStatusBadgeClass(assignment.status)}>{assignment.status}</Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
