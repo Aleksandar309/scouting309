@@ -149,6 +149,7 @@ interface PlayerProfileProps {
   setShadowTeams: React.Dispatch<React.SetStateAction<ShadowTeam[]>>;
 }
 
+// Helper function to assign position type based on rating
 const assignPositionType = (rating: number): "natural" | "alternative" | "tertiary" | null => {
   if (rating >= 8) return "natural";
   if (rating >= 6) return "alternative";
@@ -156,6 +157,7 @@ const assignPositionType = (rating: number): "natural" | "alternative" | "tertia
   return null;
 };
 
+// Helper to get highlight type for an attribute
 const getHighlightType = (
   attributeName: string,
   category: FmAttributeCategory,
@@ -175,6 +177,7 @@ const getHighlightType = (
   return null;
 };
 
+// Helper function to calculate the average rating for an attribute, considering its history
 const getDisplayedAttributeRating = (attribute: PlayerAttribute, isEditMode: boolean): number => {
   if (isEditMode) {
     return attribute.rating;
@@ -193,6 +196,68 @@ const getDisplayedAttributeRating = (attribute: PlayerAttribute, isEditMode: boo
   return Math.round(sum / allRatings.length);
 };
 
+// Helper to calculate average scouting profile metrics from reports
+const calculateAverageScoutingProfile = (player: Player | null) => {
+  const reports = player?.scoutingReports || [];
+  if (reports.length === 0) {
+    return { avgCurrentAbility: 0, avgPotentialAbility: 0, avgTeamFit: 0 };
+  }
+
+  let totalCurrentAbility = 0;
+  let totalPotentialAbility = 0;
+  let totalTeamFit = 0;
+  let count = 0;
+
+  reports.forEach(report => {
+    if (report.currentAbility !== undefined) totalCurrentAbility += report.currentAbility;
+    if (report.potentialAbility !== undefined) totalPotentialAbility += report.potentialAbility;
+    if (report.teamFit !== undefined) totalTeamFit += report.teamFit;
+    count++;
+  });
+
+  return {
+    avgCurrentAbility: count > 0 ? Math.round(totalCurrentAbility / count) : 0,
+    avgPotentialAbility: count > 0 ? Math.round(totalPotentialAbility / count) : 0,
+    avgTeamFit: count > 0 ? Math.round(totalTeamFit / count) : 0,
+  };
+};
+
+// Helper function to compare and update attribute history
+const updateAttributeHistory = (
+  currentAttrs: PlayerAttribute[],
+  newAttrs: AttributeFormArray,
+  category: FmAttributeCategory,
+  changedByScoutName: string
+): PlayerAttribute[] => {
+  return newAttrs.map((newAttr: AttributeFormItem) => {
+    const currentAttr = currentAttrs.find(attr => attr.name === newAttr.name);
+    const history: AttributeHistoryEntry[] = currentAttr?.history ? [...currentAttr.history] : [];
+
+    if (currentAttr && currentAttr.rating !== newAttr.rating) {
+      history.push({
+        date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+        rating: newAttr.rating,
+        changedBy: changedByScoutName,
+        comment: `Rating changed from ${currentAttr.rating} to ${newAttr.rating}`,
+      });
+    } else if (!currentAttr) {
+      // If it's a new attribute, add an initial history entry
+      history.push({
+        date: new Date().toISOString().split('T')[0],
+        rating: newAttr.rating,
+        changedBy: changedByScoutName,
+        comment: `Initial rating set to ${newAttr.rating}`,
+      });
+    }
+
+    return {
+      name: newAttr.name,
+      rating: newAttr.rating,
+      history: history,
+    };
+  });
+};
+
 // New helper type for combined role options
 interface CombinedRoleOption {
   positionName: string;
@@ -200,6 +265,68 @@ interface CombinedRoleOption {
   compatibility: number;
   id: string; // Unique ID for the select item
 }
+
+// RenderAttributeSection component moved outside PlayerProfile
+interface RenderAttributeSectionProps {
+  categoryName: FmAttributeCategory;
+  fieldArrayName: "technical" | "tactical" | "physical" | "mentalPsychology" | "setPieces" | "hidden";
+  form: any; // Use appropriate type from react-hook-form, e.g., UseFormReturn<PlayerFormValues>
+  isEditMode: boolean;
+  selectedFmRole: FmRole | null;
+  handleAttributeHistoryClick: (attributeName: string, category: FmAttributeCategory) => void;
+}
+
+const RenderAttributeSection: React.FC<RenderAttributeSectionProps> = ({
+  categoryName,
+  fieldArrayName,
+  form,
+  isEditMode,
+  selectedFmRole,
+  handleAttributeHistoryClick,
+}) => {
+  return (
+    <div className="space-y-2">
+      {form.watch(fieldArrayName).map((attr: AttributeFormItem, index: number) => (
+        <div key={attr.name}>
+          {isEditMode ? (
+            <FormField
+              control={form.control}
+              name={`${fieldArrayName}.${index}.rating`}
+              render={({ field }) => (
+                <FormItem className="flex items-center justify-between">
+                  <FormLabel className="text-muted-foreground w-1/2">{attr.name}</FormLabel>
+                  <FormControl className="w-1/2">
+                    <Input
+                      type="number"
+                      min="1"
+                      max="10"
+                      className="bg-input border-border text-foreground text-sm text-center h-8"
+                      {...field}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value, 10);
+                        field.onChange(isNaN(value) ? 0 : value);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : (
+            <AttributeRating
+              name={attr.name}
+              rating={getDisplayedAttributeRating(attr, isEditMode)}
+              highlightType={getHighlightType(attr.name, categoryName, selectedFmRole)}
+              onViewHistory={handleAttributeHistoryClick}
+              attributeCategory={categoryName}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
 
 const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scouts, shadowTeams, setShadowTeams }) => {
   const { id } = useParams<{ id: string }>();
@@ -231,7 +358,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   // New state for combined role options
   const [combinedRoleOptions, setCombinedRoleOptions] = useState<CombinedRoleOption[]>([]);
 
-  const form = useForm<PlayerFormValues>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: currentPlayer ? {
       name: currentPlayer.name,
@@ -432,40 +559,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       return;
     }
 
-    const updateAttributeHistory = (
-      currentAttrs: PlayerAttribute[],
-      newAttrs: AttributeFormArray,
-      category: FmAttributeCategory
-    ): PlayerAttribute[] => {
-      return newAttrs.map((newAttr: AttributeFormItem) => {
-        const currentAttr = currentAttrs.find(attr => attr.name === newAttr.name);
-        const history: AttributeHistoryEntry[] = currentAttr?.history ? [...currentAttr.history] : [];
-
-        if (currentAttr && currentAttr.rating !== newAttr.rating) {
-          history.push({
-            date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
-            rating: newAttr.rating,
-            changedBy: changedByScoutName,
-            comment: `Rating changed from ${currentAttr.rating} to ${newAttr.rating}`,
-          });
-        } else if (!currentAttr) {
-          // If it's a new attribute, add an initial history entry
-          history.push({
-            date: new Date().toISOString().split('T')[0],
-            rating: newAttr.rating,
-            changedBy: changedByScoutName,
-            comment: `Initial rating set to ${newAttr.rating}`,
-          });
-        }
-
-        return {
-          name: newAttr.name,
-          rating: newAttr.rating,
-          history: history,
-        };
-      });
-    };
-
     const updatedPlayer: Player = {
       ...currentPlayer,
       name: values.name,
@@ -486,12 +579,12 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       },
       positionsData: processedPositionsData,
       positions: generalPositions, // Update general positions array
-      technical: updateAttributeHistory(currentPlayer.technical, values.technical, 'technical'),
-      tactical: updateAttributeHistory(currentPlayer.tactical, values.tactical, 'tactical'),
-      physical: updateAttributeHistory(currentPlayer.physical, values.physical, 'physical'),
-      mentalPsychology: updateAttributeHistory(currentPlayer.mentalPsychology, values.mentalPsychology, 'mentalPsychology'),
-      setPieces: updateAttributeHistory(currentPlayer.setPieces, values.setPieces, 'setPieces'),
-      hidden: updateAttributeHistory(currentPlayer.hidden, values.hidden, 'hidden'),
+      technical: updateAttributeHistory(currentPlayer.technical, values.technical, 'technical', changedByScoutName),
+      tactical: updateAttributeHistory(currentPlayer.tactical, values.tactical, 'tactical', changedByScoutName),
+      physical: updateAttributeHistory(currentPlayer.physical, values.physical, 'physical', changedByScoutName),
+      mentalPsychology: updateAttributeHistory(currentPlayer.mentalPsychology, values.mentalPsychology, 'mentalPsychology', changedByScoutName),
+      setPieces: updateAttributeHistory(currentPlayer.setPieces, values.setPieces, 'setPieces', changedByScoutName),
+      hidden: updateAttributeHistory(currentPlayer.hidden, values.hidden, 'hidden', changedByScoutName),
       keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(Boolean) : [],
       areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(Boolean) : [],
       scoutingReports: currentPlayer.scoutingReports, // Keep existing reports
@@ -544,6 +637,9 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   };
 
   const currentSelectedCombinedRoleId = selectedFmRole ? combinedRoleOptions.find(opt => opt.role.id === selectedFmRole.id)?.id : undefined;
+
+
+  const { avgCurrentAbility, avgPotentialAbility, avgTeamFit } = calculateAverageScoutingProfile(player);
 
 
   return (
@@ -1088,7 +1184,14 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     <CardTitle className="text-lg font-semibold flex items-center"><User className="mr-2 h-5 w-5" /> Technical</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {renderAttributeSection("technical", "Technical", "technical")}
+                    <RenderAttributeSection
+                      categoryName="technical"
+                      fieldArrayName="technical"
+                      form={form}
+                      isEditMode={isEditMode}
+                      selectedFmRole={selectedFmRole}
+                      handleAttributeHistoryClick={handleAttributeHistoryClick}
+                    />
                   </CardContent>
                 </Card>
 
@@ -1097,7 +1200,14 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     <CardTitle className="text-lg font-semibold flex items-center"><MapPin className="mr-2 h-5 w-5" /> Tactical</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {renderAttributeSection("tactical", "Tactical", "tactical")}
+                    <RenderAttributeSection
+                      categoryName="tactical"
+                      fieldArrayName="tactical"
+                      form={form}
+                      isEditMode={isEditMode}
+                      selectedFmRole={selectedFmRole}
+                      handleAttributeHistoryClick={handleAttributeHistoryClick}
+                    />
                   </CardContent>
                 </Card>
 
@@ -1106,7 +1216,14 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     <CardTitle className="text-lg font-semibold flex items-center"><Target className="mr-2 h-5 w-5" /> Set Pieces</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {renderAttributeSection("setPieces", "Set Pieces", "setPieces")}
+                    <RenderAttributeSection
+                      categoryName="setPieces"
+                      fieldArrayName="setPieces"
+                      form={form}
+                      isEditMode={isEditMode}
+                      selectedFmRole={selectedFmRole}
+                      handleAttributeHistoryClick={handleAttributeHistoryClick}
+                    />
                   </CardContent>
                 </Card>
 
@@ -1115,7 +1232,14 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     <CardTitle className="text-lg font-semibold flex items-center"><Scale className="mr-2 h-5 w-5" /> Physical</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {renderAttributeSection("physical", "Physical", "physical")}
+                    <RenderAttributeSection
+                      categoryName="physical"
+                      fieldArrayName="physical"
+                      form={form}
+                      isEditMode={isEditMode}
+                      selectedFmRole={selectedFmRole}
+                      handleAttributeHistoryClick={handleAttributeHistoryClick}
+                    />
                   </CardContent>
                 </Card>
 
@@ -1124,7 +1248,14 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     <CardTitle className="text-lg font-semibold flex items-center"><User className="mr-2 h-5 w-5" /> Mental & Psychology</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {renderAttributeSection("mentalPsychology", "Mental & Psychology", "mentalPsychology")}
+                    <RenderAttributeSection
+                      categoryName="mentalPsychology"
+                      fieldArrayName="mentalPsychology"
+                      form={form}
+                      isEditMode={isEditMode}
+                      selectedFmRole={selectedFmRole}
+                      handleAttributeHistoryClick={handleAttributeHistoryClick}
+                    />
                   </CardContent>
                 </Card>
 
@@ -1133,7 +1264,14 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     <CardTitle className="text-lg font-semibold flex items-center"><EyeOff className="mr-2 h-5 w-5" /> Hidden Attributes</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {renderAttributeSection("hidden", "Hidden (1-10)", "hidden")}
+                    <RenderAttributeSection
+                      categoryName="hidden"
+                      fieldArrayName="hidden"
+                      form={form}
+                      isEditMode={isEditMode}
+                      selectedFmRole={selectedFmRole}
+                      handleAttributeHistoryClick={handleAttributeHistoryClick}
+                    />
                   </CardContent>
                 </Card>
 
