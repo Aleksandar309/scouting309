@@ -439,44 +439,62 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     ): PlayerAttribute[] => {
       return newAttrs.map((newAttr: AttributeFormItem) => {
         const currentAttr = currentAttrs.find(attr => attr.name === newAttr.name);
+        const history: AttributeHistoryEntry[] = currentAttr?.history ? [...currentAttr.history] : [];
+
         if (currentAttr && currentAttr.rating !== newAttr.rating) {
-          const newHistoryEntry: AttributeHistoryEntry = {
-            date: new Date().toISOString(),
+          history.push({
+            date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
             rating: newAttr.rating,
             changedBy: changedByScoutName,
-            comment: `Rating changed from ${currentAttr.rating} to ${newAttr.rating}.`,
-          };
-          return {
-            name: newAttr.name,
+            comment: `Rating changed from ${currentAttr.rating} to ${newAttr.rating}`,
+          });
+        } else if (!currentAttr) {
+          // If it's a new attribute, add an initial history entry
+          history.push({
+            date: new Date().toISOString().split('T')[0],
             rating: newAttr.rating,
-            history: [...(currentAttr.history || []), newHistoryEntry],
-          };
+            changedBy: changedByScoutName,
+            comment: `Initial rating set to ${newAttr.rating}`,
+          });
         }
+
         return {
           name: newAttr.name,
           rating: newAttr.rating,
-          history: currentAttr?.history || [],
+          history: history,
         };
       });
     };
 
     const updatedPlayer: Player = {
-      ...player,
-      ...values,
-      details: values.details as Player['details'],
-      scoutingProfile: values.scoutingProfile as Player['scoutingProfile'],
-      positions: generalPositions,
-      positionsData: processedPositionsData,
-      keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
-      areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
-      avatarUrl: values.avatarUrl,
+      ...currentPlayer,
+      name: values.name,
+      team: values.team,
+      nationality: values.nationality,
+      age: values.age,
+      value: values.value,
+      footed: values.footed,
       lastEdited: new Date().toISOString(),
-      technical: updateAttributeHistory(currentPlayer.technical, values.technical, "technical"),
-      tactical: updateAttributeHistory(currentPlayer.tactical, values.tactical, "tactical"),
-      physical: updateAttributeHistory(currentPlayer.physical, values.physical, "physical"),
-      mentalPsychology: updateAttributeHistory(currentPlayer.mentalPsychology, values.mentalPsychology, "mentalPsychology"),
-      setPieces: updateAttributeHistory(currentPlayer.setPieces, values.setPieces, "setPieces"),
-      hidden: updateAttributeHistory(currentPlayer.hidden, values.hidden, "hidden"),
+      avatarUrl: values.avatarUrl || currentPlayer.avatarUrl,
+      details: {
+        ...currentPlayer.details,
+        ...values.details,
+      },
+      scoutingProfile: {
+        ...currentPlayer.scoutingProfile,
+        ...values.scoutingProfile,
+      },
+      positionsData: processedPositionsData,
+      positions: generalPositions, // Update general positions array
+      technical: updateAttributeHistory(currentPlayer.technical, values.technical, 'technical'),
+      tactical: updateAttributeHistory(currentPlayer.tactical, values.tactical, 'tactical'),
+      physical: updateAttributeHistory(currentPlayer.physical, values.physical, 'physical'),
+      mentalPsychology: updateAttributeHistory(currentPlayer.mentalPsychology, values.mentalPsychology, 'mentalPsychology'),
+      setPieces: updateAttributeHistory(currentPlayer.setPieces, values.setPieces, 'setPieces'),
+      hidden: updateAttributeHistory(currentPlayer.hidden, values.hidden, 'hidden'),
+      keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(Boolean) : [],
+      areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(Boolean) : [],
+      scoutingReports: currentPlayer.scoutingReports, // Keep existing reports
     };
 
     setPlayers((prevPlayers) =>
@@ -487,78 +505,46 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     toast.success("Player profile updated successfully!");
   };
 
-  const calculateAverageScoutingProfile = () => {
-    const reports = player?.scoutingReports || [];
-    if (reports.length === 0) {
-      return { avgCurrentAbility: 0, avgPotentialAbility: 0, avgTeamFit: 0 };
+  const handleCancelEdit = () => {
+    if (currentPlayer) {
+      form.reset({
+        name: currentPlayer.name,
+        team: currentPlayer.team,
+        nationality: currentPlayer.nationality,
+        age: currentPlayer.age,
+        value: currentPlayer.value,
+        footed: currentPlayer.footed,
+        lastEdited: currentPlayer.lastEdited || '',
+        avatarUrl: currentPlayer.avatarUrl || '',
+        details: currentPlayer.details,
+        scoutingProfile: currentPlayer.scoutingProfile,
+        positionsData: currentPlayer.positionsData.map(p => ({ name: p.name, rating: p.rating })),
+        technical: currentPlayer.technical as AttributeFormArray,
+        tactical: currentPlayer.tactical as AttributeFormArray,
+        physical: currentPlayer.physical as AttributeFormArray,
+        mentalPsychology: currentPlayer.mentalPsychology as AttributeFormArray,
+        setPieces: currentPlayer.setPieces as AttributeFormArray,
+        hidden: currentPlayer.hidden as AttributeFormArray,
+        keyStrengths: currentPlayer.keyStrengths.join('\n'),
+        areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
+        changedByScout: "",
+      });
     }
-
-    let totalCurrentAbility = 0;
-    let totalPotentialAbility = 0;
-    let totalTeamFit = 0;
-    let count = 0;
-
-    reports.forEach(report => {
-      if (report.currentAbility !== undefined) totalCurrentAbility += report.currentAbility;
-      if (report.potentialAbility !== undefined) totalPotentialAbility += report.potentialAbility;
-      if (report.teamFit !== undefined) totalTeamFit += report.teamFit;
-      count++;
-    });
-
-    return {
-      avgCurrentAbility: count > 0 ? Math.round(totalCurrentAbility / count) : 0,
-      avgPotentialAbility: count > 0 ? Math.round(totalPotentialAbility / count) : 0,
-      avgTeamFit: count > 0 ? Math.round(totalTeamFit / count) : 0,
-    };
+    setIsEditMode(false);
+    toast.info("Edit cancelled.");
   };
 
-  const { avgCurrentAbility, avgPotentialAbility, avgTeamFit } = calculateAverageScoutingProfile();
+  const handleCombinedRoleSelectChange = (selectedId: string) => {
+    const selectedOption = combinedRoleOptions.find(opt => opt.id === selectedId);
+    if (selectedOption) {
+      setSelectedFmRole(selectedOption.role);
+    } else {
+      setSelectedFmRole(null);
+    }
+  };
 
-  const renderAttributeSection = (
-    categoryName: FmAttributeCategory,
-    label: string,
-    fieldArrayName: "technical" | "tactical" | "physical" | "mentalPsychology" | "setPieces" | "hidden"
-  ) => (
-    <div className="space-y-2">
-      {form.watch(fieldArrayName).map((attr: AttributeFormItem, index) => (
-        <div key={attr.name}>
-          {isEditMode ? (
-            <FormField
-              control={form.control}
-              name={`${fieldArrayName}.${index}.rating`}
-              render={({ field }) => (
-                <FormItem className="flex items-center justify-between">
-                  <FormLabel className="text-muted-foreground w-1/2">{attr.name}</FormLabel>
-                  <FormControl className="w-1/2">
-                    <Input
-                      type="number"
-                      min="1"
-                      max="10"
-                      className="bg-input border-border text-foreground text-sm text-center h-8"
-                      {...field}
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value, 10);
-                        field.onChange(isNaN(value) ? 0 : value);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ) : (
-            <AttributeRating
-              name={attr.name}
-              rating={getDisplayedAttributeRating(attr, isEditMode)}
-              highlightType={getHighlightType(attr.name, categoryName, selectedFmRole)}
-              onViewHistory={handleAttributeHistoryClick}
-              attributeCategory={categoryName}
-            />
-          )}
-        </div>
-      ))}
-    </div>
-  );
+  const currentSelectedCombinedRoleId = selectedFmRole ? combinedRoleOptions.find(opt => opt.role.id === selectedFmRole.id)?.id : undefined;
+
 
   return (
     <div className="min-h-screen bg-background text-foreground p-6 pt-16">
@@ -679,31 +665,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     </Button>
                     <Button
                       variant="outline"
-                      onClick={() => {
-                        setIsEditMode(false);
-                        form.reset(currentPlayer ? {
-                          name: currentPlayer.name,
-                          team: currentPlayer.team,
-                          nationality: currentPlayer.nationality,
-                          age: currentPlayer.age,
-                          value: currentPlayer.value,
-                          footed: currentPlayer.footed,
-                          lastEdited: currentPlayer.lastEdited || '',
-                          avatarUrl: currentPlayer.avatarUrl || '',
-                          details: currentPlayer.details,
-                          scoutingProfile: currentPlayer.scoutingProfile,
-                          positionsData: currentPlayer.positionsData.map(p => ({ name: p.name, rating: p.rating })),
-                          technical: currentPlayer.technical as AttributeFormArray,
-                          tactical: currentPlayer.tactical as AttributeFormArray,
-                          physical: currentPlayer.physical as AttributeFormArray,
-                          mentalPsychology: currentPlayer.mentalPsychology as AttributeFormArray,
-                          setPieces: currentPlayer.setPieces as AttributeFormArray,
-                          hidden: currentPlayer.hidden as AttributeFormArray,
-                          keyStrengths: currentPlayer.keyStrengths.join('\n'),
-                          areasForDevelopment: currentPlayer.areasForDevelopment.join('\n'),
-                          changedByScout: "",
-                        } : undefined);
-                      }}
+                      onClick={handleCancelEdit}
                       className="bg-card border-border text-foreground hover:bg-accent"
                     >
                       <XCircle className="mr-2 h-4 w-4" /> Cancel
@@ -1101,12 +1063,9 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   <CardContent className="flex flex-col items-center justify-center h-full p-4">
                     <div className="w-full space-y-4 mb-4">
                       <Select
-                        value={selectedFmRole ? `${selectedFmRole.id}-${combinedRoleOptions.find(opt => opt.role.id === selectedFmRole?.id)?.positionName}` : ""}
-                        onValueChange={(value) => {
-                          const [roleId, positionName] = value.split('-');
-                          const selectedOption = combinedRoleOptions.find(opt => opt.role.id === roleId && opt.positionName === positionName);
-                          setSelectedFmRole(selectedOption?.role || null);
-                        }}
+                        value={currentSelectedCombinedRoleId}
+                        onValueChange={handleCombinedRoleSelectChange}
+                        disabled={combinedRoleOptions.length === 0}
                       >
                         <SelectTrigger className="w-full bg-input border-border text-foreground hover:bg-accent">
                           <SelectValue placeholder="Select a role" />
@@ -1114,7 +1073,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                         <SelectContent className="bg-popover border-border text-popover-foreground">
                           {combinedRoleOptions.map(option => (
                             <SelectItem key={option.id} value={option.id}>
-                              {option.role.name} ({option.positionName}) - {option.compatibility}%
+                              {option.positionName} - {option.role.name} ({option.compatibility.toFixed(0)}%)
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -1190,16 +1149,22 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
-                              <Textarea className="bg-input border-border text-foreground min-h-[100px]" {...field} />
+                              <Textarea {...field} rows={5} placeholder="Enter key strengths, one per line" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                     ) : (
-                      player.keyStrengths.map((strength, index) => (
-                        <p key={index}>• {strength}</p>
-                      ))
+                      <ul className="list-disc list-inside text-sm space-y-1">
+                        {player.keyStrengths.length > 0 ? (
+                          player.keyStrengths.map((strength, index) => (
+                            <li key={index}>{strength}</li>
+                          ))
+                        ) : (
+                          <li className="text-muted-foreground">No key strengths listed.</li>
+                        )}
+                      </ul>
                     )}
                   </CardContent>
                 </Card>
@@ -1216,16 +1181,22 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
-                              <Textarea className="bg-input border-border text-foreground min-h-[100px]" {...field} />
+                              <Textarea {...field} rows={5} placeholder="Enter areas for development, one per line" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                     ) : (
-                      player.areasForDevelopment.map((area, index) => (
-                        <p key={index}>• {area}</p>
-                      ))
+                      <ul className="list-disc list-inside text-sm space-y-1">
+                        {player.areasForDevelopment.length > 0 ? (
+                          player.areasForDevelopment.map((area, index) => (
+                            <li key={index}>{area}</li>
+                          ))
+                        ) : (
+                          <li className="text-muted-foreground">No areas for development listed.</li>
+                        )}
+                      </ul>
                     )}
                   </CardContent>
                 </Card>
