@@ -40,11 +40,10 @@ import RadarChart from "@/components/RadarChart";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import ScoutReportForm from "@/components/ScoutReportForm";
 import AddToShortlistDialog from '@/components/AddToShortlistDialog';
-import PlayerStatistics from '@/components/PlayerStatistics';
 import PlayerPitch from '@/components/PlayerPitch';
 import RoleDetailsDialog from '@/components/RoleDetailsDialog';
 import AttributeHistoryDialog from '@/components/AttributeHistoryDialog';
-import { FmRole, FmRoleAttribute, FmAttributeCategory, getAttributesByCategory } from '@/utils/fm-roles';
+import { FmRole, FmRoleAttribute, FmAttributeCategory, getAttributesByCategory, getRolesForPosition } from '@/utils/fm-roles';
 import {
   Accordion,
   AccordionContent,
@@ -78,8 +77,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ALL_FOOTBALL_POSITIONS } from "@/utils/positions";
-import { ShadowTeam, ShadowTeamPlayer } from '@/types/shadow-team'; // Import ShadowTeam types
-import AddPlayerToShadowTeamDialog from '@/components/AddPlayerToShadowTeamDialog'; // Import the new dialog
+import { ShadowTeam, ShadowTeamPlayer } from '@/types/shadow-team';
+import AddPlayerToShadowTeamDialog from '@/components/AddPlayerToShadowTeamDialog';
 
 // Define the schema for a single attribute item
 const attributeItemSchema = z.object({
@@ -134,7 +133,7 @@ const formSchema = z.object({
   physical: attributeArraySchema,
   mentalPsychology: attributeArraySchema,
   setPieces: attributeArraySchema,
-  hidden: attributeArraySchema, // Now consistent with other attributes
+  hidden: attributeArraySchema,
   keyStrengths: z.string().optional(),
   areasForDevelopment: z.string().optional(),
   changedByScout: z.string().optional(),
@@ -146,8 +145,8 @@ interface PlayerProfileProps {
   players: Player[];
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
   scouts: Scout[];
-  shadowTeams: ShadowTeam[]; // Receive shadowTeams from App.tsx
-  setShadowTeams: React.Dispatch<React.SetStateAction<ShadowTeam[]>>; // Receive setShadowTeams from App.tsx
+  shadowTeams: ShadowTeam[];
+  setShadowTeams: React.Dispatch<React.SetStateAction<ShadowTeam[]>>;
 }
 
 // Helper function to assign position type based on rating
@@ -207,13 +206,12 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   const [player, setPlayer] = useState<Player | null>(currentPlayer || null);
   const [isReportFormOpen, setIsReportFormOpen] = useState(false);
   const [isShortlistFormOpen, setIsShortlistFormOpen] = useState(false);
-  const [showScoutingProfile, setShowScoutingProfile] = useState(true);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [isBioDialogOpen, setIsBioDialogOpen] = useState(false); // New state for biography dialog
+  const [isBioDialogOpen, setIsBioDialogOpen] = useState(false);
 
   const [isRoleDetailsDialogOpen, setIsRoleDetailsDialogOpen] = useState(false);
   const [selectedPositionForRoles, setSelectedPositionForRoles] = useState<string | null>(null);
-  const [selectedFmRole, setSelectedFmRole] = useState<FmRole | null>(null);
+  const [selectedFmRole, setSelectedFmRole] = useState<FmRole | null>(null); // This state now drives the radar
 
   const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
   const [selectedHistoryAttribute, setSelectedHistoryAttribute] = useState<{ name: string; category: FmAttributeCategory } | null>(null);
@@ -224,8 +222,10 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // State for AddPlayerToShadowTeamDialog
   const [isAddPlayerToTeamDialogOpen, setIsAddPlayerToTeamDialogOpen] = useState(false);
+
+  // New state for the radar's position dropdown
+  const [selectedPositionForRadar, setSelectedPositionForRadar] = useState<string | null>(null);
 
   const form = useForm<PlayerFormValues>({
     resolver: zodResolver(formSchema),
@@ -299,9 +299,16 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       } else {
         setSelectedFormationId(null);
       }
+
+      // Set a default position for the radar when player changes
+      if (currentPlayer.positionsData.length > 0) {
+        const defaultPos = currentPlayer.positionsData.find(p => p.type === 'natural' && p.rating >= 8) || currentPlayer.positionsData[0];
+        setSelectedPositionForRadar(defaultPos.name);
+        setSelectedFmRole(null); // Clear selected FM role when player changes
+      }
     }
     setIsEditMode(false);
-    setSelectedFmRole(null);
+    // setSelectedFmRole(null); // This is now handled by the effect above
   }, [currentPlayer, form]);
 
   // Effect to calculate formation fit when selectedFormationId or player changes
@@ -341,7 +348,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   const handlePositionClick = (positionType: string) => {
     setSelectedPositionForRoles(positionType);
     setIsRoleDetailsDialogOpen(true);
-    setSelectedFmRole(null);
+    // setSelectedFmRole(null); // Role selection in dialog will update this state
   };
 
   const handleRoleSelect = (role: FmRole | null) => {
@@ -397,7 +404,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       const type = assignPositionType(posInput.rating);
       if (type) {
         processedPositionsData.push({
-          name: posInput.name.toUpperCase(), // Standardize position names
+          name: posInput.name.toUpperCase(),
           type: type,
           rating: posInput.rating,
         });
@@ -413,10 +420,10 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     // Function to compare and update attribute history
     const updateAttributeHistory = (
       currentAttrs: PlayerAttribute[],
-      newAttrs: AttributeFormArray, // Changed parameter type
+      newAttrs: AttributeFormArray,
       category: FmAttributeCategory
     ): PlayerAttribute[] => {
-      return newAttrs.map((newAttr: AttributeFormItem) => { // Explicitly type newAttr
+      return newAttrs.map((newAttr: AttributeFormItem) => {
         const currentAttr = currentAttrs.find(attr => attr.name === newAttr.name);
         if (currentAttr && currentAttr.rating !== newAttr.rating) {
           const newHistoryEntry: AttributeHistoryEntry = {
@@ -426,14 +433,14 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
             comment: `Rating changed from ${currentAttr.rating} to ${newAttr.rating}.`,
           };
           return {
-            name: newAttr.name, // Explicitly assign name
-            rating: newAttr.rating, // Explicitly assign rating
+            name: newAttr.name,
+            rating: newAttr.rating,
             history: [...(currentAttr.history || []), newHistoryEntry],
           };
         }
         return {
-          name: newAttr.name, // Explicitly assign name
-          rating: newAttr.rating, // Explicitly assign rating
+          name: newAttr.name,
+          rating: newAttr.rating,
           history: currentAttr?.history || [],
         };
       });
@@ -442,8 +449,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     const updatedPlayer: Player = {
       ...player,
       ...values,
-      details: values.details as Player['details'], // Explicitly cast
-      scoutingProfile: values.scoutingProfile as Player['scoutingProfile'], // Explicitly cast
+      details: values.details as Player['details'],
+      scoutingProfile: values.scoutingProfile as Player['scoutingProfile'],
       positions: generalPositions,
       positionsData: processedPositionsData,
       keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [],
@@ -466,12 +473,33 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     toast.success("Player profile updated successfully!");
   };
 
-  const attributesForRadar = [
-    ...player.technical.slice(0, 3),
-    ...player.tactical.slice(0, 3),
-    ...player.physical.slice(0, 3),
-    ...player.mentalPsychology.slice(0, 3),
-  ];
+  // Calculate average scouting profile metrics from reports
+  const calculateAverageScoutingProfile = () => {
+    const reports = player?.scoutingReports || [];
+    if (reports.length === 0) {
+      return { avgCurrentAbility: 0, avgPotentialAbility: 0, avgTeamFit: 0 };
+    }
+
+    let totalCurrentAbility = 0;
+    let totalPotentialAbility = 0;
+    let totalTeamFit = 0;
+    let count = 0;
+
+    reports.forEach(report => {
+      if (report.currentAbility !== undefined) totalCurrentAbility += report.currentAbility;
+      if (report.potentialAbility !== undefined) totalPotentialAbility += report.potentialAbility;
+      if (report.teamFit !== undefined) totalTeamFit += report.teamFit;
+      count++;
+    });
+
+    return {
+      avgCurrentAbility: count > 0 ? Math.round(totalCurrentAbility / count) : 0,
+      avgPotentialAbility: count > 0 ? Math.round(totalPotentialAbility / count) : 0,
+      avgTeamFit: count > 0 ? Math.round(totalTeamFit / count) : 0,
+    };
+  };
+
+  const { avgCurrentAbility, avgPotentialAbility, avgTeamFit } = calculateAverageScoutingProfile();
 
   const renderAttributeSection = (
     categoryName: FmAttributeCategory,
@@ -479,7 +507,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     fieldArrayName: "technical" | "tactical" | "physical" | "mentalPsychology" | "setPieces" | "hidden"
   ) => (
     <div className="space-y-2">
-      {form.watch(fieldArrayName).map((attr: AttributeFormItem, index) => ( // Explicitly type attr
+      {form.watch(fieldArrayName).map((attr: AttributeFormItem, index) => (
         <div key={attr.name}>
           {isEditMode ? (
             <FormField
@@ -518,35 +546,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       ))}
     </div>
   );
-
-  // Calculate average scouting profile metrics from reports
-  const calculateAverageScoutingProfile = () => {
-    const reports = player?.scoutingReports || [];
-    if (reports.length === 0) {
-      return { avgCurrentAbility: 0, avgPotentialAbility: 0, avgTeamFit: 0 };
-    }
-
-    let totalCurrentAbility = 0;
-    let totalPotentialAbility = 0;
-    let totalTeamFit = 0;
-    let count = 0;
-
-    reports.forEach(report => {
-      if (report.currentAbility !== undefined) totalCurrentAbility += report.currentAbility;
-      if (report.potentialAbility !== undefined) totalPotentialAbility += report.potentialAbility;
-      if (report.teamFit !== undefined) totalTeamFit += report.teamFit;
-      count++;
-    });
-
-    return {
-      avgCurrentAbility: count > 0 ? Math.round(totalCurrentAbility / count) : 0,
-      avgPotentialAbility: count > 0 ? Math.round(totalPotentialAbility / count) : 0,
-      avgTeamFit: count > 0 ? Math.round(totalTeamFit / count) : 0,
-    };
-  };
-
-  const { avgCurrentAbility, avgPotentialAbility, avgTeamFit } = calculateAverageScoutingProfile();
-
 
   return (
     <div className="min-h-screen bg-background text-foreground p-6">
@@ -1086,36 +1085,58 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Scouting Profile / Statistics Card (now only Radar Chart) */}
+                {/* Player Role Analysis Card (replaces Scouting Profile / Statistics Card) */}
                 <Card className="bg-card border-border text-card-foreground col-span-1 md:col-span-1 lg:col-span-1">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg font-semibold">
-                      {showScoutingProfile ? "Attribute Radar" : "Player Statistics"}
+                      Player Role Analysis
                     </CardTitle>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setShowScoutingProfile(!showScoutingProfile)}
-                      className="bg-muted border-border text-muted-foreground hover:bg-accent"
-                    >
-                      {showScoutingProfile ? (
-                        <>
-                          <BarChart2 className="mr-2 h-4 w-4" /> View Statistics
-                        </>
-                      ) : (
-                        <>
-                          <Radar className="mr-2 h-4 w-4" /> View Radar
-                        </>
-                      )}
-                    </Button>
                   </CardHeader>
-                  {showScoutingProfile ? (
-                    <CardContent className="flex items-start justify-center h-full p-4">
-                      <RadarChart playerAttributes={attributesForRadar} />
-                    </CardContent>
-                  ) : (
-                    <PlayerStatistics />
-                  )}
+                  <CardContent className="flex flex-col items-center justify-center h-full p-4">
+                    <div className="w-full space-y-4 mb-4">
+                      {/* Position Selector for Radar */}
+                      <Select
+                        value={selectedPositionForRadar || ""}
+                        onValueChange={(value) => {
+                          setSelectedPositionForRadar(value);
+                          setSelectedFmRole(null); // Clear role when position changes
+                        }}
+                      >
+                        <SelectTrigger className="w-full bg-input border-border text-foreground hover:bg-accent">
+                          <SelectValue placeholder="Select a position" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-popover border-border text-popover-foreground">
+                          {player.positionsData.map(pos => (
+                            <SelectItem key={pos.name} value={pos.name}>
+                              {pos.name} ({pos.type})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      {/* Role Selector for Radar */}
+                      <Select
+                        value={selectedFmRole?.name || ""}
+                        onValueChange={(value) => {
+                          const role = getRolesForPosition(selectedPositionForRadar || "").find(r => r.name === value);
+                          setSelectedFmRole(role || null);
+                        }}
+                        disabled={!selectedPositionForRadar}
+                      >
+                        <SelectTrigger className="w-full bg-input border-border text-foreground hover:bg-accent">
+                          <SelectValue placeholder="Select a role" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-popover border-border text-popover-foreground">
+                          {selectedPositionForRadar && getRolesForPosition(selectedPositionForRadar).map(role => (
+                            <SelectItem key={role.id} value={role.name}>
+                              {role.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <RadarChart player={player} selectedRole={selectedFmRole} />
+                  </CardContent>
                 </Card>
 
                 {/* Technical Attributes Card */}
@@ -1356,7 +1377,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
               onClose={() => {
                 setIsRoleDetailsDialogOpen(false);
                 setSelectedPositionForRoles(null);
-                setSelectedFmRole(null);
+                // setSelectedFmRole(null); // Role selection in dialog will update this state
               }}
               onRoleSelect={handleRoleSelect}
               selectedRole={selectedFmRole}
