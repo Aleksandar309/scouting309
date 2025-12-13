@@ -39,6 +39,7 @@ import { playerTableColumns } from '@/utils/player-table-columns';
 import { Input } from '@/components/ui/input';
 import { ALL_FOOTBALL_POSITIONS } from '@/utils/positions';
 import { Label } from "@/components/ui/label";
+import { REGION_MAP, ALL_REGIONS } from '@/utils/regions'; // Import regions utility
 
 interface PlayerDatabaseProps {
   players: Player[];
@@ -62,6 +63,8 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
   const [openTeamFilter, setOpenTeamFilter] = React.useState(false);
   const [openNationalityFilter, setOpenNationalityFilter] = React.useState(false);
   const [openPositionFilter, setOpenPositionFilter] = React.useState(false);
+  const [openRegionFilter, setOpenRegionFilter] = React.useState(false); // New state for region filter
+  const [selectedRegion, setSelectedRegion] = React.useState<string | null>(null); // State to hold selected region
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -85,6 +88,14 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
     players.forEach(player => nationalities.add(player.nationality));
     return Array.from(nationalities).sort();
   }, [players]);
+
+  // Filter players based on selected region before passing to table/card display
+  const filteredPlayersByRegion = React.useMemo(() => {
+    if (!selectedRegion) {
+      return players;
+    }
+    return players.filter(player => REGION_MAP[player.nationality] === selectedRegion);
+  }, [players, selectedRegion]);
 
   return (
     <div className="min-h-screen bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
@@ -307,6 +318,44 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                   </PopoverContent>
                 </Popover>
 
+                {/* New Region Filter */}
+                <Popover open={openRegionFilter} onOpenChange={setOpenRegionFilter}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openRegionFilter}
+                      className="w-full justify-between bg-input border-border text-foreground hover:bg-accent"
+                    >
+                      {selectedRegion ?? "Filter by region..."}
+                      <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-popover border-border text-popover-foreground">
+                    <Command>
+                      <CommandInput placeholder="Search region..." />
+                      <CommandList>
+                        <CommandEmpty>No region found.</CommandEmpty>
+                        <CommandGroup>
+                          {ALL_REGIONS.map((region) => (
+                            <CommandItem
+                              key={region}
+                              value={region}
+                              onSelect={(currentValue) => {
+                                setSelectedRegion(currentValue === selectedRegion ? null : currentValue);
+                                setOpenRegionFilter(false);
+                              }}
+                              className="cursor-pointer hover:bg-accent"
+                            >
+                              {region}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+
                 <Popover open={openPositionFilter} onOpenChange={setOpenPositionFilter}>
                   <PopoverTrigger asChild>
                     <Button
@@ -431,7 +480,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
 
         {viewMode === 'table' ? (
           <PlayerTableDisplay
-            data={players}
+            data={filteredPlayersByRegion} // Pass region-filtered players
             columns={playerTableColumns}
             sorting={sorting}
             setSorting={setSorting}
@@ -441,7 +490,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
             setGlobalFilter={setGlobalFilter}
           />
         ) : (
-          <PlayerCardGridDisplay players={players} />
+          <PlayerCardGridDisplay players={filteredPlayersByRegion} />
         )}
       </div>
     </div>
