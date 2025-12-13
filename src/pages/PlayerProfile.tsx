@@ -43,7 +43,7 @@ import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import PlayerPitch from '@/components/PlayerPitch';
 import RoleDetailsDialog from '@/components/RoleDetailsDialog';
 import AttributeHistoryDialog from '@/components/AttributeHistoryDialog';
-import { FmRole, FmRoleAttribute, FmAttributeCategory, getAttributesByCategory, getRolesForPosition } from '@/utils/fm-roles';
+import { FmRole, FmRoleAttribute, FmAttributeCategory, getAttributesByCategory, getRolesForPosition, calculateRoleCompatibility } from '@/utils/fm-roles';
 import {
   Accordion,
   AccordionContent,
@@ -193,6 +193,14 @@ const getDisplayedAttributeRating = (attribute: PlayerAttribute, isEditMode: boo
   return Math.round(sum / allRatings.length);
 };
 
+// New helper type for combined role options
+interface CombinedRoleOption {
+  positionName: string;
+  role: FmRole;
+  compatibility: number;
+  id: string; // Unique ID for the select item
+}
+
 const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scouts, shadowTeams, setShadowTeams }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -207,7 +215,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
 
   const [isRoleDetailsDialogOpen, setIsRoleDetailsDialogOpen] = useState(false);
   const [selectedPositionForRoles, setSelectedPositionForRoles] = useState<string | null>(null);
-  const [selectedFmRole, setSelectedFmRole] = useState<FmRole | null>(null);
+  const [selectedFmRole, setSelectedFmRole] = useState<FmRole | null>(null); // Keep this for RadarChart
 
   const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
   const [selectedHistoryAttribute, setSelectedHistoryAttribute] = useState<{ name: string; category: FmAttributeCategory } | null>(null);
@@ -220,7 +228,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
 
   const [isAddPlayerToTeamDialogOpen, setIsAddPlayerToTeamDialogOpen] = useState(false);
 
-  const [selectedPositionForRadar, setSelectedPositionForRadar] = useState<string | null>(null);
+  // New state for combined role options
+  const [combinedRoleOptions, setCombinedRoleOptions] = useState<CombinedRoleOption[]>([]);
 
   const form = useForm<PlayerFormValues>({
     resolver: zodResolver(formSchema),
@@ -292,11 +301,30 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
         setSelectedFormationId(null);
       }
 
-      if (currentPlayer.positionsData.length > 0) {
-        const defaultPos = currentPlayer.positionsData.find(p => p.type === 'natural' && p.rating >= 8) || currentPlayer.positionsData[0];
-        setSelectedPositionForRadar(defaultPos.name);
+      // --- New logic for Player Role Analysis ---
+      const allCombinedOptions: CombinedRoleOption[] = [];
+      currentPlayer.positionsData.forEach(playerPos => {
+        const rolesForThisPosition = getRolesForPosition(playerPos.name);
+        rolesForThisPosition.forEach(role => {
+          const compatibility = calculateRoleCompatibility(currentPlayer, role);
+          allCombinedOptions.push({
+            positionName: playerPos.name,
+            role,
+            compatibility,
+            id: `${role.id}-${playerPos.name}`, // Unique ID for the select item
+          });
+        });
+      });
+
+      allCombinedOptions.sort((a, b) => b.compatibility - a.compatibility);
+      setCombinedRoleOptions(allCombinedOptions);
+
+      if (allCombinedOptions.length > 0) {
+        setSelectedFmRole(allCombinedOptions[0].role);
+      } else {
         setSelectedFmRole(null);
       }
+      // --- End new logic ---
     }
     setIsEditMode(false);
   }, [currentPlayer, form]);
@@ -533,7 +561,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   );
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
+    <div className="min-h-screen bg-background text-foreground p-6 pt-16">
       <div className="max-w-7xl mx-auto">
         <Button
           variant="ghost"
@@ -1063,48 +1091,30 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
+                {/* Player Role Analysis Card - Refactored */}
                 <Card className="bg-card border-border text-card-foreground col-span-1 md:col-span-1 lg:col-span-1">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg font-semibold">
-                      Player Role Analysis
+                      Player Role
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-col items-center justify-center h-full p-4">
                     <div className="w-full space-y-4 mb-4">
                       <Select
-                        value={selectedPositionForRadar || ""}
+                        value={selectedFmRole ? `${selectedFmRole.id}-${combinedRoleOptions.find(opt => opt.role.id === selectedFmRole?.id)?.positionName}` : ""}
                         onValueChange={(value) => {
-                          setSelectedPositionForRadar(value);
-                          setSelectedFmRole(null);
+                          const [roleId, positionName] = value.split('-');
+                          const selectedOption = combinedRoleOptions.find(opt => opt.role.id === roleId && opt.positionName === positionName);
+                          setSelectedFmRole(selectedOption?.role || null);
                         }}
-                      >
-                        <SelectTrigger className="w-full bg-input border-border text-foreground hover:bg-accent">
-                          <SelectValue placeholder="Select a position" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-popover border-border text-popover-foreground">
-                          {player.positionsData.map(pos => (
-                            <SelectItem key={pos.name} value={pos.name}>
-                              {pos.name} ({pos.type})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-
-                      <Select
-                        value={selectedFmRole?.name || ""}
-                        onValueChange={(value) => {
-                          const role = getRolesForPosition(selectedPositionForRadar || "").find(r => r.name === value);
-                          setSelectedFmRole(role || null);
-                        }}
-                        disabled={!selectedPositionForRadar}
                       >
                         <SelectTrigger className="w-full bg-input border-border text-foreground hover:bg-accent">
                           <SelectValue placeholder="Select a role" />
                         </SelectTrigger>
                         <SelectContent className="bg-popover border-border text-popover-foreground">
-                          {selectedPositionForRadar && getRolesForPosition(selectedPositionForRadar).map(role => (
-                            <SelectItem key={role.id} value={role.name}>
-                              {role.name}
+                          {combinedRoleOptions.map(option => (
+                            <SelectItem key={option.id} value={option.id}>
+                              {option.role.name} ({option.positionName}) - {option.compatibility}%
                             </SelectItem>
                           ))}
                         </SelectContent>
