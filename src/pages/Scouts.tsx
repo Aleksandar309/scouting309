@@ -102,7 +102,7 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
   });
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
+    <div className="min-h-screen bg-background text-foreground p-6 pt-16">
       <div className="max-w-7xl mx-auto">
         <Button
           variant="ghost"
