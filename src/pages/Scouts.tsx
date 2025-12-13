@@ -233,7 +233,7 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
                       <p className="text-sm text-muted-foreground flex items-center mt-1">
                         <Briefcase className="h-4 w-4 mr-1" /> Assigned to: <Link to={`/scouts/${assignment.assignedTo}`} className="text-primary hover:underline ml-1">{assignment.assignedToName}</Link>
                       </p>
-                  </CardHeader>
+                    </CardHeader>
                   <CardContent className="space-y-2 text-muted-foreground text-sm">
                     <p>{assignment.description}</p>
                     <div className="flex items-center justify-between pt-2 border-t border-border">
