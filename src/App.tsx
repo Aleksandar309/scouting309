@@ -10,7 +10,7 @@ import Forum from "./pages/Forum";
 import NotFound from "./pages/NotFound";
 import PlayerProfile from "./pages/PlayerProfile";
 import ScoutProfile from "./pages/ScoutProfile";
-import ShortlistDetailsPage from "./pages/ShortlistDetailsPage"; // Import new page
+import ShortlistDetailsPage from "./pages/ShortlistDetailsPage";
 import { Player } from "./types/player";
 import { Scout } from "./types/scout";
 import { Shortlist } from "./types/shortlist";
@@ -20,6 +20,7 @@ import { ShortlistProvider } from "./context/ShortlistContext";
 import { initialMockPlayers } from "./data/mockPlayers";
 import { mockScouts } from "./data/mockScouts";
 import { initialMockTasks } from "./data/mockTasks";
+import Header from "./components/Header"; // Import the new Header component
 
 function App() {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -92,6 +93,7 @@ function App() {
 
   return (
     <Router>
+      <Header /> {/* Render the Header component here */}
       <ShortlistProvider shortlists={shortlists} setShortlists={setShortlists}>
         <Routes>
           <Route path="/" element={<Index players={players} scouts={scouts} shortlists={shortlists} shadowTeams={shadowTeams} tasks={tasks} />} />

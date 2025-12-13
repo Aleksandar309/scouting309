@@ -12,7 +12,7 @@ import TaskForm from '@/components/TaskForm';
 import { Badge } from '@/components/ui/badge';
 import { format, isPast } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/task-utils'; // Import task utils
+import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/task-utils';
 
 interface TasksPageProps {
   tasks: Task[];
@@ -35,31 +35,24 @@ const TasksPage: React.FC<TasksPageProps> = ({ tasks, setTasks, scouts }) => {
         task.id === taskId ? { ...task, status: "Completed" } : task
       )
     );
-    // Optionally show a toast notification
-    // toast.success("Task marked as complete!");
   };
 
-  // Sort tasks: Overdue first, then Completed last, then by creation date (newest first)
   const sortedTasks = [...tasks].sort((a, b) => {
     const aOverdue = a.status !== "Completed" && isPast(new Date(a.dueDate));
     const bOverdue = b.status !== "Completed" && isPast(new Date(b.dueDate));
 
-    // 1. Overdue tasks first
     if (aOverdue && !bOverdue) return -1;
     if (!aOverdue && bOverdue) return 1;
 
-    // 2. Completed tasks last
     if (a.status === "Completed" && b.status !== "Completed") return 1;
     if (a.status !== "Completed" && b.status === "Completed") return -1;
 
-    // 3. Then by creation date (newest first)
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
+    <div className="min-h-screen bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
       <div className="max-w-7xl mx-auto">
-        {/* Back Button */}
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}

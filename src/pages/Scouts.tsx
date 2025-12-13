@@ -18,31 +18,31 @@ import AssignmentForm from '@/components/AssignmentForm';
 import { Badge } from '@/components/ui/badge';
 import { format, isPast } from 'date-fns';
 import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/task-utils';
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"; // Import ToggleGroup
-import ScoutListDisplay from '@/components/ScoutListDisplay'; // Import new list display
-import { scoutTableColumns } from '@/utils/scout-table-columns'; // Import scout table columns
-import { SortingState, ColumnFiltersState } from '@tanstack/react-table'; // Import for table state
-import { Player } from '@/types/player'; // Import Player type
-import { Task } from '@/types/task'; // Import Task type
-import AddScoutForm from '@/components/AddScoutForm'; // Import AddScoutForm
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import ScoutListDisplay from '@/components/ScoutListDisplay';
+import { scoutTableColumns } from '@/utils/scout-table-columns';
+import { SortingState, ColumnFiltersState } from '@tanstack/react-table';
+import { Player } from '@/types/player';
+import { Task } from '@/types/task';
+import AddScoutForm from '@/components/AddScoutForm';
 
 interface ScoutsPageProps {
   assignments: Assignment[];
   setAssignments: React.Dispatch<React.SetStateAction<Assignment[]>>;
   scouts: Scout[];
   setScouts: React.Dispatch<React.SetStateAction<Scout[]>>;
-  players: Player[]; // Added players prop
-  tasks: Task[]; // Added tasks prop
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>; // Added setTasks prop
+  players: Player[];
+  tasks: Task[];
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
 }
 
 const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, scouts, setScouts, players, tasks, setTasks }) => {
   const navigate = useNavigate();
   const [isAssignmentFormOpen, setIsAssignmentFormOpen] = useState(false);
-  const [isAddScoutFormOpen, setIsAddScoutFormOpen] = useState(false); // New state for AddScoutForm
+  const [isAddScoutFormOpen, setIsAddScoutFormOpen] = useState(false);
   const [viewMode, setViewMode] = React.useState<'list' | 'card'>(() => {
     if (typeof window !== 'undefined') {
-      return (localStorage.getItem('scoutViewMode') as 'list' | 'card') || 'list'; // Default to list
+      return (localStorage.getItem('scoutViewMode') as 'list' | 'card') || 'list';
     }
     return 'list';
   });
@@ -102,9 +102,8 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
   });
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
+    <div className="min-h-screen bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
       <div className="max-w-7xl mx-auto">
-        {/* Back Button */}
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
@@ -122,10 +121,10 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
           </TabsList>
 
           <TabsContent value="team" className="mt-6">
-            <div className="flex justify-between items-center mb-4"> {/* Added flex container */}
+            <div className="flex justify-between items-center mb-4">
               <Dialog open={isAddScoutFormOpen} onOpenChange={setIsAddScoutFormOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="default" size="icon"> {/* Changed to icon-only, default variant */}
+                  <Button variant="default" size="icon">
                     <PlusCircle className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>
@@ -234,23 +233,22 @@ const ScoutsPage: React.FC<ScoutsPageProps> = ({ assignments, setAssignments, sc
                       <p className="text-sm text-muted-foreground flex items-center mt-1">
                         <Briefcase className="h-4 w-4 mr-1" /> Assigned to: <Link to={`/scouts/${assignment.assignedTo}`} className="text-primary hover:underline ml-1">{assignment.assignedToName}</Link>
                       </p>
-                    </CardHeader>
-                    <CardContent className="space-y-2 text-muted-foreground text-sm">
-                      <p>{assignment.description}</p>
-                      <div className="flex items-center justify-between pt-2 border-t border-border">
-                        <span className="flex items-center">
-                          <CalendarDays className="h-4 w-4 mr-1" /> Due: {format(new Date(assignment.dueDate), 'MMM dd, yyyy')}
-                          {getDueDateStatus(assignment.dueDate, assignment.status)}
-                        </span>
-                        <Badge className={getStatusBadgeClass(assignment.status)}>{assignment.status}</Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-muted-foreground text-sm">
+                    <p>{assignment.description}</p>
+                    <div className="flex items-center justify-between pt-2 border-t border-border">
+                      <span className="flex items-center">
+                        <CalendarDays className="h-4 w-4 mr-1" /> Due: {format(new Date(assignment.dueDate), 'MMM dd, yyyy')}
+                        {getDueDateStatus(assignment.dueDate, assignment.status)}
+                      </span>
+                      <Badge className={getStatusBadgeClass(assignment.status)}>{assignment.status}</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        </TabsContent>
       </div>
     </div>
   );

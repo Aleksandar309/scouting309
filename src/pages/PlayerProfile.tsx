@@ -149,7 +149,6 @@ interface PlayerProfileProps {
   setShadowTeams: React.Dispatch<React.SetStateAction<ShadowTeam[]>>;
 }
 
-// Helper function to assign position type based on rating
 const assignPositionType = (rating: number): "natural" | "alternative" | "tertiary" | null => {
   if (rating >= 8) return "natural";
   if (rating >= 6) return "alternative";
@@ -157,7 +156,6 @@ const assignPositionType = (rating: number): "natural" | "alternative" | "tertia
   return null;
 };
 
-// Helper to get highlight type for an attribute
 const getHighlightType = (
   attributeName: string,
   category: FmAttributeCategory,
@@ -177,7 +175,6 @@ const getHighlightType = (
   return null;
 };
 
-// Helper function to calculate the average rating for an attribute, considering its history
 const getDisplayedAttributeRating = (attribute: PlayerAttribute, isEditMode: boolean): number => {
   if (isEditMode) {
     return attribute.rating;
@@ -200,7 +197,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // Find the player based on the ID from the URL, re-evaluate when ID or players change
   const currentPlayer = React.useMemo(() => players.find(p => p.id === id), [id, players]);
 
   const [player, setPlayer] = useState<Player | null>(currentPlayer || null);
@@ -211,7 +207,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
 
   const [isRoleDetailsDialogOpen, setIsRoleDetailsDialogOpen] = useState(false);
   const [selectedPositionForRoles, setSelectedPositionForRoles] = useState<string | null>(null);
-  const [selectedFmRole, setSelectedFmRole] = useState<FmRole | null>(null); // This state now drives the radar
+  const [selectedFmRole, setSelectedFmRole] = useState<FmRole | null>(null);
 
   const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
   const [selectedHistoryAttribute, setSelectedHistoryAttribute] = useState<{ name: string; category: FmAttributeCategory } | null>(null);
@@ -224,7 +220,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
 
   const [isAddPlayerToTeamDialogOpen, setIsAddPlayerToTeamDialogOpen] = useState(false);
 
-  // New state for the radar's position dropdown
   const [selectedPositionForRadar, setSelectedPositionForRadar] = useState<string | null>(null);
 
   const form = useForm<PlayerFormValues>({
@@ -258,7 +253,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     name: "positionsData",
   });
 
-  // Effect to update player state and form defaults when the currentPlayer object changes
   React.useEffect(() => {
     setPlayer(currentPlayer || null);
     if (currentPlayer) {
@@ -285,7 +279,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
         changedByScout: "",
       });
 
-      // Calculate and sort formations by overall fit
       const calculatedFormationsWithFit = FM_FORMATIONS.map(formation => {
         const fitScore = calculateFormationOverallFit(currentPlayer, formation);
         return { ...formation, overallFit: fitScore };
@@ -293,25 +286,21 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
 
       setFormationsWithFit(calculatedFormationsWithFit);
 
-      // Set the selected formation to the best fitting one by default
       if (calculatedFormationsWithFit.length > 0) {
         setSelectedFormationId(calculatedFormationsWithFit[0].id);
       } else {
         setSelectedFormationId(null);
       }
 
-      // Set a default position for the radar when player changes
       if (currentPlayer.positionsData.length > 0) {
         const defaultPos = currentPlayer.positionsData.find(p => p.type === 'natural' && p.rating >= 8) || currentPlayer.positionsData[0];
         setSelectedPositionForRadar(defaultPos.name);
-        setSelectedFmRole(null); // Clear selected FM role when player changes
+        setSelectedFmRole(null);
       }
     }
     setIsEditMode(false);
-    // setSelectedFmRole(null); // This is now handled by the effect above
   }, [currentPlayer, form]);
 
-  // Effect to calculate formation fit when selectedFormationId or player changes
   React.useEffect(() => {
     if (selectedFormationId && player) {
       const formation = FM_FORMATIONS.find(f => f.id === selectedFormationId);
@@ -348,7 +337,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   const handlePositionClick = (positionType: string) => {
     setSelectedPositionForRoles(positionType);
     setIsRoleDetailsDialogOpen(true);
-    // setSelectedFmRole(null); // Role selection in dialog will update this state
   };
 
   const handleRoleSelect = (role: FmRole | null) => {
@@ -375,7 +363,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     setShadowTeams(prev => prev.map(team => {
       if (team.id === teamId) {
         const currentPlayersInPosition = team.playersByPosition[positionName] || [];
-        // Prevent adding the same player to the same position
         if (currentPlayersInPosition.some(p => p.id === playerToAdd.id)) {
           toast.info(`${playerToAdd.name} je već dodan na poziciju ${positionName} u timu ${team.name}.`);
           return team;
@@ -417,7 +404,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       return;
     }
 
-    // Function to compare and update attribute history
     const updateAttributeHistory = (
       currentAttrs: PlayerAttribute[],
       newAttrs: AttributeFormArray,
@@ -473,7 +459,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     toast.success("Player profile updated successfully!");
   };
 
-  // Calculate average scouting profile metrics from reports
   const calculateAverageScoutingProfile = () => {
     const reports = player?.scoutingReports || [];
     if (reports.length === 0) {
@@ -548,9 +533,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   );
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
+    <div className="min-h-screen bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
       <div className="max-w-7xl mx-auto">
-        {/* Back Button */}
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
@@ -561,10 +545,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            {/* Header Section */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
-                {/* Avatar/Initial Display */}
                 <div className="relative w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mr-4 overflow-hidden bg-primary">
                   {isEditMode ? (
                     <>
@@ -722,7 +704,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </DialogTrigger>
                   <ScoutReportForm player={player} onReportSubmit={handleAddReport} onClose={() => setIsReportFormOpen(false)} scouts={scouts} />
                 </Dialog>
-                {/* New: Add to Shadow Team Button */}
                 <Dialog open={isAddPlayerToTeamDialogOpen} onOpenChange={setIsAddPlayerToTeamDialogOpen}>
                   <DialogTrigger asChild>
                     <Button
@@ -831,9 +812,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                 )}
               </div>
 
-              {/* Main Content Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Player Details Card */}
                 <Card className="bg-card border-border text-card-foreground">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg font-semibold">Player Details</CardTitle>
@@ -998,7 +977,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Player Positions Card */}
                 <Card className="bg-card border-border text-card-foreground">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg font-semibold">Player Positions</CardTitle>
@@ -1085,7 +1063,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Player Role Analysis Card (replaces Scouting Profile / Statistics Card) */}
                 <Card className="bg-card border-border text-card-foreground col-span-1 md:col-span-1 lg:col-span-1">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg font-semibold">
@@ -1094,12 +1071,11 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardHeader>
                   <CardContent className="flex flex-col items-center justify-center h-full p-4">
                     <div className="w-full space-y-4 mb-4">
-                      {/* Position Selector for Radar */}
                       <Select
                         value={selectedPositionForRadar || ""}
                         onValueChange={(value) => {
                           setSelectedPositionForRadar(value);
-                          setSelectedFmRole(null); // Clear role when position changes
+                          setSelectedFmRole(null);
                         }}
                       >
                         <SelectTrigger className="w-full bg-input border-border text-foreground hover:bg-accent">
@@ -1114,7 +1090,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                         </SelectContent>
                       </Select>
 
-                      {/* Role Selector for Radar */}
                       <Select
                         value={selectedFmRole?.name || ""}
                         onValueChange={(value) => {
@@ -1139,7 +1114,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Technical Attributes Card */}
                 <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><User className="mr-2 h-5 w-5" /> Technical</CardTitle>
@@ -1149,7 +1123,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Tactical Attributes Card (now before Set Pieces) */}
                 <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><MapPin className="mr-2 h-5 w-5" /> Tactical</CardTitle>
@@ -1159,7 +1132,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Set Pieces Attributes Card (now after Tactical) */}
                 <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><Target className="mr-2 h-5 w-5" /> Set Pieces</CardTitle>
@@ -1169,7 +1141,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Physical Attributes Card */}
                 <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><Scale className="mr-2 h-5 w-5" /> Physical</CardTitle>
@@ -1179,7 +1150,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Mental & Psychology Attributes Card */}
                 <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><User className="mr-2 h-5 w-5" /> Mental & Psychology</CardTitle>
@@ -1189,7 +1159,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Hidden Attributes Card */}
                 <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><EyeOff className="mr-2 h-5 w-5" /> Hidden Attributes</CardTitle>
@@ -1199,7 +1168,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Key Strengths Card */}
                 <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold">Key Strengths</CardTitle>
@@ -1226,7 +1194,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Areas for Development Card */}
                 <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold">Areas for Development</CardTitle>
@@ -1253,7 +1220,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Overview Card */}
                 <Card className="bg-card border-border text-card-foreground">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center"><Gauge className="mr-2 h-5 w-5" /> Overview</CardTitle>
@@ -1308,7 +1274,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                         <AttributeRating name="Team Fit" rating={player.scoutingProfile.teamFit} />
                         {player.scoutingReports.length > 0 && (
                           <div className="mt-4 pt-3 border-t border-border space-y-2">
-                            <h4 className="text-md font-semibold text-foreground">Average from Reports:</h4>
+                            <h4 className="font-semibold text-foreground mb-1">Average from Reports:</h4>
                             <AttributeRating name="Avg. Current Ability" rating={avgCurrentAbility} />
                             <AttributeRating name="Avg. Potential Ability" rating={avgPotentialAbility} />
                             <AttributeRating name="Avg. Team Fit" rating={avgTeamFit} />
@@ -1319,7 +1285,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Scouting Reports Card */}
                 <Card className="bg-card border-border text-card-foreground col-span-full">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold">Scouting Reports ({player.scoutingReports.length})</CardTitle>
@@ -1368,7 +1333,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
           </Form>
         </div>
 
-        {/* Role Details Dialog */}
         <Dialog open={isRoleDetailsDialogOpen} onOpenChange={setIsRoleDetailsDialogOpen}>
           {selectedPositionForRoles && (
             <RoleDetailsDialog
@@ -1377,7 +1341,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
               onClose={() => {
                 setIsRoleDetailsDialogOpen(false);
                 setSelectedPositionForRoles(null);
-                // setSelectedFmRole(null); // Role selection in dialog will update this state
               }}
               onRoleSelect={handleRoleSelect}
               selectedRole={selectedFmRole}
@@ -1385,7 +1348,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
           )}
         </Dialog>
 
-        {/* Attribute History Dialog */}
         <Dialog open={isHistoryDialogOpen} onOpenChange={setIsHistoryDialogOpen}>
           {selectedHistoryAttribute && player && (
             <AttributeHistoryDialog

@@ -19,7 +19,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Player } from '@/types/player';
 
 interface ShortlistPageProps {
-  players: Player[]; // Still need allPlayers for AddToShortlistDialog
+  players: Player[];
 }
 
 const ShortlistPage: React.FC<ShortlistPageProps> = ({ players }) => {
@@ -27,13 +27,11 @@ const ShortlistPage: React.FC<ShortlistPageProps> = ({ players }) => {
   const navigate = useNavigate();
   const [isCreateShortlistDialogOpen, setIsCreateShortlistDialogOpen] = useState(false);
 
-  // Sort shortlists by creation date (newest first)
   const sortedShortlists = [...shortlists].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
+    <div className="min-h-screen bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
       <div className="max-w-7xl mx-auto">
-        {/* Back Button */}
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}

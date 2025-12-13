@@ -22,7 +22,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
 interface ShortlistDetailsPageProps {
-  players: Player[]; // All available players for detailed info
+  players: Player[];
 }
 
 const ShortlistDetailsPage: React.FC<ShortlistDetailsPageProps> = ({ players }) => {
@@ -33,11 +33,11 @@ const ShortlistDetailsPage: React.FC<ShortlistDetailsPageProps> = ({ players }) 
   const currentShortlist = shortlists.find(sl => sl.id === id);
 
   const [isAddPlayerDialogOpen, setIsAddPlayerDialogOpen] = useState(false);
-  const [sortOrder, setSortOrder] = useState<'position' | 'name'>('position'); // State for sorting players
+  const [sortOrder, setSortOrder] = useState<'position' | 'name'>('position');
 
   if (!currentShortlist) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-6">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
         <div className="text-center bg-card p-8 rounded-lg shadow-lg border border-border">
           <h1 className="text-3xl font-bold mb-4 text-destructive">Shortlist Not Found</h1>
           <p className="text-xl text-muted-foreground mb-6">The shortlist you are looking for does not exist.</p>
@@ -63,7 +63,7 @@ const ShortlistDetailsPage: React.FC<ShortlistDetailsPageProps> = ({ players }) 
   const sortPlayers = (shortlistPlayers: typeof currentShortlist.players) => {
     if (sortOrder === 'name') {
       return [...shortlistPlayers].sort((a, b) => a.name.localeCompare(b.name));
-    } else { // 'position' sort
+    } else {
       return [...shortlistPlayers].sort((a, b) => {
         const playerA = players.find(p => p.id === a.id);
         const playerB = players.find(p => p.id === b.id);
@@ -95,9 +95,8 @@ const ShortlistDetailsPage: React.FC<ShortlistDetailsPageProps> = ({ players }) 
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
+    <div className="min-h-screen bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
       <div className="max-w-7xl mx-auto">
-        {/* Back Button */}
         <Button
           variant="ghost"
           onClick={() => navigate('/shortlists')}
@@ -118,8 +117,13 @@ const ShortlistDetailsPage: React.FC<ShortlistDetailsPageProps> = ({ players }) 
               <Badge variant="secondary" className="bg-muted text-muted-foreground">{currentShortlist.players.length} players</Badge>
               <Dialog open={isAddPlayerDialogOpen} onOpenChange={setIsAddPlayerDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                    <PlusCircle className="mr-2 h-4 w-4" /> Add Player
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => e.preventDefault()}
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground p-2 h-auto"
+                  >
+                    <PlusCircle className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>
                 <AddToShortlistDialog
@@ -131,7 +135,7 @@ const ShortlistDetailsPage: React.FC<ShortlistDetailsPageProps> = ({ players }) 
               <Button
                 variant="destructive"
                 onClick={handleDeleteShortlist}
-                className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                className="bg-destructive hover:bg-destructive/90 text-destructive-foreground p-2 h-auto"
               >
                 <Trash2 className="mr-2 h-4 w-4" /> Delete Shortlist
               </Button>

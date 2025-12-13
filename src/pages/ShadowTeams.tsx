@@ -19,7 +19,7 @@ import CreateShadowTeamDialog from '@/components/CreateShadowTeamDialog';
 import ShadowPitch from '@/components/ShadowPitch';
 import { FM_FORMATIONS, Formation } from '@/utils/formations';
 import { toast } from 'sonner';
-import AddPlayerToShadowTeamDialog from '@/components/AddPlayerToShadowTeamDialog'; // Import the new dialog
+import AddPlayerToShadowTeamDialog from '@/components/AddPlayerToShadowTeamDialog';
 
 interface ShadowTeamsProps {
   players: Player[];
@@ -32,9 +32,8 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
   const [isCreateTeamDialogOpen, setIsCreateTeamDialogOpen] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
-  const [pitchColor, setPitchColor] = useState<'green' | 'theme'>('green'); // State for pitch color
+  const [pitchColor, setPitchColor] = useState<'green' | 'theme'>('green');
 
-  // State for AddPlayerToShadowTeamDialog
   const [isAddPlayerToTeamDialogOpen, setIsAddPlayerToTeamDialogOpen] = useState(false);
   const [selectedPositionForAdd, setSelectedPositionForAdd] = useState<string | null>(null);
 
@@ -53,10 +52,10 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
     const newTeam: ShadowTeam = {
       id: `st-${Date.now()}`,
       ...newTeamData,
-      playersByPosition: {}, // Initialize with empty players
+      playersByPosition: {},
     };
     setShadowTeams(prev => [...prev, newTeam]);
-    setSelectedTeamId(newTeam.id); // Automatically select the new team
+    setSelectedTeamId(newTeam.id);
   };
 
   const handleSelectTeam = (teamId: string) => {
@@ -68,7 +67,7 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
     if (currentTeam && formation) {
       setShadowTeams(prev => prev.map(team =>
         team.id === currentTeam.id
-          ? { ...team, formationId: formation.id, playersByPosition: {} } // Clear players if formation changes
+          ? { ...team, formationId: formation.id, playersByPosition: {} }
           : team
       ));
       setSelectedFormation(formation);
@@ -124,7 +123,6 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
     toast.success("Player removed from position.");
   };
 
-  // New handler for when a player is dragged and dropped
   const handlePlayerDragStop = (
     positionName: string,
     playerId: string,
@@ -157,9 +155,8 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
+    <div className="min-h-screen bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
       <div className="max-w-7xl w-full mx-auto">
-        {/* Back Button */}
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
@@ -171,7 +168,6 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
         <h1 className="text-3xl font-bold mb-6">Shadow Teams</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Create New Team */}
           <Dialog open={isCreateTeamDialogOpen} onOpenChange={setIsCreateTeamDialogOpen}>
             <DialogTrigger asChild>
               <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
@@ -181,7 +177,6 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
             <CreateShadowTeamDialog onConfirm={handleCreateTeam} onClose={() => setIsCreateTeamDialogOpen(false)} />
           </Dialog>
 
-          {/* Select Existing Team */}
           <Select onValueChange={handleSelectTeam} value={selectedTeamId || ""}>
             <SelectTrigger className="w-full bg-input border-border text-foreground hover:bg-accent">
               <SelectValue placeholder="Select a Shadow Team" />
@@ -199,7 +194,6 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
             </SelectContent>
           </Select>
 
-          {/* Select Formation */}
           <Select onValueChange={handleSelectFormation} value={selectedFormation?.id || ""}>
             <SelectTrigger className="w-full bg-input border-border text-foreground hover:bg-accent" disabled={!currentTeam}>
               <SelectValue placeholder="Choose Formation" />
@@ -251,7 +245,7 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
                 playersByPosition={currentTeam.playersByPosition}
                 onPositionClick={handlePositionClick}
                 onPlayerRemove={handlePlayerRemove}
-                onPlayerDragStop={handlePlayerDragStop} // Pass the new handler
+                onPlayerDragStop={handlePlayerDragStop}
                 pitchColor={pitchColor}
               />
             </CardContent>
@@ -268,7 +262,6 @@ const ShadowTeams: React.FC<ShadowTeamsProps> = ({ players, shadowTeams, setShad
         )}
       </div>
 
-      {/* Add Player To Shadow Team Dialog */}
       <Dialog open={isAddPlayerToTeamDialogOpen} onOpenChange={setIsAddPlayerToTeamDialogOpen}>
         {isAddPlayerToTeamDialogOpen && (
           <AddPlayerToShadowTeamDialog

@@ -2,35 +2,33 @@ import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, LayoutDashboard, Search, ListChecks, ClipboardList, MessageSquare } from "lucide-react"; // Import MessageSquare icon
-import { ThemeToggle } from "@/components/ThemeToggle";
-import Logo from "@/components/Logo";
-import { Player } from "@/types/player"; // Import Player type
-import { Scout } from "@/types/scout"; // Import Scout type
-import { Shortlist } from "@/types/shortlist"; // Import Shortlist type
-import { ShadowTeam } from "@/types/shadow-team"; // Import ShadowTeam type
-import { Task } from "@/types/task"; // Import Task type
+import { Users, LayoutDashboard, Search, ListChecks, ClipboardList, MessageSquare } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle"; // Keep import for now, but it's not rendered here
+import Logo from "@/components/Logo"; // Keep import for now, but it's not rendered here
+import { Player } from "@/types/player";
+import { Scout } from "@/types/scout";
+import { Shortlist } from "@/types/shortlist";
+import { ShadowTeam } from "@/types/shadow-team";
+import { Task } from "@/types/task";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"; // Import Tooltip components
+} from "@/components/ui/tooltip";
 
 interface IndexProps {
   players: Player[];
   scouts: Scout[];
   shortlists: Shortlist[];
   shadowTeams: ShadowTeam[];
-  tasks: Task[]; // Add tasks to props
+  tasks: Task[];
 }
 
 const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams, tasks }) => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-6">
-      <div className="absolute top-4 right-4">
-        <ThemeToggle />
-      </div>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
+      {/* Removed ThemeToggle from here */}
       <div className="max-w-4xl w-full text-center p-8 bg-card rounded-lg shadow-2xl border border-border">
         <Logo className="mb-10 mx-auto" />
         <p className="text-xl text-muted-foreground mb-10">
@@ -41,8 +39,8 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams,
           <Link to="/players" className="block">
             <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium text-center w-full">Player Database</CardTitle> {/* Added text-center and w-full */}
-                <Search className="h-6 w-6 text-primary absolute right-6 top-6" /> {/* Adjusted icon position */}
+                <CardTitle className="text-lg font-medium text-center w-full">Player Database</CardTitle>
+                <Search className="h-6 w-6 text-primary absolute right-6 top-6" />
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-between">
                 <TooltipProvider>
@@ -68,8 +66,8 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams,
           <Link to="/scouts" className="block">
             <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium text-center w-full">Scouting Team</CardTitle> {/* Added text-center and w-full */}
-                <Users className="h-6 w-6 text-primary absolute right-6 top-6" /> {/* Adjusted icon position */}
+                <CardTitle className="text-lg font-medium text-center w-full">Scouting Team</CardTitle>
+                <Users className="h-6 w-6 text-primary absolute right-6 top-6" />
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-between">
                 <div className="h-32 flex items-center justify-center w-full rounded-md mb-4 bg-muted text-primary text-6xl font-bold">
@@ -86,8 +84,8 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams,
           <Link to="/shortlists" className="block">
             <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium text-center w-full">Shortlists</CardTitle> {/* Added text-center and w-full */}
-                <ListChecks className="h-6 w-6 text-primary absolute right-6 top-6" /> {/* Adjusted icon position */}
+                <CardTitle className="text-lg font-medium text-center w-full">Shortlists</CardTitle>
+                <ListChecks className="h-6 w-6 text-primary absolute right-6 top-6" />
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-between">
                 <div className="h-32 flex items-center justify-center w-full rounded-md mb-4 bg-muted text-primary text-6xl font-bold">
@@ -102,13 +100,12 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams,
           </Link>
         </div>
 
-        {/* New grid for placeholder cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
           <Link to="/shadow-teams" className="block">
             <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium text-center w-full">Shadow Teams</CardTitle> {/* Added text-center and w-full */}
-                <LayoutDashboard className="h-6 w-6 text-primary absolute right-6 top-6" /> {/* Adjusted icon position */}
+                <CardTitle className="text-lg font-medium text-center w-full">Shadow Teams</CardTitle>
+                <LayoutDashboard className="h-6 w-6 text-primary absolute right-6 top-6" />
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-between">
                 <TooltipProvider>
@@ -134,8 +131,8 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams,
           <Link to="/tasks" className="block">
             <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium text-center w-full">Scouting Tasks</CardTitle> {/* Added text-center and w-full */}
-                <ClipboardList className="h-6 w-6 text-primary absolute right-6 top-6" /> {/* Adjusted icon position */}
+                <CardTitle className="text-lg font-medium text-center w-full">Scouting Tasks</CardTitle>
+                <ClipboardList className="h-6 w-6 text-primary absolute right-6 top-6" />
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-between">
                 <TooltipProvider>
@@ -161,8 +158,8 @@ const Index: React.FC<IndexProps> = ({ players, scouts, shortlists, shadowTeams,
           <Link to="/forum" className="block">
             <Card className="bg-card border-border text-card-foreground hover:shadow-xl transition-shadow duration-300 min-h-[320px] flex flex-col cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-lg font-medium text-center w-full">Forum</CardTitle> {/* Added text-center and w-full */}
-                <MessageSquare className="h-6 w-6 text-primary absolute right-6 top-6" /> {/* Adjusted icon position */}
+                <CardTitle className="text-lg font-medium text-center w-full">Forum</CardTitle>
+                <MessageSquare className="h-6 w-6 text-primary absolute right-6 top-6" />
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-between">
                 <div className="h-32 flex items-center justify-center w-full rounded-md mb-4 bg-muted text-primary text-6xl font-bold">

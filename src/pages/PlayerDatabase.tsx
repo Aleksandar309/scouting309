@@ -35,10 +35,10 @@ import {
 import { POSITION_ORDER } from '@/utils/position-order';
 import PlayerTableDisplay from '@/components/PlayerTableDisplay';
 import PlayerCardGridDisplay from '@/components/PlayerCardGridDisplay';
-import { playerTableColumns } from '@/utils/player-table-columns'; // Import the shared columns
-import { Input } from '@/components/ui/input'; // Keep Input for global filter
-import { ALL_FOOTBALL_POSITIONS } from '@/utils/positions'; // Import ALL_FOOTBALL_POSITIONS
-import { Label } from "@/components/ui/label"; // Add this import
+import { playerTableColumns } from '@/utils/player-table-columns';
+import { Input } from '@/components/ui/input';
+import { ALL_FOOTBALL_POSITIONS } from '@/utils/positions';
+import { Label } from "@/components/ui/label";
 
 interface PlayerDatabaseProps {
   players: Player[];
@@ -58,7 +58,6 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
   });
   const [isAddPlayerDialogOpen, setIsAddPlayerDialogOpen] = React.useState(false);
 
-  // States for Popover open/close
   const [openNameFilter, setOpenNameFilter] = React.useState(false);
   const [openTeamFilter, setOpenTeamFilter] = React.useState(false);
   const [openNationalityFilter, setOpenNationalityFilter] = React.useState(false);
@@ -75,7 +74,6 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
     setIsAddPlayerDialogOpen(false);
   };
 
-  // Get unique values for autocomplete filters
   const uniqueTeams = React.useMemo(() => {
     const teams = new Set<string>();
     players.forEach(player => teams.add(player.team));
@@ -88,12 +86,9 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
     return Array.from(nationalities).sort();
   }, [players]);
 
-  // Removed uniquePositions derived from players, now using ALL_FOOTBALL_POSITIONS directly for filter options
-
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
+    <div className="min-h-screen bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
       <div className="max-w-7xl mx-auto">
-        {/* Back Button */}
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
@@ -105,7 +100,6 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Player Database</h1>
           <div className="flex items-center space-x-4">
-            {/* Add Player Button */}
             <Dialog open={isAddPlayerDialogOpen} onOpenChange={setIsAddPlayerDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-purple-600 hover:bg-purple-700 text-white">
@@ -130,11 +124,9 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                 <LayoutGrid className="h-4 w-4 mr-2" /> Card View
               </ToggleGroupItem>
             </ToggleGroup>
-            {/* ThemeToggle removed from here */}
           </div>
         </div>
 
-        {/* Filter Section - now collapsible */}
         <Accordion type="single" collapsible className="w-full mb-6">
           <AccordionItem value="filters" className="border-none">
             <AccordionTrigger className="flex items-center justify-between p-4 border border-border rounded-lg bg-card hover:bg-accent transition-colors duration-200">
@@ -143,8 +135,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
               </h2>
             </AccordionTrigger>
             <AccordionContent className="p-4 border border-t-0 border-border rounded-b-lg bg-card">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"> {/* Changed to lg:grid-cols-3 */}
-                {/* Name Filter with Autocomplete */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Popover open={openNameFilter} onOpenChange={setOpenNameFilter}>
                   <PopoverTrigger asChild>
                     <Button
@@ -202,7 +193,6 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                   </PopoverContent>
                 </Popover>
 
-                {/* Team Filter with Autocomplete */}
                 <Popover open={openTeamFilter} onOpenChange={setOpenTeamFilter}>
                   <PopoverTrigger asChild>
                     <Button
@@ -260,7 +250,6 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                   </PopoverContent>
                 </Popover>
 
-                {/* Nationality Filter with Autocomplete */}
                 <Popover open={openNationalityFilter} onOpenChange={setOpenNationalityFilter}>
                   <PopoverTrigger asChild>
                     <Button
@@ -318,7 +307,6 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                   </PopoverContent>
                 </Popover>
 
-                {/* Position Filter with Autocomplete */}
                 <Popover open={openPositionFilter} onOpenChange={setOpenPositionFilter}>
                   <PopoverTrigger asChild>
                     <Button
@@ -347,13 +335,13 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                       <CommandList>
                         <CommandEmpty>No position found.</CommandEmpty>
                         <CommandGroup>
-                          {ALL_FOOTBALL_POSITIONS // Using ALL_FOOTBALL_POSITIONS for filter options
+                          {ALL_FOOTBALL_POSITIONS
                             .filter(position =>
                               position.toLowerCase().startsWith(
                                 (columnFilters.find(f => f.id === 'positions')?.value as string || "").toLowerCase()
                               )
                             )
-                            .sort((a, b) => { // Keep sorting based on POSITION_ORDER
+                            .sort((a, b) => {
                               const indexA = POSITION_ORDER.indexOf(a);
                               const indexB = POSITION_ORDER.indexOf(b);
                               if (indexA === -1 && indexB === -1) return a.localeCompare(b);
@@ -384,7 +372,6 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                   </PopoverContent>
                 </Popover>
 
-                {/* New: Current Ability Filter */}
                 <div className="flex flex-col space-y-1">
                   <Label htmlFor="minCurrentAbility" className="text-muted-foreground">Min Current Ability</Label>
                   <Input
@@ -408,7 +395,6 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                   />
                 </div>
 
-                {/* New: Potential Ability Filter */}
                 <div className="flex flex-col space-y-1">
                   <Label htmlFor="minPotentialAbility" className="text-muted-foreground">Min Potential Ability</Label>
                   <Input
@@ -432,12 +418,11 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                   />
                 </div>
 
-                {/* Global filter for general search */}
                 <Input
                   placeholder="Global search..."
                   value={globalFilter ?? ""}
                   onChange={(event) => setGlobalFilter(event.target.value)}
-                  className="bg-input border-border text-foreground lg:col-span-3" // Spans all 3 columns in lg
+                  className="bg-input border-border text-foreground lg:col-span-3"
                 />
               </div>
             </AccordionContent>

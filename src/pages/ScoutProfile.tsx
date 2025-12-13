@@ -19,26 +19,26 @@ import { playerTableColumns } from '@/utils/player-table-columns';
 import { format, isPast } from 'date-fns';
 import ScoutAttributesSection from '@/components/ScoutAttributesSection';
 import { ScoutRole } from '@/utils/scout-roles';
-import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/task-utils'; // Updated import
+import { getPriorityBadgeClass, getStatusBadgeClass, getDueDateStatus } from '@/utils/task-utils';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog'; // Import Dialog components
-import ScoutEditForm from '@/components/ScoutEditForm'; // Import ScoutEditForm
-import TaskForm from '@/components/TaskForm'; // Import TaskForm
-import { Task } from '@/types/task'; // Import Task type
+import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
+import ScoutEditForm from '@/components/ScoutEditForm';
+import TaskForm from '@/components/TaskForm';
+import { Task } from '@/types/task';
 
 interface ScoutProfileProps {
   players: Player[];
   assignments: Assignment[];
-  scouts: Scout[]; // Receive scouts from App.tsx
-  setScouts: React.Dispatch<React.SetStateAction<Scout[]>>; // Receive setScouts from App.tsx
-  tasks: Task[]; // New: Receive tasks from App.tsx
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>; // New: Receive setTasks from App.tsx
+  scouts: Scout[];
+  setScouts: React.Dispatch<React.SetStateAction<Scout[]>>;
+  tasks: Task[];
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
 }
 
 const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments, scouts, setScouts, tasks, setTasks }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const currentScout = scouts.find(s => s.id === id); // Use scouts from props
+  const currentScout = scouts.find(s => s.id === id);
 
   const [viewMode, setViewMode] = React.useState<'table' | 'card'>(() => {
     if (typeof window !== 'undefined') {
@@ -50,8 +50,8 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments, scout
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = React.useState('');
   const [selectedScoutRole, setSelectedScoutRole] = useState<ScoutRole | null>(null);
-  const [isEditFormOpen, setIsEditFormOpen] = useState(false); // State for edit form dialog
-  const [isTaskFormOpen, setIsTaskFormOpen] = useState(false); // New state for task form dialog
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -61,7 +61,7 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments, scout
 
   if (!currentScout) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-6">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
         <div className="text-center bg-card p-8 rounded-lg shadow-lg border border-border">
           <h1 className="text-3xl font-bold mb-4 text-destructive">Scout Not Found</h1>
           <p className="text-xl text-muted-foreground mb-6">The scout you are looking for does not exist.</p>
@@ -89,34 +89,28 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments, scout
     setIsTaskFormOpen(false);
   };
 
-  // Filter players reported by this scout
   const scoutedPlayers = players.filter(player =>
     player.scoutingReports.some(report => report.scout === currentScout.name)
   );
 
-  // Filter and sort assignments for this scout
   const scoutAssignments = assignments
     .filter(assignment => assignment.assignedTo === currentScout.id)
     .sort((a, b) => {
       const aOverdue = a.status !== "Completed" && isPast(new Date(a.dueDate));
       const bOverdue = b.status !== "Completed" && isPast(new Date(b.dueDate));
 
-      // 1. Overdue tasks first
       if (aOverdue && !bOverdue) return -1;
       if (!aOverdue && bOverdue) return 1;
 
-      // 2. Completed tasks last
       if (a.status === "Completed" && b.status !== "Completed") return 1;
       if (a.status !== "Completed" && b.status === "Completed") return -1;
 
-      // 3. Then by creation date (newest first)
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
+    <div className="min-h-screen bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
       <div className="max-w-7xl mx-auto">
-        {/* Back Button */}
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
@@ -137,7 +131,7 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments, scout
                 <p className="text-muted-foreground text-lg">{currentScout.role}</p>
               </div>
             </div>
-            <div className="flex space-x-2"> {/* Container for buttons */}
+            <div className="flex space-x-2">
               <Dialog open={isEditFormOpen} onOpenChange={setIsEditFormOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline" className="bg-card text-foreground border-border hover:bg-accent">
@@ -177,24 +171,20 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments, scout
                 {currentScout.role === "Head Scout" && "Oversees all scouting operations, focusing on strategic targets and team fit across all regions."}
                 {currentScout.role === "European Scout" && "Specializes in identifying talent across major European leagues, with an emphasis on technical ability and tactical intelligence."}
                 {currentScout.role === "Youth Scout" && "Focuses on emerging talents in youth academies and lower leagues, looking for high potential and coachability."}
-                {/* Add more role descriptions as needed */}
               </p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Scout Attributes Section */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Scout Attributes</h2>
           <ScoutAttributesSection
             scout={currentScout}
             selectedScoutRole={selectedScoutRole}
             onRoleSelect={setSelectedScoutRole}
-            // isEditable={isEditFormOpen} // Only editable via the form, not directly here
           />
         </div>
 
-        {/* Scout Assignments Section */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Assignments for {currentScout.name} ({scoutAssignments.length})</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -235,7 +225,6 @@ const ScoutProfile: React.FC<ScoutProfileProps> = ({ players, assignments, scout
           </div>
         </div>
 
-        {/* Scouted Players Section */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Players Scouted by {currentScout.name} ({scoutedPlayers.length})</h2>
           <ToggleGroup
