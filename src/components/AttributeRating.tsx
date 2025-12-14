@@ -62,10 +62,11 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({
   const progressValue = Math.min(Math.max(rating * 10, 0), 100);
   const indicatorColorClass = getRatingColorClass(rating);
 
+  // More discreet highlight classes: thinner left border and subtle hover
   const highlightClasses = {
-    primary: "bg-role-primary ring-1 ring-primary", // Use semantic color
-    secondary: "bg-role-secondary ring-1 ring-purple-400", // Use semantic color
-    tertiary: "bg-role-tertiary ring-1 ring-muted-foreground", // Use semantic color
+    primary: "border-l-2 border-primary/50 pl-2 hover:bg-accent/10", // Softer primary border
+    secondary: "border-l-2 border-purple-500/50 pl-2 hover:bg-accent/10", // Softer secondary border
+    tertiary: "border-l-2 border-muted-foreground/50 pl-2 hover:bg-accent/10", // Softer tertiary border
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,7 +101,7 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({
             )}
             onClick={handleClick}
           >
-            <span className={cn("text-sm w-1/2", highlightType ? "text-text-on-colored-background" : "text-muted-foreground")}>{name}</span> {/* Use semantic text color */}
+            <span className={cn("text-sm w-1/2", highlightType ? "font-semibold text-foreground" : "text-muted-foreground")}>{name}</span> {/* Use semantic text color */}
             <div className="flex items-center w-1/2">
               {isEditable ? (
                 <Input
@@ -118,7 +119,7 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({
                     className="h-2 w-full bg-muted"
                     indicatorClassName={indicatorColorClass}
                   />
-                  <span className={cn("ml-2 text-sm", highlightType ? "text-text-on-colored-background" : "text-muted-foreground")}>{rating}</span> {/* Use semantic text color */}
+                  <span className={cn("ml-2 text-sm", highlightType ? "font-semibold text-foreground" : "text-muted-foreground")}>{rating}</span> {/* Use semantic text color */}
                 </>
               )}
             </div>
