@@ -217,10 +217,11 @@ export const calculateFormationOverallFit = (player: Player, formation: Formatio
 
 // Function to get star rating based on overall fit percentage (0-100)
 export const getStarRating = (overallFit: number): number => {
-  if (overallFit < 10) return 0.5;
-  if (overallFit < 20) return 1;
-  if (overallFit < 30) return 1.5;
-  if (overallFit < 40) return 2;
-  if (overallFit < 50) return 2.5;
-  return 3; // 50% and above
+  if (overallFit >= 80) return 3; // 80% and above for 3 stars
+  if (overallFit >= 70) return 2.5; // 70-79% for 2.5 stars
+  if (overallFit >= 60) return 2; // 60-69% for 2 stars
+  if (overallFit >= 50) return 1.5; // 50-59% for 1.5 stars
+  if (overallFit >= 40) return 1; // 40-49% for 1 star
+  if (overallFit >= 30) return 0.5; // 30-39% for 0.5 stars
+  return 0; // Below 30% for 0 stars
 };

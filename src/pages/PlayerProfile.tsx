@@ -444,10 +444,12 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       });
 
       allCombinedOptions.sort((a, b) => b.compatibility - a.compatibility);
-      setCombinedRoleOptions(allCombinedOptions);
+      // Limit to top 7 roles
+      const top7Roles = allCombinedOptions.slice(0, 7);
+      setCombinedRoleOptions(top7Roles);
 
-      if (allCombinedOptions.length > 0) {
-        setSelectedFmRole(allCombinedOptions[0].role);
+      if (top7Roles.length > 0) {
+        setSelectedFmRole(top7Roles[0].role);
       } else {
         setSelectedFmRole(null);
       }
