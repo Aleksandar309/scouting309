@@ -63,9 +63,9 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({
   const indicatorColorClass = getRatingColorClass(rating);
 
   const highlightClasses = {
-    primary: "border-l-4 border-primary pl-2", // Use border for primary
-    secondary: "border-l-4 border-purple-500 pl-2", // Use border for secondary
-    tertiary: "border-l-4 border-muted-foreground pl-2", // Use border for tertiary
+    primary: "bg-role-primary ring-1 ring-primary", // Use semantic color
+    secondary: "bg-role-secondary ring-1 ring-purple-400", // Use semantic color
+    tertiary: "bg-role-tertiary ring-1 ring-muted-foreground", // Use semantic color
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,7 +100,7 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({
             )}
             onClick={handleClick}
           >
-            <span className={cn("text-sm w-1/2", highlightType ? "font-semibold text-foreground" : "text-muted-foreground")}>{name}</span> {/* Use semantic text color */}
+            <span className={cn("text-sm w-1/2", highlightType ? "text-text-on-colored-background" : "text-muted-foreground")}>{name}</span> {/* Use semantic text color */}
             <div className="flex items-center w-1/2">
               {isEditable ? (
                 <Input
@@ -118,7 +118,7 @@ const AttributeRating: React.FC<AttributeRatingProps> = ({
                     className="h-2 w-full bg-muted"
                     indicatorClassName={indicatorColorClass}
                   />
-                  <span className={cn("ml-2 text-sm", highlightType ? "font-semibold text-foreground" : "text-muted-foreground")}>{rating}</span> {/* Use semantic text color */}
+                  <span className={cn("ml-2 text-sm", highlightType ? "text-text-on-colored-background" : "text-muted-foreground")}>{rating}</span> {/* Use semantic text color */}
                 </>
               )}
             </div>

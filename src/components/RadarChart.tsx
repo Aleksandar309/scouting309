@@ -49,7 +49,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ player, selectedRole }) => {
   });
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height={250}>
       <RechartsRadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
         <PolarGrid stroke="hsl(var(--chart-grid))" />
         <PolarAngleAxis
