@@ -1155,26 +1155,26 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     <CardTitle className="text-lg font-semibold">
                       Player Role
                     </CardTitle>
+                    {/* Moved Select component here */}
+                    <Select
+                      value={currentSelectedCombinedRoleId}
+                      onValueChange={handleCombinedRoleSelectChange}
+                      disabled={combinedRoleOptions.length === 0}
+                    >
+                      <SelectTrigger className="w-[250px] bg-input border-border text-foreground hover:bg-accent"> {/* Adjusted width */}
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover border-border text-popover-foreground">
+                        {combinedRoleOptions.map(option => (
+                          <SelectItem key={option.id} value={option.id}>
+                            {option.positionName} - {option.role.name} ({option.compatibility.toFixed(0)}%)
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </CardHeader>
                   <CardContent className="flex flex-col items-center justify-center h-full p-4">
-                    <div className="w-full space-y-4 mb-4">
-                      <Select
-                        value={currentSelectedCombinedRoleId}
-                        onValueChange={handleCombinedRoleSelectChange}
-                        disabled={combinedRoleOptions.length === 0}
-                      >
-                        <SelectTrigger className="w-full bg-input border-border text-foreground hover:bg-accent">
-                          <SelectValue placeholder="Select a role" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-popover border-border text-popover-foreground">
-                          {combinedRoleOptions.map(option => (
-                            <SelectItem key={option.id} value={option.id}>
-                              {option.positionName} - {option.role.name} ({option.compatibility.toFixed(0)}%)
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    {/* Removed the div containing the Select component */}
                     <RadarChart player={player} selectedRole={selectedFmRole} />
                   </CardContent>
                 </Card>
