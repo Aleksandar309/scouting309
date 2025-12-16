@@ -33,9 +33,9 @@ import {
   History,
   Trash2,
   PlusCircle,
-  Video, // NEW: Video icon
+  Video,
 } from "lucide-react";
-import { Player, PlayerAttribute, AttributeHistoryEntry, PlayerPosition, PlayerVideo } from "@/types/player"; // NEW: Import PlayerVideo
+import { Player, PlayerAttribute, AttributeHistoryEntry, PlayerPosition, PlayerVideo } from "@/types/player";
 import AttributeRating from "@/components/AttributeRating";
 import RadarChart from "@/components/RadarChart";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -44,7 +44,7 @@ import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import PlayerPitch from '@/components/PlayerPitch';
 import RoleDetailsDialog from '@/components/RoleDetailsDialog';
 import AttributeHistoryDialog from '@/components/AttributeHistoryDialog';
-import AddVideoForm from '@/components/AddVideoForm'; // NEW: Import AddVideoForm
+import AddVideoForm from '@/components/AddVideoForm';
 import { FmRole, FmRoleAttribute, FmAttributeCategory, getAttributesByCategory, getRolesForPosition, calculateRoleCompatibility } from '@/utils/fm-roles';
 import {
   Accordion,
@@ -81,6 +81,13 @@ import {
 import { ALL_FOOTBALL_POSITIONS } from "@/utils/positions";
 import { ShadowTeam, ShadowTeamPlayer } from '@/types/shadow-team';
 import AddPlayerToShadowTeamDialog from '@/components/AddPlayerToShadowTeamDialog';
+
+// Helper function to extract YouTube video ID
+const getYouTubeVideoId = (url: string): string | null => {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
 
 // Define the schema for a single attribute item
 const attributeItemSchema = z.object({
@@ -356,7 +363,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isAddPlayerToTeamDialogOpen, setIsAddPlayerToTeamDialogOpen] = useState(false);
-  const [isAddVideoFormOpen, setIsAddVideoFormOpen] = useState(false); // NEW: State for AddVideoForm
+  const [isAddVideoFormOpen, setIsAddVideoFormOpen] = useState(false);
 
   // New state for combined role options
   const [combinedRoleOptions, setCombinedRoleOptions] = useState<CombinedRoleOption[]>([]);
@@ -494,7 +501,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     });
   };
 
-  // NEW: Handle adding a new video
   const handleAddVideo = (newVideo: PlayerVideo) => {
     setPlayers((prevPlayers) =>
       prevPlayers.map((p) =>
@@ -601,7 +607,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
         ...values.scoutingProfile,
       },
       positionsData: processedPositionsData,
-      positions: generalPositions, // Update general positions array
+      positions: generalPositions,
       technical: updateAttributeHistory(currentPlayer.technical, values.technical, 'technical', changedByScoutName),
       tactical: updateAttributeHistory(currentPlayer.tactical, values.tactical, 'tactical', changedByScoutName),
       physical: updateAttributeHistory(currentPlayer.physical, values.physical, 'physical', changedByScoutName),
@@ -610,8 +616,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       hidden: updateAttributeHistory(currentPlayer.hidden, values.hidden, 'hidden', changedByScoutName),
       keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(Boolean) : [],
       areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(Boolean) : [],
-      scoutingReports: currentPlayer.scoutingReports, // Keep existing reports
-      videos: currentPlayer.videos, // Keep existing videos
+      scoutingReports: currentPlayer.scoutingReports,
+      videos: currentPlayer.videos,
     };
 
     setPlayers((prevPlayers) =>
@@ -1173,19 +1179,17 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Player Role Analysis Card - Refactored */}
                 <Card className="bg-card border-border text-card-foreground col-span-1 md:col-span-1 lg:col-span-1">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg font-semibold">
                       Player Role
                     </CardTitle>
-                    {/* Moved Select component here */}
                     <Select
                       value={currentSelectedCombinedRoleId}
                       onValueChange={handleCombinedRoleSelectChange}
                       disabled={combinedRoleOptions.length === 0}
                     >
-                      <SelectTrigger className="w-[250px] bg-input border-border text-foreground hover:bg-accent"> {/* Adjusted width */}
+                      <SelectTrigger className="w-[250px] bg-input border-border text-foreground hover:bg-accent">
                         <SelectValue placeholder="Select a role" />
                       </SelectTrigger>
                       <SelectContent className="bg-popover border-border text-popover-foreground">
@@ -1198,7 +1202,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                     </Select>
                   </CardHeader>
                   <CardContent className="flex flex-col items-center justify-center h-full p-4">
-                    {/* Removed the div containing the Select component */}
                     <RadarChart player={player} selectedRole={selectedFmRole} />
                   </CardContent>
                 </Card>
@@ -1428,7 +1431,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* NEW: Video Gallery Card */}
                 <Card className="bg-card border-border text-card-foreground col-span-full">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center">
@@ -1458,14 +1460,27 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                               </div>
                             </AccordionTrigger>
                             <AccordionContent className="p-4 bg-muted rounded-b-md text-muted-foreground space-y-2">
-                              <a
-                                href={video.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-primary hover:underline flex items-center"
-                              >
-                                <Video className="mr-2 h-4 w-4" /> Watch Video
-                              </a>
+                              {getYouTubeVideoId(video.url) ? (
+                                <div className="relative w-full" style={{ paddingBottom: '56.25%' /* 16:9 Aspect Ratio */ }}>
+                                  <iframe
+                                    className="absolute top-0 left-0 w-full h-full rounded-md"
+                                    src={`https://www.youtube.com/embed/${getYouTubeVideoId(video.url)}`}
+                                    title={video.title}
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                  ></iframe>
+                                </div>
+                              ) : (
+                                <a
+                                  href={video.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-primary hover:underline flex items-center"
+                                >
+                                  <Video className="mr-2 h-4 w-4" /> Watch Video (External Link)
+                                </a>
+                              )}
                             </AccordionContent>
                           </AccordionItem>
                         ))}
@@ -1476,7 +1491,6 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
-                {/* Scouting Reports Card */}
                 <Card className="bg-card border-border text-card-foreground col-span-full">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold">Scouting Reports ({player.scoutingReports.length})</CardTitle>
