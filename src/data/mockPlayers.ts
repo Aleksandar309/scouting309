@@ -144,6 +144,22 @@ export const initialMockPlayers: Player[] = [
         teamFit: 9,
       },
     ],
+    videos: [ // NEW: Sample video data
+      {
+        id: "vid1",
+        title: "Mats Wieffer - Midfield Masterclass vs Lazio",
+        url: "https://www.youtube.com/watch?v=example1",
+        uploadedBy: "Scouting Dept.",
+        uploadDate: "2024-03-10",
+      },
+      {
+        id: "vid2",
+        title: "Wieffer Highlights - Eredivisie 23/24",
+        url: "https://www.youtube.com/watch?v=example2",
+        uploadedBy: "James Clark",
+        uploadDate: "2024-06-01",
+      },
+    ],
   },
   {
     id: "2",
@@ -267,6 +283,7 @@ export const initialMockPlayers: Player[] = [
         teamFit: 8,
       },
     ],
+    videos: [], // No videos for Kudus initially
   },
   {
     id: "3",
@@ -389,6 +406,7 @@ export const initialMockPlayers: Player[] = [
         teamFit: 9,
       },
     ],
+    videos: [], // No videos for Wirtz initially
   },
   {
     id: "4",
@@ -510,6 +528,7 @@ export const initialMockPlayers: Player[] = [
         teamFit: 9,
       },
     ],
+    videos: [], // No videos for Colwill initially
   },
   {
     id: "5",
@@ -631,5 +650,6 @@ export const initialMockPlayers: Player[] = [
         teamFit: 10,
       },
     ],
+    videos: [], // No videos for Ferguson initially
   },
 ];

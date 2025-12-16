@@ -33,8 +33,9 @@ import {
   History,
   Trash2,
   PlusCircle,
+  Video, // NEW: Video icon
 } from "lucide-react";
-import { Player, PlayerAttribute, AttributeHistoryEntry, PlayerPosition } from "@/types/player";
+import { Player, PlayerAttribute, AttributeHistoryEntry, PlayerPosition, PlayerVideo } from "@/types/player"; // NEW: Import PlayerVideo
 import AttributeRating from "@/components/AttributeRating";
 import RadarChart from "@/components/RadarChart";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -43,6 +44,7 @@ import AddToShortlistDialog from '@/components/AddToShortlistDialog';
 import PlayerPitch from '@/components/PlayerPitch';
 import RoleDetailsDialog from '@/components/RoleDetailsDialog';
 import AttributeHistoryDialog from '@/components/AttributeHistoryDialog';
+import AddVideoForm from '@/components/AddVideoForm'; // NEW: Import AddVideoForm
 import { FmRole, FmRoleAttribute, FmAttributeCategory, getAttributesByCategory, getRolesForPosition, calculateRoleCompatibility } from '@/utils/fm-roles';
 import {
   Accordion,
@@ -354,6 +356,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isAddPlayerToTeamDialogOpen, setIsAddPlayerToTeamDialogOpen] = useState(false);
+  const [isAddVideoFormOpen, setIsAddVideoFormOpen] = useState(false); // NEW: State for AddVideoForm
 
   // New state for combined role options
   const [combinedRoleOptions, setCombinedRoleOptions] = useState<CombinedRoleOption[]>([]);
@@ -491,6 +494,24 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
     });
   };
 
+  // NEW: Handle adding a new video
+  const handleAddVideo = (newVideo: PlayerVideo) => {
+    setPlayers((prevPlayers) =>
+      prevPlayers.map((p) =>
+        p.id === player.id
+          ? { ...p, videos: [...(p.videos || []), newVideo] }
+          : p
+      )
+    );
+    setPlayer((prevPlayer) => {
+      if (!prevPlayer) return null;
+      return {
+        ...prevPlayer,
+        videos: [...(prevPlayer.videos || []), newVideo],
+      };
+    });
+  };
+
   const handlePositionClick = (positionType: string) => {
     setSelectedPositionForRoles(positionType);
     setIsRoleDetailsDialogOpen(true);
@@ -590,6 +611,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
       keyStrengths: values.keyStrengths ? values.keyStrengths.split('\n').map(s => s.trim()).filter(Boolean) : [],
       areasForDevelopment: values.areasForDevelopment ? values.areasForDevelopment.split('\n').map(s => s.trim()).filter(Boolean) : [],
       scoutingReports: currentPlayer.scoutingReports, // Keep existing reports
+      videos: currentPlayer.videos, // Keep existing videos
     };
 
     setPlayers((prevPlayers) =>
@@ -1406,6 +1428,55 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                   </CardContent>
                 </Card>
 
+                {/* NEW: Video Gallery Card */}
+                <Card className="bg-card border-border text-card-foreground col-span-full">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold flex items-center">
+                      <Video className="mr-2 h-5 w-5" /> Video Gallery ({player.videos?.length || 0})
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Dialog open={isAddVideoFormOpen} onOpenChange={setIsAddVideoFormOpen}>
+                      <DialogTrigger asChild>
+                        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                          <PlusCircle className="mr-2 h-4 w-4" /> Add New Video
+                        </Button>
+                      </DialogTrigger>
+                      <AddVideoForm onAddVideo={handleAddVideo} onClose={() => setIsAddVideoFormOpen(false)} />
+                    </Dialog>
+
+                    {(player.videos && player.videos.length > 0) ? (
+                      <Accordion type="single" collapsible className="w-full">
+                        {player.videos.map((video) => (
+                          <AccordionItem key={video.id} value={video.id} className="border-border">
+                            <AccordionTrigger className="flex items-center justify-between p-3 bg-muted rounded-md hover:bg-accent transition-colors">
+                              <div className="flex flex-col items-start">
+                                <p className="font-medium text-foreground">{video.title}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  Uploaded by: {video.uploadedBy} • {video.uploadDate}
+                                </p>
+                              </div>
+                            </AccordionTrigger>
+                            <AccordionContent className="p-4 bg-muted rounded-b-md text-muted-foreground space-y-2">
+                              <a
+                                href={video.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline flex items-center"
+                              >
+                                <Video className="mr-2 h-4 w-4" /> Watch Video
+                              </a>
+                            </AccordionContent>
+                          </AccordionItem>
+                        ))}
+                      </Accordion>
+                    ) : (
+                      <p className="text-center text-muted-foreground py-4">No videos added yet.</p>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Scouting Reports Card */}
                 <Card className="bg-card border-border text-card-foreground col-span-full">
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold">Scouting Reports ({player.scoutingReports.length})</CardTitle>

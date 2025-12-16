@@ -17,6 +17,14 @@ export interface PlayerPosition {
   rating: number; // 0-10
 }
 
+export interface PlayerVideo { // NEW: Interface for player videos
+  id: string;
+  title: string;
+  url: string;
+  uploadedBy: string; // Name of the person who uploaded the video
+  uploadDate: string; // ISO string or 'YYYY-MM-DD'
+}
+
 export interface Player {
   id: string;
   name: string;
@@ -67,4 +75,5 @@ export interface Player {
     potentialAbility?: number; // NEW: Specific potential ability from this report
     teamFit?: number; // NEW: Specific team fit from this report
   }[];
+  videos?: PlayerVideo[]; // NEW: Optional array of player videos
 }
