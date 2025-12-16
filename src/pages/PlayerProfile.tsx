@@ -1432,12 +1432,10 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                 </Card>
 
                 <Card className="bg-card border-border text-card-foreground col-span-full">
-                  <CardHeader>
+                  <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg font-semibold flex items-center">
                       <Video className="mr-2 h-5 w-5" /> Video Gallery ({player.videos?.length || 0})
                     </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
                     <Dialog open={isAddVideoFormOpen} onOpenChange={setIsAddVideoFormOpen}>
                       <DialogTrigger asChild>
                         <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
@@ -1446,7 +1444,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
                       </DialogTrigger>
                       <AddVideoForm onAddVideo={handleAddVideo} onClose={() => setIsAddVideoFormOpen(false)} />
                     </Dialog>
-
+                  </CardHeader>
+                  <CardContent className="space-y-4">
                     {(player.videos && player.videos.length > 0) ? (
                       <Accordion type="single" collapsible className="w-full">
                         {player.videos.map((video) => (
