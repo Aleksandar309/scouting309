@@ -65,7 +65,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import FormationSelector from '@/components/Formation/FormationSelector';
+import FormationSelector from '@/components/FormationSelector'; // Ispravljena putanja
 import { FM_FORMATIONS, calculateFormationFit, calculateFormationOverallFit, getStarRating } from '@/utils/formations';
 import { Formation, PlayerFormationFitPosition } from '@/types/formation';
 import { ALL_ATTRIBUTE_NAMES, CATEGORIZED_ATTRIBUTES } from '@/utils/player-attributes';
