@@ -65,7 +65,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import FormationSelector from '@/components/FormationSelector';
+import FormationSelector from '@/components/Formation/FormationSelector';
 import { FM_FORMATIONS, calculateFormationFit, calculateFormationOverallFit, getStarRating } from '@/utils/formations';
 import { Formation, PlayerFormationFitPosition } from '@/types/formation';
 import { ALL_ATTRIBUTE_NAMES, CATEGORIZED_ATTRIBUTES } from '@/utils/player-attributes';
@@ -502,19 +502,24 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ players, setPlayers, scou
   };
 
   const handleAddVideo = (newVideo: PlayerVideo) => {
-    setPlayers((prevPlayers) =>
-      prevPlayers.map((p) =>
+    console.log("handleAddVideo received:", newVideo); // Log received video data
+    setPlayers((prevPlayers) => {
+      const updatedPlayers = prevPlayers.map((p) =>
         p.id === player.id
           ? { ...p, videos: [...(p.videos || []), newVideo] }
           : p
-      )
-    );
+      );
+      console.log("setPlayers updated:", updatedPlayers); // Log updated players array
+      return updatedPlayers;
+    });
     setPlayer((prevPlayer) => {
       if (!prevPlayer) return null;
-      return {
+      const updatedPlayer = {
         ...prevPlayer,
         videos: [...(prevPlayer.videos || []), newVideo],
       };
+      console.log("setPlayer updated:", updatedPlayer); // Log updated local player state
+      return updatedPlayer;
     });
   };
 

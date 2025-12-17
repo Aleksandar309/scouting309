@@ -29,7 +29,13 @@ import { PlayerVideo } from "@/types/player";
 
 const formSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters." }),
-  url: z.string().url({ message: "Please enter a valid URL." }),
+  url: z.string().min(1, { message: "Video URL is required." }).transform(val => {
+    // Prepend https:// if it's missing and not a relative path
+    if (val && !/^(https?:\/\/|ftps?:\/\/|\/\/)/i.test(val)) {
+      return `https://${val}`;
+    }
+    return val;
+  }).pipe(z.string().url({ message: "Please enter a valid URL." })), // Then validate as URL
   uploadedBy: z.string().min(2, { message: "Uploader name must be at least 2 characters." }),
 });
 
@@ -49,6 +55,7 @@ const AddVideoForm: React.FC<AddVideoFormProps> = ({ onAddVideo, onClose }) => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    console.log("AddVideoForm onSubmit values:", values); // Log values before processing
     const newVideo: PlayerVideo = {
       id: `video-${Date.now()}`,
       title: values.title,
