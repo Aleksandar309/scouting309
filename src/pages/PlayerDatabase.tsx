@@ -39,7 +39,8 @@ import { playerTableColumns } from '@/utils/player-table-columns';
 import { Input } from '@/components/ui/input';
 import { ALL_FOOTBALL_POSITIONS } from '@/utils/positions';
 import { Label } from "@/components/ui/label";
-import { REGION_MAP, ALL_REGIONS } from '@/utils/regions'; // Import regions utility
+import { REGION_MAP, ALL_REGIONS } from '@/utils/regions';
+import { calculateOverallModernRating } from '@/utils/player-utils'; // Import the new utility
 
 interface PlayerDatabaseProps {
   players: Player[];
@@ -63,8 +64,8 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
   const [openTeamFilter, setOpenTeamFilter] = React.useState(false);
   const [openNationalityFilter, setOpenNationalityFilter] = React.useState(false);
   const [openPositionFilter, setOpenPositionFilter] = React.useState(false);
-  const [openRegionFilter, setOpenRegionFilter] = React.useState(false); // New state for region filter
-  const [selectedRegion, setSelectedRegion] = React.useState<string | null>(null); // State to hold selected region
+  const [openRegionFilter, setOpenRegionFilter] = React.useState(false);
+  const [selectedRegion, setSelectedRegion] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -89,16 +90,24 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
     return Array.from(nationalities).sort();
   }, [players]);
 
-  // Filter players based on selected region before passing to table/card display
-  const filteredPlayersByRegion = React.useMemo(() => {
-    if (!selectedRegion) {
-      return players;
+  // Filter players based on selected region and OMR
+  const filteredPlayers = React.useMemo(() => {
+    let currentPlayers = players;
+
+    if (selectedRegion) {
+      currentPlayers = currentPlayers.filter(player => REGION_MAP[player.nationality] === selectedRegion);
     }
-    return players.filter(player => REGION_MAP[player.nationality] === selectedRegion);
-  }, [players, selectedRegion]);
+
+    const minOmrFilter = columnFilters.find(f => f.id === 'overallModernRating')?.value as number;
+    if (!isNaN(minOmrFilter) && minOmrFilter > 0) {
+      currentPlayers = currentPlayers.filter(player => calculateOverallModernRating(player) >= minOmrFilter);
+    }
+
+    return currentPlayers;
+  }, [players, selectedRegion, columnFilters]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6 pt-16"> {/* Added pt-16 */}
+    <div className="min-h-screen bg-background text-foreground p-6 pt-16">
       <div className="max-w-7xl mx-auto">
         <Button
           variant="ghost"
@@ -467,6 +476,31 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
                   />
                 </div>
 
+                {/* New Min OMR Filter */}
+                <div className="flex flex-col space-y-1">
+                  <Label htmlFor="minOmr" className="text-muted-foreground">Min OMR</Label>
+                  <Input
+                    id="minOmr"
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    placeholder="Min OMR (0-10)"
+                    value={(columnFilters.find(f => f.id === 'overallModernRating')?.value as number) ?? ""}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value);
+                      setColumnFilters(prev => {
+                        const newFilters = prev.filter(f => f.id !== 'overallModernRating');
+                        if (!isNaN(value) && value >= 0 && value <= 10) {
+                          newFilters.push({ id: 'overallModernRating', value });
+                        }
+                        return newFilters;
+                      });
+                    }}
+                    className="bg-input border-border text-foreground"
+                  />
+                </div>
+
                 <Input
                   placeholder="Global search..."
                   value={globalFilter ?? ""}
@@ -480,7 +514,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
 
         {viewMode === 'table' ? (
           <PlayerTableDisplay
-            data={filteredPlayersByRegion} // Pass region-filtered players
+            data={filteredPlayers}
             columns={playerTableColumns}
             sorting={sorting}
             setSorting={setSorting}
@@ -490,7 +524,7 @@ const PlayerDatabase: React.FC<PlayerDatabaseProps> = ({ players, setPlayers }) 
             setGlobalFilter={setGlobalFilter}
           />
         ) : (
-          <PlayerCardGridDisplay players={filteredPlayersByRegion} />
+          <PlayerCardGridDisplay players={filteredPlayers} />
         )}
       </div>
     </div>
