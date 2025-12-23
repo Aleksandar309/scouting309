@@ -16,11 +16,13 @@ import { Scout } from "./types/scout";
 import { Shortlist } from "./types/shortlist";
 import { ShadowTeam } from "./types/shadow-team";
 import { Task } from "./types/task";
+import { ForumPost } from "./types/forum"; // Import ForumPost
 import { ShortlistProvider } from "./context/ShortlistContext";
 import { initialMockPlayers } from "./data/mockPlayers";
 import { mockScouts } from "./data/mockScouts";
 import { initialMockTasks } from "./data/mockTasks";
-import Header from "./components/Header"; // Import the new Header component
+import { initialMockForumPosts } from "./data/mockForumPosts"; // Import mock forum posts
+import Header from "./components/Header";
 
 function App() {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -28,6 +30,7 @@ function App() {
   const [shortlists, setShortlists] = useState<Shortlist[]>([]);
   const [shadowTeams, setShadowTeams] = useState<ShadowTeam[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [forumPosts, setForumPosts] = useState<ForumPost[]>([]); // NEW: State for forum posts
 
   useEffect(() => {
     const storedPlayers = localStorage.getItem("players");
@@ -69,6 +72,14 @@ function App() {
     } else {
       setTasks(initialMockTasks);
     }
+
+    // NEW: Load forum posts from localStorage or use mock data
+    const storedForumPosts = localStorage.getItem("forumPosts");
+    if (storedForumPosts) {
+      setForumPosts(JSON.parse(storedForumPosts));
+    } else {
+      setForumPosts(initialMockForumPosts);
+    }
   }, []);
 
   useEffect(() => {
@@ -91,9 +102,14 @@ function App() {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
+  // NEW: Save forum posts to localStorage
+  useEffect(() => {
+    localStorage.setItem("forumPosts", JSON.stringify(forumPosts));
+  }, [forumPosts]);
+
   return (
     <Router>
-      <Header /> {/* Render the Header component here */}
+      <Header />
       <ShortlistProvider shortlists={shortlists} setShortlists={setShortlists}>
         <Routes>
           <Route path="/" element={<Index players={players} scouts={scouts} shortlists={shortlists} shadowTeams={shadowTeams} tasks={tasks} />} />
@@ -105,7 +121,7 @@ function App() {
           <Route path="/shortlists/:id" element={<ShortlistDetailsPage players={players} />} />
           <Route path="/shadow-teams" element={<ShadowTeams shadowTeams={shadowTeams} setShadowTeams={setShadowTeams} players={players} />} />
           <Route path="/tasks" element={<Tasks tasks={tasks} setTasks={setTasks} scouts={scouts} />} />
-          <Route path="/forum" element={<Forum />} />
+          <Route path="/forum" element={<Forum forumPosts={forumPosts} setForumPosts={setForumPosts} scouts={scouts} players={players} />} /> {/* Pass forumPosts and scouts */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </ShortlistProvider>
